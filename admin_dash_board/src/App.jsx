@@ -25,7 +25,9 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/" element={<Dashboard />} >
+        
+        </Route>
       </Routes>
     </>
   );
