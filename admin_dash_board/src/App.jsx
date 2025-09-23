@@ -11,6 +11,8 @@ import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
+import UploadVideos from './components/UploadRecordedVideo.jsx/UploadVideos';
+import UploadedVideos from './components/UploadedVideos/UploadedVideos';
 
 function App() {
 
@@ -26,7 +28,8 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Dashboard />} >
-        
+          <Route path="/upload_recorded_video" element={<UploadVideos />} />
+           <Route path="/recorded_sessions" element={<UploadedVideos />} />
         </Route>
       </Routes>
     </>
