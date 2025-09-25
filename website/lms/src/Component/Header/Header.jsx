@@ -21,7 +21,7 @@ const Header = () => {
                 <nav className="hidden md:flex space-x-6">
                     <Link to="/" className="ml-3 text-gray-700 hover:text-blue-600">Home</Link>
                     <Link to="/about" className="ml-3 text-gray-700 hover:text-blue-600">About</Link>
-                    <Link to="/courses" className="ml-3 text-gray-700 hover:text-blue-600">Courses</Link>
+                    <Link to="/allcourses" className="ml-3 text-gray-700 hover:text-blue-600">Courses</Link>
 
                     {/* <a href="#" className=" ml-3 text-gray-700 hover:text-blue-600">Page</a> */}
                     <div
@@ -49,13 +49,19 @@ const Header = () => {
 
 
                 <div className='flex '>
-                    <button className="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700">
-                        Login
-                    </button>
 
-                    <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
-                        Sign up
-                    </button>
+                    <Link to="/login">
+                        <button className="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700">
+                            Login
+                        </button>
+                    </Link>
+
+
+                    <Link to="/sigh_up">
+                        <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
+                            Sign up
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
