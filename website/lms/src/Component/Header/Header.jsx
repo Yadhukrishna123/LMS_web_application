@@ -38,7 +38,7 @@ const Header = () => {
                             <div className="absolute flex flex-col top-full left-0 bg-white shadow-lg rounded-md mt-2 w-40 z-50">
                                 <Link to="/" className="ml-3 text-gray-700 hover:text-blue-600">Page1</Link>
                                 <Link to="/about" className="ml-3 text-gray-700 hover:text-blue-600">Page2</Link>
-                                <Link to="/courses" className="ml-3 text-gray-700 hover:text-blue-600">Page3</Link>
+                                <Link to="/" className="ml-3 text-gray-700 hover:text-blue-600">Page3</Link>
                             </div>
                         )}
                     </div>
