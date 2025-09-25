@@ -33,7 +33,7 @@ const About = () => {
             <div className='our-story'>
                 <div className='our-story-sectios-one'>
                     <div className=''>
-                        <h4 className='font-semibold text-3xl'>Our  mission</h4>
+                        <h4 className='font-semibold text-3xl missionTitle'>Our  mission</h4>
                         <p className='mt-3 w-[50%] text-gray-500'>Lorem ipsum dolor sit amet consectetur adipisicing elit.!</p>
                     </div>
                     <div className=''>

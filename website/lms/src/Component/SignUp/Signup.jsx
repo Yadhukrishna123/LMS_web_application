@@ -6,10 +6,10 @@ const Signup = () => {
 
     }
     const handleSubmit = () => {
-        
-    }
 
     }
+
+    
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
             <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-lg">
@@ -53,7 +53,7 @@ const Signup = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
+                        className="w-full mt-5 bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
                     >
                         Sign Up
                     </button>
