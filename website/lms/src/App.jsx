@@ -3,18 +3,18 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './Component/Home/Home'
 import Header from './Component/Header/Header'
 import Contact from './Component/Contact/Contact'
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
 import CoursesSection from './Component/Courses/Courses'
 import LearningExp from './Component/LearningExp/LearningExp'
 import Detailpage from './Component/Courses/Detailpage'
 import Testimonials from './Component/Testimonials/Testimonials'
 import CategoryBrowser from './Component/Categories/Coursecards'
 import Mentors from './Component/Mentors/Mentors'
-=======
-=======
 
->>>>>>> yadhu-branch
+
+
+
 
 import About from './Component/About/About'
 // import Courses from './Component/Courses/Courses'
@@ -25,9 +25,7 @@ import Footer from './Component/Footer/Footer'
 import Login from './Component/Login/Login'
 import UserPage from './Component/UserPage/UserPage'
 
-<<<<<<< HEAD
->>>>>>> yadhu-branch
-=======
+
 
 import CoursesSection from './Component/Courses/Courses'
 import LearningExp from './Component/LearningExp/LearningExp'
@@ -35,7 +33,7 @@ import Detailpage from './Component/Courses/Detailpage'
 import Testimonials from './Component/Testimonials/Testimonials'
 import CategoryBrowser from './Component/Categories/Coursecards'
 import Mentors from './Component/Mentors/Mentors'
->>>>>>> yadhu-branch
+
 
 
 function App() {
