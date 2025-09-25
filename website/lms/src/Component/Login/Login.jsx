@@ -38,11 +38,8 @@ const Login = () => {
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
                     >
-<<<<<<< HEAD
-                        Sign Up
-=======
                         Sign in
->>>>>>> master
+
                     </button>
                 </form>
             </div>
