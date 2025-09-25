@@ -53,11 +53,11 @@ const Header = () => {
                         Login
                     </button>
 
-<<<<<<< HEAD
+
                     <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
                         Sign up
                     </button>
-=======
+
                     <Link to="/login">
                         <button className="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700">
                             Login
@@ -76,7 +76,7 @@ const Header = () => {
                             Profile
                         </button>
                     </Link>
->>>>>>> yadhu-branch
+
                 </div>
 
                 {/* Mobile Menu Button */}
