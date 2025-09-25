@@ -36,7 +36,7 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
+                        className="w-full mt-5 bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
                     >
                         Sign in
 
@@ -44,7 +44,7 @@ const Login = () => {
                 </form>
             </div>
             <div className='mt-3'>
-                <p className='text-center'>  If you don’t have an account, <span className='text-blue-600'>Sign up</span></p>
+                <p className='text-center'>  If you don’t have an account, <span className='text-blue-600'>Register</span></p>
             </div>
         </div>
     )

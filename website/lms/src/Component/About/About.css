@@ -42,13 +42,15 @@
 }
 
 @media only screen and (max-width: 944px) {
-    .title{
+    .title {
         width: 70% !important;
     }
-    .title h1{
+
+    .title h1 {
         font-size: 40px !important;
     }
-    .title p{
+
+    .title p {
         width: 90% !important;
         margin: auto;
         margin-top: 30px;
@@ -56,20 +58,23 @@
 }
 
 @media only screen and (max-width: 734px) {
-    .title{
+    .title {
         width: 80% !important;
     }
-    .title h1{
+
+    .title h1 {
         font-size: 35px !important;
     }
-    .title p{
+
+    .title p {
         width: 90% !important;
         margin: auto;
         margin-top: 30px;
     }
+
     .our-story-sectios-one {
         flex-direction: column;
         margin-left: 50px;
     }
-    
+
 }

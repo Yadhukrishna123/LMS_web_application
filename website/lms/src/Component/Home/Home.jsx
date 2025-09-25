@@ -21,7 +21,7 @@ const Home = () => {
       <CoursesSection />
       <Testimonials />
       <Mentors />
-      <Contact />
+      
      
     </div>
   );

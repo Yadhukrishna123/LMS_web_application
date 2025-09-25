@@ -62,6 +62,12 @@ const Header = () => {
                             Sign up
                         </button>
                     </Link>
+
+                    <Link to="/user_page">
+                        <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
+                            Profile
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}

@@ -11,6 +11,7 @@ import CoursesSection from './Component/Courses/Courses'
 import Signup from './Component/SignUp/Signup'
 import Footer from './Component/Footer/Footer'
 import Login from './Component/Login/Login'
+import UserPage from './Component/UserPage/UserPage'
 
 
 
@@ -30,6 +31,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/sigh_up" element={<Signup />} />
          <Route path="/login" element={<Login />} />
+          <Route path="/user_page" element={<UserPage />} />
+
 
       </Routes>
       <Footer />
