@@ -45,8 +45,8 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
         <Route path="/about" element={<LearningExp />} />
         <Route path="/detailpage/:id" element={<Detailpage />} />
         <Route path="/testimonials" element={<Testimonials />} />
@@ -54,10 +54,10 @@ function App() {
         <Route path="/mentors" element={<Mentors />} />
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />
-=======
-=======
 
->>>>>>> yadhu-branch
+
+
+
 
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
@@ -69,9 +69,9 @@ function App() {
          <Route path="/login" element={<Login />} />
           <Route path="/user_page" element={<UserPage />} />
 
-<<<<<<< HEAD
->>>>>>> yadhu-branch
-=======
+
+
+
 
         <Route path="/about" element={<LearningExp />} />
         <Route path="/detailpage/:id" element={<Detailpage />} />
@@ -80,7 +80,7 @@ function App() {
         <Route path="/mentors" element={<Mentors />} />
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />
->>>>>>> yadhu-branch
+
 
       </Routes>
     </BrowserRouter>
