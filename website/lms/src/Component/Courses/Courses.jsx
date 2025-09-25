@@ -14,20 +14,20 @@ const courses = [
     title: "Let's learn about copywriting",
     desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit."
   },
-  {
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
-    tags: ["Hobby", "Sing"],
-    price: "$25",
-    title: "Learn how to write a song",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1537432376769-00a65d3702f1",
-    tags: ["UI/UX", "Coding"],
-    price: "$25",
-    title: "Learn about Android Coding",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit."
-  }
+  // {
+  //   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+  //   tags: ["Hobby", "Sing"],
+  //   price: "$25",
+  //   title: "Learn how to write a song",
+  //   desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit."
+  // },
+  // {
+  //   image: "https://images.unsplash.com/photo-1537432376769-00a65d3702f1",
+  //   tags: ["UI/UX", "Coding"],
+  //   price: "$25",
+  //   title: "Learn about Android Coding",
+  //   desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit."
+  // }
 ];
 
 

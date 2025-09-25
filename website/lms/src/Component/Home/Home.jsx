@@ -22,7 +22,7 @@ const Home = () => {
       <Testimonials />
       <Mentors />
       <Contact />
-      <Footer />
+     
     </div>
   );
 };
