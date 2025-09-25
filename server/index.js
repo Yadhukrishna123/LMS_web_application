@@ -93,10 +93,23 @@ app.get("/getAll_enquiry", async(req, res) => {
 
 
 
+/////// COURSES LIST //// 
 
+const course=require("./modals/courses")
 
+app.get("/courses", async (req, res) => {
+  const courses = await course.find();
+  res.json(courses);
+});
 
+// GET /courses/:id 
 
+app.get("/courses/:id", async (req, res) => {
+  const courseId = req.params.id;
+  const courseDetail = await course.findById(courseId); // use same model
+  if (!courseDetail) return res.status(404).json({ message: "Course not found" });
+  res.json(courseDetail);
+});
 
 
 
