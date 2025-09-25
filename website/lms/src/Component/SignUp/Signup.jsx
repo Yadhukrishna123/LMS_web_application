@@ -6,10 +6,10 @@ const Signup = () => {
 
     }
     const handleSubmit = () => {
-        
-    }
 
     }
+
+    
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
             <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-lg">
