@@ -4,6 +4,7 @@ const cors = require("cors")
 const port = 8080
 const recordedVideoModal = require("./modals/recordedVideos")
 const enquiryModal = require("./modals/enquires")
+const courseModal = require("./modals/courses")
 
 const app = express()
 app.use(cors())
@@ -73,7 +74,7 @@ app.post("/user_enquiries", async (req, res) => {
     }
 })
 
-app.get("/getAll_enquiry", async(req, res) => {
+app.get("/getAll_enquiry", async (req, res) => {
     try {
         const { name } = req.query
         let query = {}
@@ -92,24 +93,86 @@ app.get("/getAll_enquiry", async(req, res) => {
 
 
 
+app.post("/create_course", async (req, res) => {
+    try {
+        const { title, description, price, duration, level, instructor, category, image } = req.body
 
-/////// COURSES LIST //// 
+        if (!title || !description || !price || !duration || !level || !category || !instructor || !image) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
 
-const course=require("./modals/courses")
+        const data = await courseModal.create(req.body)
+        res.status(200).json({
+            message: "Success",
+            data
+        })
 
-app.get("/courses", async (req, res) => {
-  const courses = await course.find();
-  res.json(courses);
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 });
 
-// GET /courses/:id 
+app.get("/get_All_courses", async (req, res) => {
+    try {
+        const { title, category, price, duration } = req.query
+        let query = {}
+        if (title) {
+            query.title = { $regex: title, $options: "i" }
+        }
+        if (category && category.toLowerCase() !== "all") {
+            query.category = category.toLowerCase();
+        }
 
-app.get("/courses/:id", async (req, res) => {
-  const courseId = req.params.id;
-  const courseDetail = await course.findById(courseId); // use same model
-  if (!courseDetail) return res.status(404).json({ message: "Course not found" });
-  res.json(courseDetail);
-});
+        if (price) {
+            if (price === "1-1000") {
+                query.price = { $gte: 1, $lte: 1000 };
+            } else if (price === "1000-2000") {
+                query.price = { $gte: 1000, $lte: 2000 };
+            } else if (price === "2000-3000") {
+                query.price = { $gte: 2000, $lte: 3000 };
+            }
+        }
+
+        if (duration) {
+            query.duration = duration
+        }
+        const data = await courseModal.find(query)
+        res.status(200).json({
+            success: true,
+            data
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

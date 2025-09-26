@@ -18,7 +18,7 @@ const Home = () => {
       <LearningExp />
       <CategoryBrowser />
       <Benefits />
-      <CoursesSection />
+      {/* <CoursesSection /> */}
       <Testimonials />
       <Mentors />
       
