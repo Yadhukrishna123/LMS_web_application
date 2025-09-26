@@ -69,7 +69,8 @@ const CoursesPage = () => {
   }, [search, category, priceFilter, durationFilter, courses]);
 
   return (
-    <div className="px-4 md:px-12 lg:px-24 py-12 bg-gray-100 min-h-screen">
+    <div className="px-4 md:px-12 lg:px-24 py-12 bg-gray-100 min-h-screen"> 
+    <h3 className="text-4xl font-semibold mb-2 text-center mb-3 ">Courses</h3>
       {showFilters && (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
