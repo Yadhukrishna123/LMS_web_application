@@ -1,10 +1,17 @@
 import React from 'react'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CgProfile } from "react-icons/cg";
+import { useDispatch, useSelector } from 'react-redux';
+import { userLoggedOut } from '../Redux/UserSlice';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const isAuthentication = useSelector((state) => state.userAuth.isAuthentication)
+    const dispatch = useDispatch()
+
 
     const handlePage = () => {
         setIsDropdownOpen((prev) => !prev)
@@ -30,7 +37,7 @@ const Header = () => {
 
                     >
                         <button className="text-gray-700 hover:text-blue-600 flex items-center">
-                           Look Up ▼
+                            Look Up ▼
                         </button>
 
                         {/* Dropdown Menu */}
@@ -49,30 +56,63 @@ const Header = () => {
 
 
                 <div className='flex '>
-                 
 
-                    <Link to="/login">
-                        <button className="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700">
-                            Login
-                        </button>
-                    </Link>
+                    <button className="hidden md:block ml-3  text-dark px-4 py-2 "
+                        onClick={() => setOpen(!open)}
+                    >
+                        <CgProfile size={30} />
+                        {open && (
+                            <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50">
+                                <ul className="py-2">
+                                    {isAuthentication ? (
+                                        <>
+                                            <li>
+                                                <Link
+                                                    to="/user_profile"
+                                                    className="block px-4 py-2 hover:bg-gray-100"
+                                                >
+                                                    Profile
+                                                </Link>
+                                            </li>
+                                            <li onClick={() => dispatch(userLoggedOut())}>
+                                                Logout
+                                            </li>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <li>
+                                                <Link
+                                                    to="/login"
+                                                    className="block px-4 py-2 hover:bg-gray-100"
+                                                >
+                                                    Login
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    to="/sign_up"
+                                                    className="block px-4 py-2 hover:bg-gray-100"
+                                                >
+                                                    Register
+                                                </Link>
+                                            </li>
+                                        </>
+                                    )}
 
 
-                    <Link to="/sigh_up">
-                        <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
-                            Sign up
-                        </button>
-                    </Link>
-
-                    <Link to="/user_page">
-                        <button className="hidden md:block ml-3  text-dark px-4 py-2 ">
-                            Profile
-                        </button>
-                    </Link>
 
 
 
-                  
+
+                                </ul>
+                            </div>
+                        )}
+                    </button>
+
+
+
+
+
 
                 </div>
 

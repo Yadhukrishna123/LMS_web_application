@@ -2,9 +2,11 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const port = 8080
+const bcrypt = require("bcrypt")
 const recordedVideoModal = require("./modals/recordedVideos")
 const enquiryModal = require("./modals/enquires")
 const courseModal = require("./modals/courses")
+const userModal = require("./modals/users")
 
 const app = express()
 app.use(cors())
@@ -12,7 +14,7 @@ app.use(express.json())
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 
 
-// upload recorded video //
+// recorded video //
 
 app.post("/upload_recorded_video", async (req, res) => {
     try {
@@ -53,6 +55,10 @@ app.get("/get_all_records", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 })
+
+
+// emquiry //
+
 app.post("/user_enquiries", async (req, res) => {
     try {
         const { name, email, message } = req.body
@@ -91,6 +97,8 @@ app.get("/getAll_enquiry", async (req, res) => {
     }
 })
 
+
+// course ///
 
 
 app.post("/create_course", async (req, res) => {
@@ -157,6 +165,111 @@ app.get("/get_All_courses", async (req, res) => {
     }
 })
 
+
+// users //
+
+app.post("/sign_up", async (req, res) => {
+    try {
+        const { firstname, lastname, email, phone, password, role } = req.body
+
+        if (!firstname || !lastname || !email || !phone || !password || !role) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const user = await userModal.create({
+            firstname,
+            lastname,
+            email,
+            phone,
+            password: hashedPassword,
+            role
+        })
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Faild to register"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully registerd",
+            user
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+})
+
+app.post("/login", async (req, res) => {
+    const { email, phone, password } = req.body
+
+    try {
+        const user = await userModal.findOne({
+            $or: [{ email: email }, { phone: phone }]
+        })
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalued email of phone"
+            })
+        }
+
+        const isPassword = await bcrypt.compare(password, user.password)
+
+        if (!isPassword) {
+            return res.status(401).json({
+                success: false,
+                message: "Wrong password"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "You are successfully sign in",
+            isAuthentication: true,
+            user
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+})
+
+app.get("/getAll_user", async (req, res) => {
+    try {
+        const { firstname } = req.query
+
+        let query = {}
+        if (firstname) {
+            query.firstname = { $regex: firstname, $options: "i" }
+        }
+        const user = await userModal.find(query)
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+})
 
 
 
