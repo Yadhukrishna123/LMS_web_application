@@ -12,31 +12,31 @@ const GoogleLogin = () => {
    
   }
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    const token = params.get("token")
-    const encodedUser = params.get("user")
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search)
+  //   const token = params.get("token")
+  //   const encodedUser = params.get("user")
 
-    if (token && encodedUser) {
-      try {
-        const decodeData = atob(encodedUser)
-        const userData = JSON.parse(decodeData)
+  //   if (token && encodedUser) {
+  //     try {
+  //       const decodeData = atob(encodedUser)
+  //       const userData = JSON.parse(decodeData)
 
-         console.log(decodeData);
-        console.log(userData);
+  //        console.log(decodeData);
+  //       console.log(userData);
 
-        localStorage.setItem("token", token)
-        localStorage.setItem("user", JSON.stringify(userData))
+  //       localStorage.setItem("token", token)
+  //       localStorage.setItem("user", JSON.stringify(userData))
 
 
-        navigate('/login', { replace: true });
+  //       navigate('/login', { replace: true });
 
-      } catch (error) {
-        console.error('Error decoding user data or parsing JSON:', error);
+  //     } catch (error) {
+  //       console.error('Error decoding user data or parsing JSON:', error);
 
-      }
-    }
-  }, [location, navigate])
+  //     }
+  //   }
+  // }, [location, navigate])
 
 
 
