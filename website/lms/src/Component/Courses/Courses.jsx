@@ -109,6 +109,7 @@ const CoursesPage = () => {
         {currentItems && currentItems.map((c, i) => {
           return (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+             <Link to={`/detailpage/${c._id}`}>
               <img
                 src={c.image}
 
@@ -151,7 +152,7 @@ const CoursesPage = () => {
                   </div>
                 </div>
               </div>
-              
+              </Link>
             </div>
 
             

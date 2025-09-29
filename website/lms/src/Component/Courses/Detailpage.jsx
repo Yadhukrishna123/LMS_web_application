@@ -7,6 +7,7 @@ const Detailpage = () => {
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -26,18 +27,33 @@ const Detailpage = () => {
   if (loading)
     return <div className="text-center mt-20 text-lg font-semibold">Loading...</div>;
 
+  if (error)
+    return <div className="text-center mt-20 text-lg font-semibold text-red-500">{error}</div>;
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen m-3">
       {/* Images */}
       <div className="mb-6">
-        {course.image?.map((img, idx) => (
+        {Array.isArray(course.image) ? (
+          course.image.map((img, idx) => (
+            <img
+              key={idx}
+              src={img.startsWith("http") ? img : `http://localhost:8080/images/${img}`}
+              alt={`Course ${idx + 1}`}
+              className="w-full h-80 object-cover rounded mb-4"
+            />
+          ))
+        ) : (
           <img
-            key={idx}
-            src={img.startsWith("http") ? img : `http://localhost:8080/images/${img}`}
-            alt={`Course ${idx + 1}`}
-            className="w-full h-80 object-cover rounded"
+            src={
+              course.image?.startsWith("http")
+                ? course.image
+                : `http://localhost:8080/images/${course.image}`
+            }
+            alt={course.title}
+            className="w-full h-80 object-cover rounded mb-4"
           />
-        ))}
+        )}
       </div>
 
       {/* Course Info */}
@@ -56,7 +72,7 @@ const Detailpage = () => {
       <p className="text-gray-800 mb-4">{course.desc}</p>
 
       <p className="text-2xl font-bold mb-6">
-        {course.price > 0 ? `$${course.price}` : "Free"}
+        {course.price > 0 ? `₹${course.price}` : "Free"}
       </p>
 
       <div className="flex gap-4">
