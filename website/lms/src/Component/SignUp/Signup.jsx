@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+// import GoogleLogin from '../GooglrLogin/GoogleLogin'
 
 const Signup = () => {
     const navigate = useNavigate()
@@ -116,7 +117,11 @@ const Signup = () => {
                     >
                         Sign Up
                     </button>
+                    
                 </form>
+                {/* <div>
+                        <GoogleLogin/>
+                    </div> */}
             </div>
 
             <div className='mt-3'>

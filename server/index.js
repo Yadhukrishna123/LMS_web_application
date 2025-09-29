@@ -1,19 +1,42 @@
+const dotenv = require("dotenv").config({ path: "./Config/config.env" })
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
-const port = 8080
 const bcrypt = require("bcrypt")
+
 const recordedVideoModal = require("./modals/recordedVideos")
 const enquiryModal = require("./modals/enquires")
 const courseModal = require("./modals/courses")
 const userModal = require("./modals/users")
+// const session = require("express-session")
+// const passport = require("./Config/pasport")
+// const authRoute = require("./Routes/auth")
+// const token = require("./jsonToken/jwt")
+
 
 const app = express()
+// app.use(cors({
+//     origin: true,
+//     credentials: true
+// }))
 app.use(cors())
 app.use(express.json())
+
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 
 
+
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: { secure: false }
+// }))
+// app.use(passport.initialize())
+// app.use(passport.session())
+
+
+// app.use("/auth", authRoute);
 // recorded video //
 
 app.post("/upload_recorded_video", async (req, res) => {
@@ -232,11 +255,15 @@ app.post("/login", async (req, res) => {
             })
         }
 
+        // const generateToken = token(user)
+        // console.log(generateToken);
+
         res.status(200).json({
             success: true,
             message: "You are successfully sign in",
             isAuthentication: true,
-            user
+            user,
+           
         })
 
     } catch (error) {
@@ -289,7 +316,7 @@ app.get("/getAll_user", async (req, res) => {
 
 
 
-app.listen(port, () => {
-    console.log(`server is running on port ${port}`);
+app.listen(process.env.PORT, () => {
+    console.log(`server is running on port ${process.env.PORT}`);
 
 })

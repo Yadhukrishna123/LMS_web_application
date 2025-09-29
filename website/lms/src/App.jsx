@@ -10,9 +10,9 @@ import Signup from './Component/SignUp/Signup'
 import Login from './Component/Login/Login'
 import UserPage from './Component/UserPage/UserPage'
 import CoursesSection from './Component/Courses/Courses'
-import LearningExp from './Component/LearningExp/LearningExp'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
+
 
 
 
@@ -31,16 +31,17 @@ function App() {
         <Route path="/detailpage/:id" element={<Detailpage />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/cateogeries" element={<CategoryBrowser />} />
-       
+
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/sign_up" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/user_page" element={<UserPage />} />
 
 
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
   )
 }

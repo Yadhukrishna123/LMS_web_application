@@ -1,10 +1,11 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { userAuthSuccess } from '../Redux/UserSlice'
 
 const Login = () => {
+    // const location = useLocation();
     const dispatch = useDispatch()
     let [message, setMessage] = useState("")
     const navigate = useNavigate()
@@ -13,6 +14,33 @@ const Login = () => {
         password: "",
 
     })
+
+
+    // useEffect(() => {
+    //     const params = new URLSearchParams(location.search)
+    //     const token = params.get("token")
+    //     const encodedUser = params.get("user")
+
+    //     if (token && encodedUser) {
+    //         try {
+    //             const decodeData = atob(encodedUser)
+    //             const userData = JSON.parse(decodeData)
+
+    //             console.log(decodeData);
+    //             console.log(userData);
+
+    //             localStorage.setItem("token", token)
+    //             localStorage.setItem("user", JSON.stringify(userData))
+
+
+    //             // navigate('/login', { replace: true });
+
+    //         } catch (error) {
+    //             console.error('Error decoding user data or parsing JSON:', error);
+
+    //         }
+    //     }
+    // }, [location, navigate])
 
 
 
