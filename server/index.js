@@ -158,7 +158,44 @@ app.get("/get_All_courses", async (req, res) => {
 })
 
 
+app.get("/Admin_view_All_courses", async (req, res) => {
+    try {
+        const { title, category, price, duration } = req.query
+        let query = {}
+        if (title) {
+            query.title = { $regex: title, $options: "i" }
+        }
+        if (category && category.toLowerCase() !== "all") {
+            query.category = category.toLowerCase();
+        }
 
+        if (price) {
+            if (price === "1-1000") {
+                query.price = { $gte: 1, $lte: 1000 };
+            } else if (price === "1000-2000") {
+                query.price = { $gte: 1000, $lte: 2000 };
+            } else if (price === "2000-3000") {
+                query.price = { $gte: 2000, $lte: 3000 };
+            }
+        }
+
+        if (duration) {
+            query.duration = duration
+        }
+        const data = await courseModal.find(query)
+        res.status(200).json({
+            success: true,
+            data
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+})
 
 
 

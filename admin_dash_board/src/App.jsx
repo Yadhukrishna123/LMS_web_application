@@ -15,6 +15,7 @@ import UploadVideos from './components/UploadRecordedVideo.jsx/UploadVideos';
 import UploadedVideos from './components/UploadedVideos/UploadedVideos';
 import UserEnquiries from './components/Enquiries/UserEnquiries';
 import AddCourse from './components/AddCourse/AddCourse';
+import AdminViewCourses from './components/AddCourse/ViewCourse';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
            <Route path="/recorded_sessions" element={<UploadedVideos />} />
             <Route path="/user_enquiries" element={<UserEnquiries />} />
               <Route path="/add_course" element={<AddCourse />} />
+              <Route path="/view_course" element={<AdminViewCourses />} />
         </Route>
       </Routes>
     </>
