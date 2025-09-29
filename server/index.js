@@ -1,9 +1,9 @@
-const dotenv = require("dotenv").config({ path: "./Config/config.env" })
+// const dotenv = require("dotenv").config({ path: "./Config/config.env" })
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
-
+const PORT = 8080
 const recordedVideoModal = require("./modals/recordedVideos")
 const enquiryModal = require("./modals/enquires")
 const courseModal = require("./modals/courses")
@@ -316,7 +316,7 @@ app.get("/getAll_user", async (req, res) => {
 
 
 
-app.listen(process.env.PORT, () => {
-    console.log(`server is running on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+    console.log(`server is running on port ${PORT}`);
 
 })
