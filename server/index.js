@@ -263,7 +263,7 @@ app.post("/login", async (req, res) => {
             message: "You are successfully sign in",
             isAuthentication: true,
             user,
-           
+            generateToken
         })
 
     } catch (error) {
