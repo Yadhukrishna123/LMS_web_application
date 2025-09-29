@@ -1,12 +1,77 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { userAuthSuccess } from '../Redux/UserSlice'
 
 const Login = () => {
+    // const location = useLocation();
+    const dispatch = useDispatch()
+    let [message, setMessage] = useState("")
+    const navigate = useNavigate()
+    let [inputs, setInputs] = useState({
+        emailOrPhone: "",
+        password: "",
 
-    const handleChange = () => {
+    })
 
+
+    // useEffect(() => {
+    //     const params = new URLSearchParams(location.search)
+    //     const token = params.get("token")
+    //     const encodedUser = params.get("user")
+
+    //     if (token && encodedUser) {
+    //         try {
+    //             const decodeData = atob(encodedUser)
+    //             const userData = JSON.parse(decodeData)
+
+    //             console.log(decodeData);
+    //             console.log(userData);
+
+    //             localStorage.setItem("token", token)
+    //             localStorage.setItem("user", JSON.stringify(userData))
+
+
+    //             // navigate('/login', { replace: true });
+
+    //         } catch (error) {
+    //             console.error('Error decoding user data or parsing JSON:', error);
+
+    //         }
+    //     }
+    // }, [location, navigate])
+
+
+
+
+    const handleChange = (e) => {
+        setInputs({ ...inputs, [e.target.name]: e.target.value })
     }
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            let res = await axios.post("http://localhost:8080/login", {
+                email: inputs.emailOrPhone,
+                password: inputs.password
+            })
+            console.log(res);
+            if (res.data.success) {
+                if (res.data.isAuthentication) {
+                    dispatch(userAuthSuccess({
+                        user: res.data.user,
+                        isAuthentication: res.data.isAuthentication
+                    }))
+                    setMessage(res.data.message)
+                    await new Promise((back) => setTimeout(back, 2000))
+                    navigate("/")
+                }
 
+            }
+
+        } catch (error) {
+
+        }
     }
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
@@ -15,7 +80,7 @@ const Login = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
 
                     <input
-                        type="email"
+                        type="text"
                         name="emailOrPhone"
                         placeholder="Email or phone"
 
@@ -33,6 +98,8 @@ const Login = () => {
                         onChange={handleChange}
                         className="w-full px-4 py-2 border  focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
+
+                    {message && <p className='text-center text-green-500'>{message}</p>}
 
                     <button
                         type="submit"
