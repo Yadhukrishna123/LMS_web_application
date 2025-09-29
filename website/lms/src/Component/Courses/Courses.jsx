@@ -7,16 +7,17 @@ const CoursesPage = () => {
   const showFilters = location.pathname === "/allcourses";
 
   const [courses, setCourses] = useState([]);
-  const [filteredCourses, setFilteredCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
-  const [durationFilter, setDurationFilter] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Number of items per page
 
   const getAllCourse = async () => {
     try {
       let res = await axios.get(`http://localhost:8080/get_All_courses?title=${search}&category=${category}&price=${price}`)
-      console.log(res);
+      //console.log(res);
       setCourses(res.data.data)
     } catch (error) {
 
@@ -33,6 +34,19 @@ const CoursesPage = () => {
     setCategory("")
     setPrice("")
   }
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = courses.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(courses.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="px-4 md:px-12 lg:px-24 py-12 bg-gray-100 min-h-screen">
@@ -92,7 +106,7 @@ const CoursesPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
 
-        {courses && courses.map((c, i) => {
+        {currentItems && currentItems.map((c, i) => {
           return (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
               <img
@@ -137,14 +151,36 @@ const CoursesPage = () => {
                   </div>
                 </div>
               </div>
+              
             </div>
 
+            
           )
+          
         })}
 
 
 
       </div>
+      <div className="flex items-center justify-center border-t border-white/10 px-4 py-3 sm:px-6">
+  <div className="flex space-x-1">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i + 1}
+        onClick={() => handlePageChange(i + 1)}
+        className={`min-w-9 rounded-md py-2 px-3 text-center text-sm transition-all ml-2 
+          ${
+            currentPage === i + 1
+              ? "bg-slate-800 text-white border border-transparent shadow-md hover:shadow-lg focus:bg-slate-700 active:bg-slate-700"
+              : "border border-slate-300 text-slate-600 shadow-sm hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800"
+          }
+        `}
+      >
+        {i + 1}
+      </button>
+    ))}
+  </div>
+</div>
     </div>
   );
 };
