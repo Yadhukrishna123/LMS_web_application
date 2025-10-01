@@ -20,10 +20,10 @@ import ViewCategory from './components/Cateogry/ViewCategory';
 import ViewInstuctors from './components/Instructors/ViewInstructors';
 import AddInstuctors from './components/Instructors/AddInstructors';
 import Users from './components/Users/Users';
-<<<<<<< HEAD
+
 import AddStudents from './components/Students/Addstudents';
 import ViewStudents from './components/Students/Viewstudents';
-=======
+
 import AddInstitution from './components/AddInstitution/AddInstitution';
 import LoginInstitution from './components/AddInstitution/LoginInstitution';
 import { AdminContext } from './components/AdminContext/Context';
@@ -31,7 +31,7 @@ import ProtectedRoutes from './utils/ProtectedRoutes';
 import MyProfile from './components/MyProfile/MyProfile';
 import CreateProfile from './components/CreateProfile/CreateProfile';
 import EditProfile from './components/CreateProfile/EditProfile';
->>>>>>> dashboard-branch
+
 
 
 function App() {
