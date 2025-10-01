@@ -16,92 +16,123 @@ const ViewInstuctors = () => {
   }, []);
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">All instructors</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {viewinstructor &&
-            viewinstructor.map((e, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-6 flex flex-col items-center"
-              >
-                {/* Profile Image */}
+  <h2 className="text-2xl font-bold mb-6">All Instructors</h2>
+
+  <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+    <table className="min-w-full divide-y divide-gray-200 border rounded-lg shadow-md">
+      <thead className="bg-blue-100">
+        <tr>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Profile
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Name
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Specialization
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Email
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Phone
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Experience
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Qualification
+          </th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Links
+          </th>
+          <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">
+        {viewinstructor &&
+          viewinstructor.map((e, i) => (
+            <tr key={i} className="hover:bg-gray-50">
+              {/* Profile Image */}
+              <td className="px-6 py-4">
                 <img
                   src={e.image}
                   alt={e.name}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-blue-100"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-blue-100"
                 />
+              </td>
 
-                {/* Name & Role */}
-                <h3 className="mt-4 text-lg font-bold text-gray-800">
-                  {e.name}
-                </h3>
-                <p className="text-sm text-gray-500">{e.specialization}</p>
+              {/* Name */}
+              <td className="px-6 py-4 font-medium text-gray-800">
+                {e.name}
+              </td>
 
-                {/* Info Section */}
-                <div className="mt-4 text-sm text-gray-700 space-y-1 text-center">
-                  <p>
-                    <span className="font-medium">Email:</span> {e.email}
-                  </p>
-                  <p>
-                    <span className="font-medium">Phone:</span> {e.phone}
-                  </p>
-                  <p>
-                    <span className="font-medium">Experience:</span>{" "}
-                    {e.experience} years
-                  </p>
-                  <p>
-                    <span className="font-medium">Qualification:</span>{" "}
-                    {e.qualification}
-                  </p>
-                </div>
+              {/* Specialization */}
+              <td className="px-6 py-4 text-gray-600">{e.specialization}</td>
 
-                {/* Social Links */}
-                <div className="flex gap-4 mt-4">
-                  {e.linkedin && (
-                    <a
-                      href={e.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                  {e.github && (
-                    <a
-                      href={e.github}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-gray-800 hover:underline"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                  {e.website && (
-                    <a
-                      href={e.website}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-green-600 hover:underline"
-                    >
-                      Website
-                    </a>
-                  )}
-                </div>
+              {/* Email */}
+              <td className="px-6 py-4 text-gray-600">{e.email}</td>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 mt-6">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-lg shadow">
-                    Edit
-                  </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg shadow">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
+              {/* Phone */}
+              <td className="px-6 py-4 text-gray-600">{e.phone}</td>
+
+              {/* Experience */}
+              <td className="px-6 py-4 text-gray-600">{e.experience} yrs</td>
+
+              {/* Qualification */}
+              <td className="px-6 py-4 text-gray-600">{e.qualification}</td>
+
+              {/* Links */}
+              <td className="px-6 py-4 flex gap-2">
+                {e.linkedin && (
+                  <a
+                    href={e.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    LinkedIn
+                  </a>
+                )}
+                {e.github && (
+                  <a
+                    href={e.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-gray-800 hover:underline text-sm"
+                  >
+                    GitHub
+                  </a>
+                )}
+                {e.website && (
+                  <a
+                    href={e.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-green-600 hover:underline text-sm"
+                  >
+                    Website
+                  </a>
+                )}
+              </td>
+
+              {/* Actions */}
+              <td className="px-6 py-4 text-center flex gap-2 justify-center">
+                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg shadow">
+                  Edit
+                </button>
+                <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
   );
 };
