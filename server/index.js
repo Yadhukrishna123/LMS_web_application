@@ -9,6 +9,7 @@ const instructorModel = require("./modals/instructor");
 const bcrypt = require("bcrypt")
 const PORT = 8080
 const userModal = require("./modals/users")
+const studentModel = require("./modals/students");
 
 
 
@@ -109,48 +110,35 @@ app.get("/getAll_enquiry", async (req, res) => {
 
 // course ///
 
-
-
 app.post("/create_course", async (req, res) => {
-    try {
-        const {
-            title,
-            description,
-            price,
-            duration,
-            level,
-            instructor,
-            category,
-            image,
-        } = req.body;
+  try {
+    const {
+      title,
+      description,
+      price,
+      duration,
+      level,
+      instructorDetails,
+      category,
+      image,
+    } = req.body;
 
-        if (
-            !title ||
-            !description ||
-            !price ||
-            !duration ||
-            !level ||
-            !category ||
-            !instructor ||
-            !image
-        ) {
-            return res.status(400).json({
-                message: "All fields are required",
-            });
-        }
-
-        const data = await courseModal.create(req.body);
-        res.status(200).json({
-            message: "Success",
-            data,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+    if (!title || !description || !price || !duration || !level || !category) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
+
+    const course = await courseModal.create(req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Course created successfully",
+      data: course,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
+
 
 app.get("/get_All_courses", async (req, res) => {
     try {
@@ -452,6 +440,48 @@ app.get("/view_instructor", async (req, res) => {
         });
     }
 });
+
+
+
+
+// Add student
+app.post("/add_student", async (req, res) => {
+  try {
+    const { name, email, phone, age, gender, profileImage, courseEnrolled, address } = req.body;
+
+    if (!name || !email || !phone) {
+      return res.status(400).json({ success: false, message: "Name, Email and Phone are required" });
+    }
+
+    const data = await studentModel.create(req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Student added successfully",
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get all students
+app.get("/view_students", async (req, res) => {
+  try {
+    const data = await studentModel.find();
+
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 
 
 app.listen(PORT, () => {

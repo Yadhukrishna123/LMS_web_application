@@ -1,158 +1,104 @@
-import React, { useState } from 'react'
-import axios from "axios"
-
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import BasicInfoForm from "./Add Course Splits/BasicInfoForm";
+import CurriculumForm from "./Add Course Splits/CurriculumForm";
+import InstructorForm from "./Add Course Splits/InstructorForm";
+import MediaForm from "./Add Course Splits/MediaForm";
+import PricingForm from "./Add Course Splits/PricingForm";
 
 const AddCourse = () => {
-    const categories = ["programming", "designing", "marketing"];
-    const durations = ["6 month", "1 year", "3 year"];
-    let [inputs, setInputs] = useState({
-        title: "", desc: "", price: "", duration: "", level: "", instructor: "", category: "", image: null
-    })
-    const preset_key = "arsmfwi7"
-    const cloud_name = "dnqlt6cit"
+  const preset_key = "arsmfwi7";
+  const cloud_name = "dnqlt6cit";
+
+  const [courseData, setCourseData] = useState({
+    title: "", description: "", overview: "", price: "", isFree: false,
+    duration: "", level: "", category: "", tags: "",
+    image: null,
+    modules: [],
+    instructorDetails: { name: "", bio: "", image: null, social: {} },
+    media: { images: [], docs: [], trailer: null },
+    pricing: { discount: "", currency: "USD", paymentType: "Paid" }
+  });
 
 
+  const [instructors, setInstructors] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-    const handleChange = (e) => {
-        const { name, files, value } = e.target
-        if (files && files.length > 0) {
-            setInputs({ ...inputs, [name]: files[0] })
-        } else {
-            setInputs({ ...inputs, [name]: value })
-        }
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const instRes = await axios.get("http://localhost:8080/view_instructor");
+      setInstructors(instRes.data.data);
+
+      const catRes = await axios.get("http://localhost:8080/view_All_categories");
+      setCategories(catRes.data.data);
+    } catch (error) {
+      console.error("Error fetching lists:", error);
     }
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+  };
+  fetchData();
+}, []);
 
-        try {
-            let img_url = null;
-            if (inputs.image) {
-                const formData = new FormData()
-                formData.append("file", inputs.image)
-                formData.append("upload_preset", preset_key)
+  const updateCourseData = (field, value) => {
+    setCourseData((prev) => ({ ...prev, [field]: value }));
+  };
 
-                let imageRes = await axios.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, formData)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let uploadedImages = [];
 
-                console.log(imageRes);
-                img_url = imageRes.data.secure_url
+      if (courseData.image) {
+        const formData = new FormData();
+        formData.append("file", courseData.image);
+        formData.append("upload_preset", preset_key);
 
+        const imgRes = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+          formData,
+          { timeout: 60000 }
+        );
 
+        uploadedImages.push(imgRes.data.secure_url);
+      }
 
+      const payload = {
+        ...courseData,
+        image: uploadedImages,
+      };
 
-            }
-            let payloads = {
-                title: inputs.title,
-                description: inputs.desc,
-                price: inputs.price,
-                duration: inputs.duration,
-                level: inputs.level,
-                instructor: inputs.instructor,
-                category: inputs.category,
-                image: img_url
-
-            }
-
-            let res = await axios.post("http://localhost:8080/create_course", payloads)
-            console.log(res);
-            
-        } catch (error) {
-
-        }
+      console.log("Payload before POST:", payload);
+      const res = await axios.post("http://localhost:8080/create_course", payload);
+      console.log("Saved:", res.data);
+    } catch (err) {
+      console.error("Error saving course", err);
     }
-    console.log(inputs);
+  };
 
-    return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-            <h2 className="text-2xl font-bold mb-4 text-center">Add New Course</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+  return (
+    <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-2xl space-y-6">
+      <h2 className="text-2xl font-bold text-center">Add New Course</h2>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <BasicInfoForm
+          data={courseData}
+          updateData={updateCourseData}
+          instructors={instructors}
+          categories={categories}
+        />
+        <CurriculumForm data={courseData} updateData={updateCourseData} />
+        <InstructorForm data={courseData} updateData={updateCourseData} />
+        <MediaForm data={courseData} updateData={updateCourseData} />
+        <PricingForm data={courseData} updateData={updateCourseData} />
 
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Course Title"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+        >
+          Save Course
+        </button>
+      </form>
+    </div>
+  );
+};
 
-                <textarea
-                    name="desc"
-                    placeholder="Course Description"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                ></textarea>
-
-                <input
-                    type="number"
-                    name="price"
-                    placeholder="Price"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-
-                <select
-                    name="duration"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                >
-                    <option value="">Select Duration</option>
-                    {durations.map((d, idx) => (
-                        <option key={idx} value={d}>
-                            {d}
-                        </option>
-                    ))}
-                </select>
-
-                <input
-                    type="text"
-                    name="level"
-                    placeholder="Level (Beginner, Intermediate, Advanced)"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                />
-
-                <input
-                    type="text"
-                    name="instructor"
-                    placeholder="Instructor Name"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                />
-
-                <select
-                    name="category"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                >
-                    <option value="">Select Category</option>
-                    {categories.map((c, idx) => (
-                        <option key={idx} value={c}>
-                            {c}
-                        </option>
-                    ))}
-                </select>
-
-                <input
-                    type="file"
-                    name="image"
-                    placeholder="Image URL"
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                />
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                >
-                    Add Course
-                </button>
-            </form>
-        </div>
-    )
-}
-
-export default AddCourse
+export default AddCourse;

@@ -21,7 +21,7 @@ const ViewCategory = () => {
     }, [])
     return (
         <div className="w-full max-w-6xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-6">All Courses</h2>
+            <h2 className="text-2xl font-bold mb-6">All Courses Category</h2>
             <div className="overflow-x-auto bg-white shadow-md rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-blue-100">

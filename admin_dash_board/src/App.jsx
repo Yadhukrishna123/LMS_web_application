@@ -23,6 +23,8 @@ import ViewInstuctors from './components/Instructors/ViewInstructors';
 import AddInstuctors from './components/Instructors/AddInstructors';
 
 import Users from './components/Users/Users';
+import AddStudents from './components/Students/Addstudents';
+import ViewStudents from './components/Students/Viewstudents';
 
 
 function App() {
@@ -50,6 +52,9 @@ function App() {
           <Route path="/add_Instuctors" element={<AddInstuctors />} />
           <Route path="/view_Instuctors" element={<ViewInstuctors />} />
           <Route path="/users" element={<Users />} />
+
+          <Route path="/add_students" element={<AddStudents />} />
+          <Route path="/view_students" element={<ViewStudents />} />
 
         </Route>
       </Routes>

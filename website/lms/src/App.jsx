@@ -12,6 +12,7 @@ import UserPage from './Component/UserPage/UserPage'
 import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
+import AddStudents from '../../../admin_dash_board/src/components/Students/Addstudents'
 
 
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/sign_up" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+
 
         <Route path="/user_page" element={<UserPage />} />
 
