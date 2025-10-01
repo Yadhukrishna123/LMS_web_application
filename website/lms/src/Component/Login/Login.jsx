@@ -1,11 +1,13 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { userAuthSuccess } from '../Redux/UserSlice'
+
+import { AllCourseDetail } from '../AllCourseContext/Context'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
     // const location = useLocation();
+    const { getUserData } = useContext(AllCourseDetail)
     const dispatch = useDispatch()
     let [message, setMessage] = useState("")
     const navigate = useNavigate()
@@ -58,10 +60,7 @@ const Login = () => {
             console.log(res);
             if (res.data.success) {
                 if (res.data.isAuthentication) {
-                    dispatch(userAuthSuccess({
-                        user: res.data.user,
-                        isAuthentication: res.data.isAuthentication
-                    }))
+                    getUserData(res.data.user, res.data.isAuthentication)
                     setMessage(res.data.message)
                     await new Promise((back) => setTimeout(back, 2000))
                     navigate("/")

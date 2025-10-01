@@ -9,12 +9,18 @@ const instructorModel = require("./modals/instructor");
 const bcrypt = require("bcrypt")
 const PORT = 8080
 const userModal = require("./modals/users")
+
 const studentModel = require("./modals/students");
+
+
+const institutionModal = require("./modals/Institution")
+const institutionProfile = require("./modals/institutionProfile")
 
 
 
 const app = express()
 app.use(cors())
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
@@ -226,12 +232,12 @@ app.post("/login", async (req, res) => {
 
     try {
         const user = await userModal.findOne({
-            $or: [{ email: email }, { phone: phone }]
+            $or: [{ email: email }]
         })
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "Invalued email of phone"
+                message: "Invalued email or phone"
             })
         }
 
@@ -276,7 +282,7 @@ app.get("/getAll_user", async (req, res) => {
 
         res.status(200).json({
             success: true,
-            user
+            user,
         })
     } catch (error) {
         res.status(500).json({
@@ -286,6 +292,9 @@ app.get("/getAll_user", async (req, res) => {
     }
 
 })
+
+
+
 
 
 app.get("/courses/:id", async (req, res) => {
@@ -444,6 +453,7 @@ app.get("/view_instructor", async (req, res) => {
 
 
 
+
 // Add student
 app.post("/add_student", async (req, res) => {
   try {
@@ -481,6 +491,177 @@ app.get("/view_students", async (req, res) => {
     });
   }
 });
+
+// add institute
+
+app.post("/add_institition", async (req, res) => {
+    const { name, phone, email, password, address } = req.body
+
+    try {
+        if (!name || !phone || !email || !password || !address) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+
+        const useinstitution = await institutionModal.create({
+            name,
+            phone,
+            email,
+            password: hashedPassword,
+            address
+
+
+        })
+
+        if (!useinstitution) {
+            return res.status(400).json({
+                success: false,
+                message: "Faild to register"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully registerd",
+            useinstitution
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+})
+
+app.post("/login_institute", async (req, res) => {
+    const { email, password } = req.body
+    try {
+        const institute = await institutionModal.findOne({ email })
+        if (!institute) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalued email "
+            })
+        }
+
+        const isPassword = await bcrypt.compare(password, institute.password)
+
+        if (!isPassword) {
+            return res.status(401).json({
+                success: false,
+                message: "Wrong password"
+            })
+        }
+
+
+
+        res.status(200).json({
+            success: true,
+            message: "You are successfully sign in",
+            isAuthentication: true,
+            institute,
+
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+})
+
+app.post("/add_institution_profile", async (req, res) => {
+    const { image,
+        instituteName,
+        address,
+        email,
+        phone,
+        website,
+        gstin,
+        accreditation,
+        founded,
+        courses,
+        students,
+        placement,
+        facilities } = req.body
+
+    try {
+        if (!instituteName || !address || !email || !phone || !founded || !courses || !placement) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const instiProfule = await institutionProfile.create({
+            image,
+            instituteName,
+            address,
+            email,
+            phone,
+            website,
+            gstin,
+            accreditation,
+            founded,
+            courses,
+            students,
+            placement,
+            facilities
+        })
+
+        if (!instiProfule) {
+            return res.status(400).json({
+                success: false,
+                message: "Faild to create profile"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully created",
+            instiProfule
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+})
+
+app.get("/get_profile_details", async (req, res) => {
+    try {
+        const profile = await institutionProfile.find()
+
+        res.status(200).json({
+            success: true,
+            profile
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

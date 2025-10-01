@@ -1,18 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
-import { useDispatch, useSelector } from 'react-redux';
-import { userLoggedOut } from '../Redux/UserSlice';
 import Logout from '../LogoutModal/Logout';
+import { AllCourseDetail } from '../AllCourseContext/Context';
 
 const Header = () => {
+    const { authentication } = useContext(AllCourseDetail)
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [isLogout, setLogout] = useState(false)
-    const isAuthentication = useSelector((state) => state.userAuth.isAuthentication)
-    const dispatch = useDispatch()
+  
 
 
 
@@ -69,7 +68,7 @@ const Header = () => {
                         {open && (
                             <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50">
                                 <ul className="py-2">
-                                    {isAuthentication ? (
+                                    {authentication ? (
                                         <>
                                             <li>
                                                 <Link

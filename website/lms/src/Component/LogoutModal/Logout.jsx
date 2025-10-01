@@ -1,25 +1,17 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { IoMdClose } from "react-icons/io";
-import { useDispatch, useSelector } from 'react-redux';
-import { userLoggedOut } from '../Redux/UserSlice';
+import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { AllCourseDetail } from '../AllCourseContext/Context';
 
 const Logout = ({ setLogout }) => {
-    const dispatch = useDispatch()
     const navigate = useNavigate()
-
-
-    const handleLogout = () => {
-        dispatch(userLoggedOut())
-        setLogout(false)
-        navigate("/login")
-    }
-
+    const { userLogout } = useContext(AllCourseDetail)
 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-
+            <ToastContainer />
             <div
                 className="absolute inset-0 bg-black/50"
             />
@@ -33,7 +25,7 @@ const Logout = ({ setLogout }) => {
                         <button >
                             <IoMdClose size={24}
                                 className="text-gray-500 hover:text-gray-700"
-                                onClick={() => setLogout(false)}
+                                onClick={() => authentication(false)}
                             />
                         </button>
                     </div>
@@ -54,7 +46,13 @@ const Logout = ({ setLogout }) => {
                         <button
 
                             className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-                            onClick={handleLogout}
+                            onClick={() => {
+                                userLogout(),
+                                    setLogout,
+                                    toast.success("successfully logged out")
+                                navigate("/login")
+
+                            }}
                         >
                             Logout
                         </button>
