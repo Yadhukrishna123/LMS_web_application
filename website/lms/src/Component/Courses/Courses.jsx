@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const CoursesPage = () => {
   const location = useLocation();
-  const showFilters = location.pathname === "/allcourses";
+  // const showFilters = location.pathname === "/allcourses";
 
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");

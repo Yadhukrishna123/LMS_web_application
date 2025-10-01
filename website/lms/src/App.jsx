@@ -12,6 +12,7 @@ import UserPage from './Component/UserPage/UserPage'
 import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
+import Context from './Component/AllCourseContext/Context'
 
 
 
@@ -21,28 +22,31 @@ import About from './Component/About/About'
 function App() {
 
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
+    <Context>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
 
 
-        <Route path="/about" element={<About />} />
-        <Route path="/detailpage/:id" element={<Detailpage />} />
-        <Route path="/testimonials" element={<Testimonials />} />
-        <Route path="/cateogeries" element={<CategoryBrowser />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/detailpage/:id" element={<Detailpage />} />
+          <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/cateogeries" element={<CategoryBrowser />} />
 
-        <Route path="/allcourses" element={<CoursesSection />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/sign_up" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+          <Route path="/allcourses" element={<CoursesSection />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/sign_up" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
 
-        <Route path="/user_page" element={<UserPage />} />
+          <Route path="/user_page" element={<UserPage />} />
 
 
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </Context>
+
   )
 }
 
