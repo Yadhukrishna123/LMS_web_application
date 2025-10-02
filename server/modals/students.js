@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
+  studentId: { type: String, unique: true }, 
   name: String,
   email: String,
   phone: String,
@@ -9,9 +10,9 @@ const studentSchema = new mongoose.Schema({
   courseEnrolled: String,
   address: String,
   profileImage: String,
+  status: { type: String, default: "Active" }, 
   joinedAt: { type: Date, default: Date.now }
 });
 
 const studentModel = mongoose.model("student", studentSchema);
 module.exports = studentModel;
-

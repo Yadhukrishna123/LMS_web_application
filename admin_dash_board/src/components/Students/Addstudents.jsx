@@ -16,8 +16,8 @@ const AddStudents = () => {
     address: "",
   });
 
-  const preset_key = "arsmfwi7"; // same Cloudinary preset
-  const cloud_name = "dnqlt6cit"; // your Cloudinary cloud name
+  const preset_key = "arsmfwi7";
+  const cloud_name = "dnqlt6cit";
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
@@ -30,9 +30,9 @@ const AddStudents = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       let img_url = null;
+
       if (inputs.profileImage) {
         const formData = new FormData();
         formData.append("file", inputs.profileImage);
@@ -51,8 +51,7 @@ const AddStudents = () => {
         profileImage: img_url,
       };
 
-      let res = await axios.post("http://localhost:8080/add_student", payloads);
-      //console.log(res.data);
+      await axios.post("http://localhost:8080/add_student", payloads);
 
       alert("Student added successfully!");
       navigate("/view_students");
@@ -68,7 +67,6 @@ const AddStudents = () => {
         address: "",
       });
     } catch (error) {
-      //console.error(error);
       alert("Error adding student");
     }
   };
@@ -134,7 +132,6 @@ const AddStudents = () => {
           name="profileImage"
           accept="image/*"
           onChange={handleChange}
-          required
           className="w-full border border-gray-300 rounded px-3 py-2"
         />
 
