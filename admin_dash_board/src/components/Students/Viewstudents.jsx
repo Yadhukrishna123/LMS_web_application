@@ -2,85 +2,79 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const ViewStudents = () => {
-  let [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([]);
 
-  const getAllStudents = async () => {
+  useEffect(() => {
+    getStudents();
+  }, []);
+
+  const getStudents = async () => {
     try {
       let res = await axios.get("http://localhost:8080/view_students");
       setStudents(res.data.data);
     } catch (error) {
-      console.error("Error fetching students:", error);
+      console.error(error);
     }
   };
-
-  useEffect(() => {
-    getAllStudents();
-  }, []);
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">All Students</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {students &&
-          students.map((student, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-6 flex flex-col items-center"
-            >
-              {/* Profile Image */}
-              <img
-                src={student.profileImage || "https://via.placeholder.com/150"}
-                alt={student.name}
-                className="w-24 h-24 rounded-full object-cover border-4 border-green-100"
-              />
-
-              {/* Name & Course */}
-              <h3 className="mt-4 text-lg font-bold text-gray-800">
-                {student.name}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {student.courseEnrolled || "No course assigned"}
-              </p>
-
-              {/* Info Section */}
-              <div className="mt-4 text-sm text-gray-700 space-y-1 text-center">
-                <p>
-                  <span className="font-medium">Email:</span> {student.email}
-                </p>
-                <p>
-                  <span className="font-medium">Phone:</span> {student.phone}
-                </p>
-                {student.age && (
-                  <p>
-                    <span className="font-medium">Age:</span> {student.age}
-                  </p>
-                )}
-                {student.gender && (
-                  <p>
-                    <span className="font-medium">Gender:</span>{" "}
-                    {student.gender}
-                  </p>
-                )}
-                {student.address && (
-                  <p>
-                    <span className="font-medium">Address:</span>{" "}
-                    {student.address}
-                  </p>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 mt-6">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-lg shadow">
+      <div className="overflow-x-auto shadow-md rounded-lg">
+        <table className="w-full text-sm text-left border border-gray-200">
+          <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
+            <tr>
+              <th className="px-4 py-3">Student ID</th>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Phone</th>
+              <th className="px-4 py-3">Enrolled Courses</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Registration Date</th>
+              <th className="px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((s, i) => (
+              <tr key={i} className="border-t hover:bg-gray-50">
+                <td className="px-4 py-3">{s.studentId}</td>
+                <td className="px-4 py-3 flex items-center gap-2">
+                  <img
+                    src={s.profileImage}
+                    alt="profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  {s.name}
+                </td>
+                <td className="px-4 py-3">{s.email}</td>
+                <td className="px-4 py-3">{s.phone}</td>
+                <td className="px-4 py-3">{s.courseEnrolled}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`px-2 py-1 rounded text-xs ${
+                      s.status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {s.status}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  {new Date(s.joinedAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 text-center flex gap-2 justify-center">
+                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg shadow">
                   Edit
                 </button>
-                <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg shadow">
+                <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow">
                   Delete
                 </button>
-              </div>
-            </div>
-          ))}
+              </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

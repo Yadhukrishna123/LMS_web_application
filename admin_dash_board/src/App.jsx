@@ -31,6 +31,9 @@ import ProtectedRoutes from './utils/ProtectedRoutes';
 import MyProfile from './components/MyProfile/MyProfile';
 import CreateProfile from './components/CreateProfile/CreateProfile';
 import EditProfile from './components/CreateProfile/EditProfile';
+import Activebatches from './components/Batches/Activebatches';
+import ViewBatches from './components/Batches/ScheduleBatch';
+import ScheduleBatch from './components/Batches/ScheduleBatch';
 
 
 
@@ -66,6 +69,8 @@ function App() {
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />
           <Route path="/edit_profile" element={<ProtectedRoutes isAuthentication={auth}><EditProfile /></ProtectedRoutes>} />
 
+          <Route path="/active_batches" element={<Activebatches />} />
+          <Route path="/add_new_batches" element={<ScheduleBatch />} />
 
           <Route path="/add_students" element={<AddStudents />} />
           <Route path="/view_students" element={<ViewStudents />} />

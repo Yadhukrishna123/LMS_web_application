@@ -9,8 +9,8 @@ const instructorModel = require("./modals/instructor");
 const bcrypt = require("bcrypt")
 const PORT = 8080
 const userModal = require("./modals/users")
-
 const studentModel = require("./modals/students");
+const batchModel = require("./modals/batches");
 
 
 const institutionModal = require("./modals/Institution")
@@ -110,8 +110,6 @@ app.get("/getAll_enquiry", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
-
 
 
 // course ///
@@ -457,13 +455,26 @@ app.get("/view_instructor", async (req, res) => {
 // Add student
 app.post("/add_student", async (req, res) => {
   try {
+    const count = await studentModel.countDocuments();
+    const studentId = `STD${String(count + 1).padStart(3, "0")}`;
+
     const { name, email, phone, age, gender, profileImage, courseEnrolled, address } = req.body;
 
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, message: "Name, Email and Phone are required" });
     }
 
-    const data = await studentModel.create(req.body);
+    const data = await studentModel.create({
+      studentId,
+      name,
+      email,
+      phone,
+      age,
+      gender,
+      profileImage,
+      courseEnrolled,
+      address,
+    });
 
     res.status(200).json({
       success: true,
@@ -652,8 +663,38 @@ app.get("/get_profile_details", async (req, res) => {
 })
 
 
+//  Create Batch
+app.post("/create_batch", async (req, res) => {
+  try {
+    const { batchName, batchCode, course, instructor, startDate, endDate } = req.body;
 
+    if (!batchName || !batchCode || !course || !instructor || !startDate || !endDate) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
 
+    const batch = new batchModel(req.body);
+    await batch.save();
+
+    res.status(201).json({ success: true, message: "Batch created", data: batch });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// view batches
+
+app.get("/view_batches", async (req, res) => {
+  try {
+    const batches = await batchModel
+      .find()
+      .populate("course", "title")
+      .populate("instructor", "name email");
+
+    res.json({ success: true, data: batches });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 
 
