@@ -6,7 +6,7 @@ const ViewCategory = () => {
     let [viewcourse, setviewcourse] = useState([])
     const getAllCourses = async () => {
         try {
-            let res = await axios.get("http://localhost:8080/view_All_categories")
+            let res = await axios.get("http://localhost:8080/api/v1/view_All_categories")
             //console.log(res.data.data);
             setviewcourse(res.data.data)
 

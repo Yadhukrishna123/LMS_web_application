@@ -7,7 +7,7 @@ const Users = () => {
     let [search, setSearch] = useState("")
 
     const getAllUsers = async () => {
-        let res = await axios.get(`http://localhost:8080/getAll_user?firstname=${search}`)
+        let res = await axios.get(`http://localhost:8080/api/v1/get_all_user?firstname=${search}`)
         console.log(res);
         setUsers(res.data.user)
     }

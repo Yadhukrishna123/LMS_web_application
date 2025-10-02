@@ -55,7 +55,7 @@ const AddInstructors = () => {
       };
 
       let res = await axios.post(
-        "http://localhost:8080/add_instructor",
+        "http://localhost:8080/api/v1/add_instructor",
         payloads
       );
       console.log(res.data);

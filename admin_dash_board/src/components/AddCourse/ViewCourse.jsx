@@ -6,7 +6,7 @@ const AdminViewCourses = () => {
     let [viewcourse, setviewcourse] = useState([])
     const getAllCourses = async () => {
         try {
-            let res = await axios.get("http://localhost:8080/Admin_view_All_courses")
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_courses")
             console.log(res.data.data);
             setviewcourse(res.data.data)
 

@@ -5,7 +5,7 @@ const ViewInstuctors = () => {
   let [viewinstructor, setviewinstructor] = useState([]);
   const getAllinstructors = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/view_instructor");
+      let res = await axios.get("http://localhost:8080/api/v1/view_instructor");
       //console.log(res.data.data);
       setviewinstructor(res.data.data);
     } catch (error) {}

@@ -6,7 +6,7 @@ const UploadedVideos = () => {
 
     const getAllVideos = async () => {
         try {
-            let res = await axios.get("http://localhost:8080/get_all_records")
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_records")
             console.log(res.data.data);
             setVideos(res.data.data)
 

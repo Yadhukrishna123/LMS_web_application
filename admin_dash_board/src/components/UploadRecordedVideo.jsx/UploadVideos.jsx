@@ -61,7 +61,7 @@ const UploadVideos = () => {
 
             }
 
-            let res = await axios.post("http://localhost:8080/upload_recorded_video", payloads)
+            let res = await axios.post("http://localhost:8080/api/v1/upload_recorded_video", payloads)
 
             console.log(res);
 

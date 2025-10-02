@@ -24,7 +24,7 @@ const AddInstitution = () => {
                 password:inputs.password,
                 address:inputs.address
             }
-            let res = await axios.post("http://localhost:8080/add_institition", payload)
+            let res = await axios.post("http://localhost:8080/api/v1/add_institition", payload)
             console.log(res);
             
         } catch (error) {

@@ -30,7 +30,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            let res = await axios.post("http://localhost:8080/sign_up", payload)
+            let res = await axios.post("http://localhost:8080/api/v1/sign_up", payload)
             console.log(res);
             if (res.data.success) {
                 setMessage(res.data.message)

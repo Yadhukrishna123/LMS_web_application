@@ -6,7 +6,7 @@ const UserEnquiries = () => {
     let [enquiry, setEnquiry] = useState([])
     const getAllEnquiries = async () => {
         try {
-            let res = await axios.get("http://localhost:8080/getAll_enquiry")
+            let res = await axios.get("http://localhost:8080/api/v1/getAll_enquiry")
             console.log(res.data.data);
             setEnquiry(res.data.data)
 

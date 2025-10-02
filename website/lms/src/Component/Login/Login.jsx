@@ -53,7 +53,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            let res = await axios.post("http://localhost:8080/login", {
+            let res = await axios.post("http://localhost:8080/api/v1/login", {
                 email: inputs.emailOrPhone,
                 password: inputs.password
             })

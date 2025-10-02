@@ -49,7 +49,7 @@ const AddCategory = () => {
 
             }
 
-            let res = await axios.post("http://localhost:8080/add_course_cateogry", payloads)
+            let res = await axios.post("http://localhost:8080/api/v1/add_course_cateogry", payloads)
             console.log(res);
             setInputs({ title: "", desc: "", image: null });
             

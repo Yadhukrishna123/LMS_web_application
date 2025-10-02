@@ -6,7 +6,7 @@ const MyProfile = () => {
     let [profile, setProfile] = useState([])
 
     const getProfile = async () => {
-        let res = await axios.get("http://localhost:8080/get_profile_details")
+        let res = await axios.get("http://localhost:8080/api/v1/get_profile_details")
         setProfile(res.data.profile)
         console.log(res);
 
