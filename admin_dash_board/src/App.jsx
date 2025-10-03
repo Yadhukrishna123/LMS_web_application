@@ -31,6 +31,10 @@ import ProtectedRoutes from './utils/ProtectedRoutes';
 import MyProfile from './components/MyProfile/MyProfile';
 import CreateProfile from './components/CreateProfile/CreateProfile';
 import EditProfile from './components/CreateProfile/EditProfile';
+import ViewCourses from './components/AddCourse/ViewCourse';
+import ActiveBatches from './components/Batches/Activebatches';
+import ScheduleBatch from './components/Batches/ScheduleBatch';
+import AddInstructors from './components/Instructors/AddInstructors';
 
 
 
@@ -58,16 +62,16 @@ function App() {
           <Route path="/add_institution" element={<AddInstitution />} />
           <Route path="/add_course_cateogry" element={<AddCategory />} />
           <Route path="/view_course_cateogry" element={<ViewCategory />} />
-          <Route path="/view_course" element={<AdminViewCourses />} />
+          <Route path="/view_course" element={<ViewCourses />} />
           <Route path="/view_Instuctors" element={<ViewInstuctors />} />
-           <Route path="/view_Instuctors" element={<ViewInstuctors />} />
+          <Route path="/add_Instuctors" element={<AddInstructors />} />
           <Route path="/users" element={<ProtectedRoutes isAuthentication={auth}><Users /></ProtectedRoutes>} />
           <Route path="/login" element={<LoginInstitution />} />
           <Route path="/my_profile" element={<ProtectedRoutes isAuthentication={auth}><MyProfile /></ProtectedRoutes>} />
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />
           <Route path="/edit_profile" element={<ProtectedRoutes isAuthentication={auth}><EditProfile /></ProtectedRoutes>} />
 
-          <Route path="/active_batches" element={<Activebatches />} />
+          <Route path="/active_batches" element={<ActiveBatches />} />
           <Route path="/add_new_batches" element={<ScheduleBatch />} />
 
           <Route path="/add_students" element={<AddStudents />} />

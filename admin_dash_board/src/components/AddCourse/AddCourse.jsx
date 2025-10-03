@@ -3,7 +3,7 @@ import axios from "axios";
 import BasicInfoForm from "./Add Course Splits/BasicInfoForm";
 import CurriculumForm from "./Add Course Splits/CurriculumForm";
 import InstructorForm from "./Add Course Splits/InstructorForm";
-import MediaForm from "./Add Course Splits/MediaForm";
+//import MediaForm from "./Add Course Splits/MediaForm";
 import PricingForm from "./Add Course Splits/PricingForm";
 
 const AddCourse = () => {
@@ -27,10 +27,10 @@ const AddCourse = () => {
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const instRes = await axios.get("http://localhost:8080/view_instructor");
+      const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
       setInstructors(instRes.data.data);
 
-      const catRes = await axios.get("http://localhost:8080/view_All_categories");
+      const catRes = await axios.get("http://localhost:8080/api/v1/view_All_categories")
       setCategories(catRes.data.data);
     } catch (error) {
       console.error("Error fetching lists:", error);
@@ -68,7 +68,7 @@ useEffect(() => {
       };
 
       console.log("Payload before POST:", payload);
-      const res = await axios.post("http://localhost:8080/create_course", payload);
+      const res = await axios.post("http://localhost:8080/api/v1/create_course", payload);
       console.log("Saved:", res.data);
     } catch (err) {
       console.error("Error saving course", err);
@@ -87,7 +87,7 @@ useEffect(() => {
         />
         <CurriculumForm data={courseData} updateData={updateCourseData} />
         <InstructorForm data={courseData} updateData={updateCourseData} />
-        <MediaForm data={courseData} updateData={updateCourseData} />
+        {/* <MediaForm data={courseData} updateData={updateCourseData} /> */}
         <PricingForm data={courseData} updateData={updateCourseData} />
 
         <button

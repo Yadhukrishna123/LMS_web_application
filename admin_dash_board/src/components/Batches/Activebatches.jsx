@@ -7,7 +7,7 @@ const ActiveBatches = () => {
   // Fetch batches
   const getBatches = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/view_batches");
+      const res = await axios.get("http://localhost:8080/api/v1/view_all_batches");
       setBatches(res.data.data);
     } catch (error) {
       console.error("Error fetching batches:", error);

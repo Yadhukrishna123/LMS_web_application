@@ -4,12 +4,11 @@ import axios from "axios";
 const InstructorForm = ({ data, updateData }) => {
   const [instructors, setInstructors] = useState([]);
 
-  // Fetch instructors from backend
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/view_instructor");
-        setInstructors(res.data.data); // Assuming API returns { success: true, data: [...] }
+        const res = await axios.get("http://localhost:8080/api/v1/view_instructor");
+        setInstructors(res.data.data); 
       } catch (error) {
         console.error("Error fetching instructors:", error);
       }
@@ -29,7 +28,6 @@ const InstructorForm = ({ data, updateData }) => {
     <section>
       <h3 className="text-lg font-semibold mb-3">C. Instructor Details</h3>
       <div className="space-y-3">
-        {/* Dropdown instead of manual inputs */}
         <select
           value={data.instructorDetails?._id || ""}
           onChange={handleSelectInstructor}
@@ -43,7 +41,6 @@ const InstructorForm = ({ data, updateData }) => {
           ))}
         </select>
 
-        {/* Preview selected instructor */}
         {data.instructorDetails?.name && (
           <div className="mt-3 p-3 border rounded bg-gray-50">
             <p><strong>Name:</strong> {data.instructorDetails.name}</p>

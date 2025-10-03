@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios"
 
 
-const AdminViewCourses = () => {
+const ViewCourses = () => {
     let [viewcourse, setviewcourse] = useState([])
     const getAllCourses = async () => {
         try {
@@ -93,4 +93,4 @@ const AdminViewCourses = () => {
     )
 }
 
-export default AdminViewCourses
+export default ViewCourses

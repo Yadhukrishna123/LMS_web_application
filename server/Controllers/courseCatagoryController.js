@@ -1,4 +1,4 @@
-const courseModal = require("../modals/cateogeries")
+const cateogry = require("../modals/cateogeries")
 
 exports.addCourseCatagory = async (req, res) => {
      try {
@@ -10,7 +10,7 @@ exports.addCourseCatagory = async (req, res) => {
                 });
             }
     
-            const data = await courseModal.create(req.body);
+            const data = await cateogry.create(req.body);
             res.status(200).json({
                 message: "Success",
                 data,
@@ -28,7 +28,7 @@ exports.viewAllCourseCatago = async (req, res) => {
         const { title } = req.query;
         let query = {};
 
-        const data = await courseModal.find(query);
+        const data = await cateogry.find(query);
 
         res.status(200).json({
             success: true,

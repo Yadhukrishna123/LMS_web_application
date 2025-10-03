@@ -37,7 +37,7 @@ const ScheduleBatch = () => {
   // Fetch Courses
   const getAllCourses = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/Admin_view_All_courses");
+      let res = await axios.get("http://localhost:8080/api/v1/get_all_courses")
       setCourses(res.data.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -47,7 +47,7 @@ const ScheduleBatch = () => {
   // Fetch Instructors
   const getAllInstructors = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/view_instructor");
+      let res = await axios.get("http://localhost:8080/api/v1/view_instructor");
       setInstructors(res.data.data);
     } catch (error) {
       console.error("Error fetching instructors:", error);
@@ -106,7 +106,7 @@ const ScheduleBatch = () => {
 
     console.log("Payload before POST:", payload);
 
-    const res = await axios.post("http://localhost:8080/create_batch", payload);
+    const res = await axios.post("http://localhost:8080/api/v1/create_batch", payload);
     console.log("Saved Batch:", res.data);
   } catch (err) {
     console.error("Error saving batch", err);
@@ -118,7 +118,7 @@ const ScheduleBatch = () => {
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-2xl space-y-6">
       <h2 className="text-2xl font-bold text-center"> Schedule New Batch</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Batch Name */}
+        
         <input
           type="text"
           name="batchName"
@@ -128,7 +128,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg"
         />
 
-        {/* Batch Code */}
         <input
           type="text"
           name="batchCode"
@@ -138,7 +137,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg"
         />
 
-        {/* Course */}
         <select
           name="course"
           value={form.course}
@@ -153,7 +151,6 @@ const ScheduleBatch = () => {
           ))}
         </select>
 
-        {/* Instructor */}
         <select
           name="instructor"
           value={form.instructor}
@@ -168,7 +165,6 @@ const ScheduleBatch = () => {
           ))}
         </select>
 
-        {/* Mode */}
         <select
           name="mode"
           value={form.mode}
@@ -180,7 +176,6 @@ const ScheduleBatch = () => {
           <option>Hybrid</option>
         </select>
 
-        {/* Max Seats */}
         <input
           type="number"
           name="maxSeats"
@@ -190,7 +185,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg"
         />
 
-        {/* Status */}
         <select
           name="status"
           value={form.status}
@@ -203,7 +197,6 @@ const ScheduleBatch = () => {
           <option>Cancelled</option>
         </select>
 
-        {/* Dates */}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="date"
@@ -221,7 +214,6 @@ const ScheduleBatch = () => {
           />
         </div>
 
-        {/* Duration */}
          <select
           name="duration"
           value={form.duration}
@@ -237,7 +229,6 @@ const ScheduleBatch = () => {
           ))}
         </select>
 
-        {/* Days of Week */}
         <div className="flex flex-wrap gap-3">
           {days.map((day) => (
             <label key={day} className="flex items-center gap-2">
@@ -251,7 +242,6 @@ const ScheduleBatch = () => {
           ))}
         </div>
 
-        {/* Class Timing */}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="time"
@@ -269,7 +259,6 @@ const ScheduleBatch = () => {
           />
         </div>
 
-        {/* Time Zone */}
         <select
           name="timeZone"
           value={form.timeZone}
@@ -282,7 +271,6 @@ const ScheduleBatch = () => {
           <option value="PST">PST</option>
         </select>
 
-        {/* Location (only if Offline/Hybrid) */}
         {(form.mode === "Offline" || form.mode === "Hybrid") && (
           <div className="space-y-3">
             <input
@@ -311,7 +299,6 @@ const ScheduleBatch = () => {
           </div>
         )}
 
-        {/* Description */}
         <textarea
           name="description"
           placeholder="Batch Description"
@@ -320,7 +307,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg h-24"
         />
 
-        {/* Notes (Private for Instructor) */}
         <textarea
           name="notes"
           placeholder="Notes for Instructor (private)"
@@ -329,7 +315,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg h-20"
         />
 
-        {/* Banner Upload */}
         <input
           type="file"
           name="banner"
@@ -338,7 +323,6 @@ const ScheduleBatch = () => {
           className="w-full border px-3 py-2 rounded-lg"
         />
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"

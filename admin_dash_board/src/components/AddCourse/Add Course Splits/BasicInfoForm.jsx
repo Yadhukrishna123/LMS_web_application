@@ -10,14 +10,10 @@ const BasicInfoForm = ({ data, updateData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const catRes = await axios.get(
-          "http://localhost:8080/view_All_categories"
-        );
+        const catRes = await axios.get("http://localhost:8080/api/v1/view_All_categories")
         setCategories(catRes.data.data);
 
-        const instRes = await axios.get(
-          "http://localhost:8080/view_instructor"
-        );
+        const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
         setInstructors(instRes.data.data);
       } catch (err) {
         console.error("Error fetching dropdown data", err);

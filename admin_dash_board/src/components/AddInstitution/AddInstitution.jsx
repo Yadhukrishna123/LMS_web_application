@@ -11,7 +11,9 @@ const AddInstitution = () => {
         address: ""
     })
     const handleInput = (e) => {
-        setInputs({ ...inputs, [e.target.name]: e.target.value })
+        const newValues = { ...inputs, [e.target.name]: e.target.value };
+        setInputs(newValues);
+        console.log("Updated inputs:", newValues);
     }
     const handleSubmit = async (e) => {
         e.preventDefault()

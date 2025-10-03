@@ -2,13 +2,22 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = 8080
+
 const userModal = require("./modals/users")
-
 const studentModel = require("./modals/students");
-
-
 const institutionModal = require("./modals/Institution")
 const institutionProfile = require("./modals/institutionProfile")
+
+
+const authRoutes = require("./Routes/authRoutes");
+const recordedVideoRoutes = require("./Routes/RecordedVideoRoutes");
+const enquiryRoutes = require("./Routes/enquiryRoutes");
+const courseRoutes = require("./Routes/courseRoutes");
+const instituteRoutes = require("./Routes/institutionRoutes");
+const studentRoutes = require("./Routes/studentRoutes");
+const courseCataRoutes = require("./Routes/courseCataRoutes");
+const instructorRoutes = require("./Routes/instructorRoutes");
+const batchRoutes = require("./Routes/batchesRoutes"); 
 
 
 
@@ -23,8 +32,9 @@ app.use("/api/v1", enquiryRoutes)
 app.use("/api/v1", courseRoutes)
 app.use("/api/v1", instituteRoutes)
 app.use("/api/v1", studentRoutes)
-app.use("/api/v1", courseCatagoroutes)
+app.use("/api/v1", courseCataRoutes)
 app.use("/api/v1", instructorRoutes)
+app.use("/api/v1", batchRoutes);
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 
@@ -73,7 +83,7 @@ app.get("/get_all_records", async (req, res) => {
 
 
 
-// emquiry //
+// enquiry //
 
 app.post("/user_enquiries", async (req, res) => {
     try {
