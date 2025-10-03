@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModal = require("../modals/users")
+const sendMail = require("../Utils/sendEmail")
+const crypto = require("crypto")
 
 
 exports.signup = async (req, res) => {
@@ -86,23 +88,101 @@ exports.login = async (req, res) => {
 }
 
 exports.getAllUsers = async (req, res) => {
-      try {
-            const { firstname } = req.query
-    
-            let query = {}
-            if (firstname) {
-                query.firstname = { $regex: firstname, $options: "i" }
-            }
-            const user = await userModal.find(query)
-    
-            res.status(200).json({
-                success: true,
-                user,
-            })
-        } catch (error) {
-            res.status(500).json({
+    try {
+        const { firstname } = req.query
+
+        let query = {}
+        if (firstname) {
+            query.firstname = { $regex: firstname, $options: "i" }
+        }
+        const user = await userModal.find(query)
+
+        res.status(200).json({
+            success: true,
+            user,
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await userModal.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message: error.message
+                message: "User not found"
             });
         }
+
+        const resetToken = crypto.randomBytes(32).toString("hex")
+        user.resetToken = resetToken
+        user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
+
+        await user.save();
+        console.log(resetToken)
+        const resetUrl = `http://localhost:5174/reset-password/${resetToken}`;
+
+
+        await sendMail(
+            user.email,
+            "Password Reset",
+            `Hello ${user.firstname},\n\nClick here to reset your password:\n${resetUrl}\n\nThis link is valid for 15 minutes.`
+        )
+
+        res.status(200).json({
+            success: true,
+            message: "Reset link sent to your email",
+        })
+    } catch (error) {
+
+    }
 }
+
+exports.resetPAssword = async (req, res) => {
+    try {
+        const { token } = req.params
+        const { password } = req.body
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
+            })
+        }
+
+        const user = await userModal.findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        })
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid or expired token" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpiry = undefined;
+
+        await user.save();
+        //  console.log("Reset Token:", resetToken);
+        res.status(200).json(
+            {
+                success: true,
+                message: "Password reset successful, please login again."
+            });
+
+    } catch (error) {
+        console.error("Reset password error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+}
+

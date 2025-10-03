@@ -6,7 +6,7 @@ import { AllCourseDetail } from '../AllCourseContext/Context';
 
 const Logout = ({ setLogout }) => {
     const navigate = useNavigate()
-    const { userLogout } = useContext(AllCourseDetail)
+    const { userLogout, authentication } = useContext(AllCourseDetail)
 
 
     return (
@@ -48,7 +48,7 @@ const Logout = ({ setLogout }) => {
                             className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
                             onClick={() => {
                                 userLogout(),
-                                    setLogout,
+                                    setLogout(false),
                                     toast.success("successfully logged out")
                                 navigate("/login")
 

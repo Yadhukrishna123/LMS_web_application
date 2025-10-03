@@ -13,6 +13,8 @@ import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
 import Context from './Component/AllCourseContext/Context'
+import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
+import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
 
 
 
@@ -39,7 +41,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-
+          <Route path="/enter_email" element={<FoegetPasswordOne />} />
+          <Route path="/reset-password/:token" element={<ForgetPaddword />} />
 
 
           <Route path="/user_page" element={<UserPage />} />

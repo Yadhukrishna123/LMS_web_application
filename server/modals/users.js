@@ -7,7 +7,9 @@ const userScheme = new mongoose.Schema({
     phone: String,
     password: String,
     role: String,
-    googleId: String
+    googleId: String,
+    resetToken: String,
+    resetTokenExpiry: Date,
 
 
 });

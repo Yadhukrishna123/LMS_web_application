@@ -1,8 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const PORT = 8080
-
+const dotenv = require("dotenv")
+dotenv.config({ path: "./Config/config.env" })
 
 
 
@@ -37,8 +37,8 @@ mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfq
 
 
 
-app.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`server is running on port ${process.env.PORT}`);
 });
 
 
