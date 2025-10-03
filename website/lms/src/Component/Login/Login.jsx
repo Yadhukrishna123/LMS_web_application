@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { AllCourseDetail } from '../AllCourseContext/Context'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
     // const location = useLocation();
@@ -72,45 +72,65 @@ const Login = () => {
 
         }
     }
+
+    const handleForgotPassword = () => {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
-            <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-lg">
-                <h2 className="text-2xl font-bold text-center mb-6">Sign in</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex items-center justify-center min-h-screen bg-blue-50 px-4">
+            <div className="flex w-[40%] max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden">
 
-                    <input
-                        type="text"
-                        name="emailOrPhone"
-                        placeholder="Email or phone"
+                {/* Left: Form Section */}
+                <div className="w-full md:w-[100%] p-8 flex flex-col justify-center">
+                    <h2 className="text-3xl font-bold text-center mb-6">Sign in</h2>
 
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border  focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <input
+                            type="text"
+                            name="emailOrPhone"
+                            placeholder="Email or phone"
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
 
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
 
+                        {/* Forget password */}
+                        <div className="text-right">
+                            <p className="text-sm text-blue-600 hover:underline" onClick={handleForgotPassword}>
+                                <Link to="/enter_email">
+                                    forget password
+                                </Link>
+                            </p>
+                        </div>
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+                        >
+                            Sign in
+                        </button>
+                    </form>
 
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border  focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
+                    {/* Register */}
+                    <p className="text-center mt-5">
+                        Don’t have an account?{" "}
+                        <a href="/register" className="text-blue-600 hover:underline">
+                            Register
+                        </a>
+                    </p>
+                </div>
 
-                    {message && <p className='text-center text-green-500'>{message}</p>}
-
-                    <button
-                        type="submit"
-                        className="w-full mt-5 bg-blue-500 text-white py-2  hover:bg-blue-600 transition"
-                    >
-                        Sign in
-
-                    </button>
-                </form>
-            </div>
-            <div className='mt-3'>
-                <p className='text-center'>  If you don’t have an account, <span className='text-blue-600'>Register</span></p>
             </div>
         </div>
     )

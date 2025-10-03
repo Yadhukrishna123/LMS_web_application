@@ -17,13 +17,15 @@ const CoursesPage = () => {
   const getAllCourse = async () => {
     try {
       let res = await axios.get(
-        `http://localhost:8080/Admin_view_All_courses?title=${search}&category=${category}&price=${price}`
+        `http://localhost:8080/api/v1/get_all_courses?title=${search}&category=${category}&price=${price}`
       );
 
       //console.log(res);
       setCourses(res.data.data);
-    } catch (error) {}
+    } catch (error) { }
   };
+  console.log(courses);
+  
 
   useEffect(() => {
     getAllCourse();
@@ -108,7 +110,7 @@ const CoursesPage = () => {
               <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                 <Link to={`/detailpage/${c._id}`}>
                   <img
-                    src={c.image && c.image[0]}
+                    src={c.image[0]}
                     alt={c.title}
                     className="w-[100%] h-[250px]"
                   />
@@ -161,11 +163,10 @@ const CoursesPage = () => {
               key={i + 1}
               onClick={() => handlePageChange(i + 1)}
               className={`min-w-9 rounded-md py-2 px-3 text-center text-sm transition-all ml-2 
-          ${
-            currentPage === i + 1
-              ? "bg-slate-800 text-white border border-transparent shadow-md hover:shadow-lg focus:bg-slate-700 active:bg-slate-700"
-              : "border border-slate-300 text-slate-600 shadow-sm hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800"
-          }
+          ${currentPage === i + 1
+                  ? "bg-slate-800 text-white border border-transparent shadow-md hover:shadow-lg focus:bg-slate-700 active:bg-slate-700"
+                  : "border border-slate-300 text-slate-600 shadow-sm hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800"
+                }
         `}
             >
               {i + 1}

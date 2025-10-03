@@ -10,7 +10,7 @@ const ViewStudents = () => {
 
   const getStudents = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/view_students");
+      let res = await axios.get("http://localhost:8080/api/v1/view_students");
       setStudents(res.data.data);
     } catch (error) {
       console.error(error);
