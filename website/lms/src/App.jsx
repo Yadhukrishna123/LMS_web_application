@@ -13,8 +13,6 @@ import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
 import Context from './Component/AllCourseContext/Context'
-import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
-import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
 
 
 
@@ -23,6 +21,7 @@ import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
 
 
 function App() {
+  const [user, setUser] = useState(null);
 
   return (
     <Context>
@@ -41,15 +40,14 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/enter_email" element={<FoegetPasswordOne />} />
-          <Route path="/reset-password/:token" element={<ForgetPaddword />} />
 
 
-          <Route path="/user_page" element={<UserPage />} />
 
           <Route path="/user_page" element={<UserPage />} />
 
-
+          <Route path="/quizzes" element={<QuizList />} />
+          <Route path="/take_quiz/:quizId" element={<TakeQuiz userId={user?._id} />} /> 
+            
 
         </Routes>
         <Footer />
