@@ -35,6 +35,13 @@ import ViewCourses from './components/AddCourse/ViewCourse';
 import ActiveBatches from './components/Batches/Activebatches';
 import ScheduleBatch from './components/Batches/ScheduleBatch';
 import AddInstructors from './components/Instructors/AddInstructors';
+import ViewQuizes from './components/Quizes/ViewQuizes';
+import Addquizes from './components/Quizes/Addquizes';
+import QuizSubmissions from './components/Quizes/UserSubmission';
+import AttendanceListing from './components/Attendence/AttendanceListing';
+import Attenencetracking from './components/Attendence/Attenencetracking';
+
+
 
 
 
@@ -76,6 +83,13 @@ function App() {
 
           <Route path="/add_students" element={<AddStudents />} />
           <Route path="/view_students" element={<ViewStudents />} />
+
+          <Route path="/add_quizes" element={<Addquizes />} />
+          <Route path="/view_quizes" element={<ViewQuizes />} />
+          <Route path="/submissions" element={<QuizSubmissions />} />
+
+          <Route path="/attendence_tracking" element={<Attenencetracking />} />
+          <Route path="/attendence_listing" element={<AttendanceListing />} />
 
         </Route>
       </Routes>

@@ -13,6 +13,10 @@ import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
 import Context from './Component/AllCourseContext/Context'
+import TakeQuiz from './Component/Quiz/UserQuiz'
+import QuizList from './Component/Quiz/QuizList'
+
+
 
 
 
@@ -21,6 +25,7 @@ import Context from './Component/AllCourseContext/Context'
 
 
 function App() {
+  const [user, setUser] = useState(null);
 
   return (
     <Context>
@@ -39,14 +44,11 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-
-
-
           <Route path="/user_page" element={<UserPage />} />
 
-          <Route path="/user_page" element={<UserPage />} />
-
-
+          <Route path="/quizzes" element={<QuizList />} />
+          <Route path="/take_quiz/:quizId" element={<TakeQuiz userId={user?._id} />} /> 
+            
 
         </Routes>
         <Footer />
