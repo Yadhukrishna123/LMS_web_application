@@ -17,14 +17,12 @@ const instituteRoutes = require("./Routes/institutionRoutes");
 const studentRoutes = require("./Routes/studentRoutes");
 const courseCataRoutes = require("./Routes/courseCataRoutes");
 const instructorRoutes = require("./Routes/instructorRoutes");
-<<<<<<< HEAD
-const batchRoutes = require("./Routes/batchesRoutes"); 
+
 const quizroutres = require("./Routes/QuizRoutes")
 const Attendence = require("./Routes/attendanceRoutes")
-=======
+
 const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
->>>>>>> today-branch
 
 
 
@@ -42,14 +40,10 @@ app.use("/api/v1", studentRoutes)
 app.use("/api/v1", courseCataRoutes)
 app.use("/api/v1", instructorRoutes)
 app.use("/api/v1", batchRoutes);
-<<<<<<< HEAD
 app.use("/api/v1", quizroutres)
 app.use("/api/v1", Attendence)
-
-
-=======
 app.use("/api/v1", scheduleRoutes);
->>>>>>> today-branch
+
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 

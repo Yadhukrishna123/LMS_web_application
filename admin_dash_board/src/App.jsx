@@ -35,7 +35,7 @@ import ViewCourses from './components/AddCourse/ViewCourse';
 import ActiveBatches from './components/Batches/Activebatches';
 import ScheduleBatch from './components/Batches/ScheduleBatch';
 import AddInstructors from './components/Instructors/AddInstructors';
-<<<<<<< HEAD
+
 import ViewQuizes from './components/Quizes/ViewQuizes';
 import Addquizes from './components/Quizes/Addquizes';
 import QuizSubmissions from './components/Quizes/UserSubmission';
@@ -43,11 +43,11 @@ import AttendanceListing from './components/Attendence/AttendanceListing';
 import Attenencetracking from './components/Attendence/Attenencetracking';
 
 
-=======
+
 import EditProfile from './components/MyProfile/EditProfile';
 import AddSchedule from './components/AddSchedule/AddSchedule';
 import ViewSchedule from './components/AddSchedule/ViewSchedule';
->>>>>>> today-branch
+
 
 
 
