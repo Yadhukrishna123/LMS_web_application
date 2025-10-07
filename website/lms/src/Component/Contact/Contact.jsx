@@ -6,6 +6,7 @@ import axios from "axios"
 
 
 const Contact = () => {
+  console.log(import.meta.env.VITE_API_URL);
   let [inputs, setInputs] = useState({
     name: "",
     email: "",
@@ -19,7 +20,7 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      let res = await axios.post("http://localhost:8080/api/v1/user_enquiries", {
+      let res = await axios.post(`${import.meta.env.VITE_API_URL}/user_enquiries`, {
         name: inputs.name,
         email: inputs.email,
         message: inputs.message
@@ -31,6 +32,8 @@ const Contact = () => {
     }
   }
   console.log(inputs);
+
+
 
   return (
     <div className="bg-blue-50 py-12 px-4 sm:px-6 lg:px-16">

@@ -19,6 +19,7 @@ export const Context = (props) => {
         setUser([])
         setAuthentication(false)
     }
+    
     return (
         <AllCourseDetail.Provider value={{ getUserData, authentication, userLogout }}>
             {props.children}

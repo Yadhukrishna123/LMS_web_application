@@ -42,7 +42,7 @@ function App() {
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/enter_email" element={<FoegetPasswordOne />} />
-          <Route path="/reset-password/:token" element={<ForgetPaddword />} />
+          <Route path="/reset_password/:token" element={<ForgetPaddword />} />
 
 
           <Route path="/user_page" element={<UserPage />} />

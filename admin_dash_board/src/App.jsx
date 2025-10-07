@@ -18,7 +18,7 @@ import AddCourse from './components/AddCourse/AddCourse';
 import AddCategory from './components/Cateogry/AddCategory';
 import ViewCategory from './components/Cateogry/ViewCategory';
 import ViewInstuctors from './components/Instructors/ViewInstructors';
-import AddInstuctors from './components/Instructors/AddInstructors';
+// import AddInstuctors from './components/Instructors/AddInstructors';
 import Users from './components/Users/Users';
 
 import AddStudents from './components/Students/Addstudents';
@@ -30,11 +30,14 @@ import { AdminContext } from './components/AdminContext/Context';
 import ProtectedRoutes from './utils/ProtectedRoutes';
 import MyProfile from './components/MyProfile/MyProfile';
 import CreateProfile from './components/CreateProfile/CreateProfile';
-import EditProfile from './components/CreateProfile/EditProfile';
+// import EditProfile from './components/CreateProfile/EditProfile';
 import ViewCourses from './components/AddCourse/ViewCourse';
 import ActiveBatches from './components/Batches/Activebatches';
 import ScheduleBatch from './components/Batches/ScheduleBatch';
 import AddInstructors from './components/Instructors/AddInstructors';
+import EditProfile from './components/MyProfile/EditProfile';
+import AddSchedule from './components/AddSchedule/AddSchedule';
+import ViewSchedule from './components/AddSchedule/ViewSchedule';
 
 
 
@@ -58,7 +61,6 @@ function App() {
           <Route path="/recorded_sessions" element={<ProtectedRoutes isAuthentication={auth}><UploadedVideos /></ProtectedRoutes>} />
           <Route path="/user_enquiries" element={<ProtectedRoutes isAuthentication={auth}><UserEnquiries /></ProtectedRoutes>} />
           <Route path="/add_course" element={<ProtectedRoutes isAuthentication={auth}><AddCourse /></ProtectedRoutes>} />
-          <Route path="/add_course" element={<ProtectedRoutes isAuthentication={auth}><AddCourse /></ProtectedRoutes>} />
           <Route path="/add_institution" element={<AddInstitution />} />
           <Route path="/add_course_cateogry" element={<AddCategory />} />
           <Route path="/view_course_cateogry" element={<ViewCategory />} />
@@ -69,11 +71,12 @@ function App() {
           <Route path="/login" element={<LoginInstitution />} />
           <Route path="/my_profile" element={<ProtectedRoutes isAuthentication={auth}><MyProfile /></ProtectedRoutes>} />
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />
-          <Route path="/edit_profile" element={<ProtectedRoutes isAuthentication={auth}><EditProfile /></ProtectedRoutes>} />
-
+          {/* <Route path="/edit_profile" element={<ProtectedRoutes isAuthentication={auth}><EditProfile /></ProtectedRoutes>} /> */}
+          <Route path="/Edit_profile/:id" element={<EditProfile />} />
           <Route path="/active_batches" element={<ActiveBatches />} />
           <Route path="/add_new_batches" element={<ScheduleBatch />} />
-
+           <Route path="/add_schedule" element={<AddSchedule />} />
+              <Route path="/view_schedules" element={<ViewSchedule />} />
           <Route path="/add_students" element={<AddStudents />} />
           <Route path="/view_students" element={<ViewStudents />} />
 
