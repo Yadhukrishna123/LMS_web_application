@@ -40,7 +40,12 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+<<<<<<< HEAD
 
+=======
+          <Route path="/enter_email" element={<FoegetPasswordOne />} />
+          <Route path="/reset_password/:token" element={<ForgetPaddword />} />
+>>>>>>> today-branch
 
 
           <Route path="/user_page" element={<UserPage />} />

@@ -160,3 +160,84 @@ exports.getAllInstitutionProfile = async (req, res) => {
         });
     }
 }
+
+exports.getInstitute = async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const institution = await institutionProfile.findById(id)
+
+        if (!institution) {
+            return res.status(404).json({
+                success: true,
+                message: "Institution not found"
+            })
+        }
+
+        res.status(200).json({
+            successs: true,
+            institution,
+
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+exports.updataeInstitutionDetails = async (req, res) => {
+    const { id } = req.params
+    const {
+        instituteName,
+        address,
+        email,
+        phone,
+        website,
+        gstin,
+        accreditation,
+        founded,
+        courses,
+        students,
+        placement,
+        facilities } = req.body
+    try {
+        const institution = await institutionProfile.findById(id)
+
+        if (!institution) {
+            return res.status(404).json({
+                success: false,
+                message: "Institution not found"
+            })
+        }
+
+        institution.instituteName = instituteName
+        institution.address = address
+        institution.email = email
+        institution.phone = phone
+        institution.website = website
+        institution.gstin = gstin
+        institution.accreditation = accreditation
+        institution.founded = founded
+        institution.courses = courses
+        institution.students = students
+        institution.placement = placement
+        institution.facilities = facilities
+
+        institution.save()
+
+        res.status(201).json({
+            success: true,
+            institution,
+            message: "Institution  updated succesfully"
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}

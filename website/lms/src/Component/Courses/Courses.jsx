@@ -17,7 +17,7 @@ const CoursesPage = () => {
   const getAllCourse = async () => {
     try {
       let res = await axios.get(
-        `http://localhost:8080/api/v1/get_all_courses?title=${search}&category=${category}&price=${price}`
+        `${process.env.API_URL}/get_all_courses?title=${search}&category=${category}&price=${price}`
       );
 
       //console.log(res);
