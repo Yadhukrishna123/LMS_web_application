@@ -22,19 +22,37 @@ exports.UserEnquiryie = async (req, res) => {
 }
 
 exports.getAllEnquiry = async (req, res) => {
-    try {
-        const { name } = req.query;
-        let query = {};
-        if (name) {
-            query.name = { $regex: name, $options: "i" };
-        }
+  try {
+    let { page = 1, limit = 5, name } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
 
-        const data = await enquiryModal.find(query);
-        res.json({
-            data,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+    let query = {};
+    if (name) {
+      query.name = { $regex: name, $options: "i" }; // case-insensitive name search
     }
-}
+
+    // Count total items for pagination
+    const totalItems = await enquiryModal.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Fetch paginated data
+    const data = await enquiryModal
+      .find(query)
+      .sort({ createdAt: -1 }) // newest first
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data,
+      totalItems,
+      totalPages,
+      page,
+      limit,
+    });
+  } catch (error) {
+    console.error("Error fetching enquiries:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

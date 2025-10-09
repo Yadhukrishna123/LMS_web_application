@@ -21,11 +21,11 @@ const ViewSchedule = () => {
       setLoading(false);
     }
   };
-  console.log(schedules);
+  //console.log(schedules);
 
   useEffect(() => {
     getAllSchedule();
-    console.log(schedules);
+   // console.log(schedules);
 
   }, []);
 
@@ -89,18 +89,20 @@ const ViewSchedule = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" >
             {schedules.map((schedule, index) => (
               <div
-                key={index}
-                className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-blue-600"
-                onClick={() => handleShowPopup(true, schedule._id)}
-              >
-
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {schedule.course}
-                </h3>
-                <p className="text-sm text-white">
-                  {schedule.batch}
-                </p>
-              </div>
+              key={index}
+              className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-blue-600"
+              onClick={() => handleShowPopup(true, schedule._id)}
+            >
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {schedule.course}
+              </h3>
+              <p className="text-sm text-blue-200 mb-1">
+                Batch: {schedule.batch}
+              </p>
+              <p className="text-sm text-blue-200 mb-1">
+                Instructor: {schedule.instructor}
+              </p>
+            </div>
             ))}
           </div>
         )}

@@ -21,20 +21,29 @@ exports.addRecordVideo = async (req, res) => {
 }
 
 exports.getAllRecordedVideos = async (req, res) => {
-    try {
-        const { title } = req.query;
-        let query = {};
-        if (title) {
-            query.title = { $regex: title, $options: "i" };
-        }
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const search = req.query.title || "";
 
-        const data = await recordedVideoModal.find(query);
+    const query = search ? { title: { $regex: search, $options: "i" } } : {};
 
-        res.json({
-            data,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
-}
+    const totalItems = await recordedVideoModal.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const data = await recordedVideoModal.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data,
+      page,
+      totalPages,
+      totalItems
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -50,14 +50,33 @@ exports.addStudent = async (req, res) => {
 
 exports.getAllStudent = async (req, res) => {
   try {
-    const students = await Student.find()
-      .populate("batch", "batchName"); // populate batch, only get batchName
-    res.status(200).json({ success: true, data: students });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const search = req.query.search || "";
+
+    const query = search
+      ? { name: { $regex: search, $options: "i" } } // search by name
+      : {};
+
+    const totalItems = await Student.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const students = await Student.find(query)
+      .populate("batch", "batchName")
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data: students,
+      page,
+      totalPages,
+      totalItems,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 
 // 🔹 Assign student to a batch
@@ -91,11 +110,11 @@ exports.assignStudentToBatch = async (req, res) => {
 };
 
 // Get students by batch
+
 exports.getStudentsByBatch = async (req, res) => {
   try {
     const { batchId } = req.params;
-    const students = await Student.find({ batch: batchId })
-      .populate("batch", "batchName");
+    const students = await Student.find({ batch: batchId }).populate("batch", "batchName");
     res.status(200).json({ success: true, data: students });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

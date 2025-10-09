@@ -1,44 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import axios from "axios"
-import { FaEdit, FaSearch, FaTrash, FaUserPlus, FaUsers } from 'react-icons/fa'
-import Delete from '../TableActions/Delete'
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
+import { FaEdit, FaSearch, FaTrash, FaUserPlus, FaUsers } from 'react-icons/fa';
+import Delete from '../TableActions/Delete';
 
 const Users = () => {
-    const [users, setUsers] = useState([])
-    const [search, setSearch] = useState("")
-    const [deleteClick, setDeleteClick] = useState(false)
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 5
-    const deleteCont = "Are you sure that you want to delete user?"
+    const [users, setUsers] = useState([]);
+    const [search, setSearch] = useState("");
+    const [deleteClick, setDeleteClick] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalUsers, setTotalUsers] = useState(0);
+    const itemsPerPage = 5;
+    const deleteCont = "Are you sure that you want to delete user?";
 
-    // Fetch all users
-    const getAllUsers = async () => {
+    const getAllUsers = async (page = 1) => {
         try {
-            let res = await axios.get(`http://localhost:8080/api/v1/get_all_user?firstname=${search}`)
-            setUsers(res.data.user || [])
+            const res = await axios.get(
+                `http://localhost:8080/api/v1/get_all_user?page=${page}&limit=${itemsPerPage}&firstname=${search}`
+            );
+            setUsers(res.data.users || []);
+            setCurrentPage(res.data.page);
+            setTotalPages(res.data.totalPages);
+            setTotalUsers(res.data.total);
         } catch (err) {
-            console.error("Error fetching users:", err)
+            console.error("Error fetching users:", err);
         }
-    }
+    };
 
     useEffect(() => {
-        setCurrentPage(1) // Reset to first page on search
-        getAllUsers()
-    }, [search])
+        setCurrentPage(1);
+        getAllUsers(1);
+    }, [search]);
 
-    const handleDelete = () => setDeleteClick(true)
-
-    // Filtered users based on search
-    const filteredUsers = users.filter(u =>
-        `${u.firstname} ${u.lastname}`.toLowerCase().includes(search.toLowerCase())
-    )
-
-    // Pagination logic
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
-    const currentUsers = filteredUsers.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    )
+    const handleDelete = () => setDeleteClick(true);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
@@ -72,7 +66,7 @@ const Users = () => {
                     <div className="flex items-center gap-4 mt-4 md:mt-0">
                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
                             <p className="text-sm text-gray-600">Total Users</p>
-                            <p className="text-2xl font-bold text-blue-600">{filteredUsers.length}</p>
+                            <p className="text-2xl font-bold text-blue-600">{totalUsers}</p>
                         </div>
                         <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
                             <FaUserPlus /> Add User
@@ -99,7 +93,7 @@ const Users = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {currentUsers.length > 0 ? currentUsers.map((u, i) => (
+                                {users.length > 0 ? users.map((u, i) => (
                                     <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg text-blue-700 font-semibold text-sm">
@@ -154,25 +148,27 @@ const Users = () => {
                     {totalPages > 1 && (
                         <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
                             <div className="text-sm text-gray-600">
-                                Showing <span className="font-semibold text-gray-900">{currentUsers.length}</span> of <span className="font-semibold text-gray-900">{filteredUsers.length}</span> users
+                                Showing <span className="font-semibold text-gray-900">{users.length}</span> of <span className="font-semibold text-gray-900">{totalUsers}</span> users
                             </div>
                             <div className="flex gap-2">
                                 <button
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === 1}
-                                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                                    onClick={() => getAllUsers(currentPage - 1)}
                                 >Previous</button>
+
                                 {[...Array(totalPages)].map((_, i) => (
                                     <button
                                         key={i}
-                                        onClick={() => setCurrentPage(i + 1)}
+                                        onClick={() => getAllUsers(i + 1)}
                                         className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'border-gray-300 text-gray-700'} hover:bg-white transition`}
                                     >{i + 1}</button>
                                 ))}
+
                                 <button
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === totalPages}
-                                    onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                                    onClick={() => getAllUsers(currentPage + 1)}
                                 >Next</button>
                             </div>
                         </div>
@@ -180,7 +176,7 @@ const Users = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Users
+export default Users;

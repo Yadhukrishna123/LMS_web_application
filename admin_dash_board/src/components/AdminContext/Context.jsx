@@ -30,7 +30,7 @@ export const Context = (props) => {
     useEffect(() => {
         getAllSchedule()
     }, [])
-    console.log(schedules);
+    //console.log(schedules);
 
     return (
         <AdminContext.Provider value={{ isAdminLogedIn, auth, handleShowPopup, showPopup, setShowPopup, schedules, scheduleId }}>

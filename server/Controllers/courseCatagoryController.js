@@ -24,20 +24,32 @@ exports.addCourseCatagory = async (req, res) => {
 }
 
 exports.viewAllCourseCatago = async (req, res) => {
-     try {
-        const { title } = req.query;
-        let query = {};
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const search = req.query.title || "";
 
-        const data = await cateogry.find(query);
+    // Build query for search
+    const query = search ? { title: { $regex: search, $options: "i" } } : {};
 
-        res.status(200).json({
-            success: true,
-            data,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
-}
+    const totalItems = await cateogry.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const data = await cateogry.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data,
+      page,
+      totalPages,
+      totalItems,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
