@@ -10,7 +10,7 @@ const ViewStudents = () => {
 
   const getStudents = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/view_students");
+      let res = await axios.get("http://localhost:8080/api/v1/view_students");
       setStudents(res.data.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -106,8 +106,8 @@ const ViewStudents = () => {
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStudents.length > 0 ? (
-                  filteredStudents.map((s, i) => (
+                {students.length > 0 ? (
+                  students.map((s, i) => (
                     <tr
                       key={i}
                       className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all"
@@ -191,7 +191,7 @@ const ViewStudents = () => {
             <p className="text-sm text-gray-600">
               Showing{" "}
               <span className="font-semibold text-gray-900">
-                {filteredStudents.length}
+                {students.length}
               </span>{" "}
               of{" "}
               <span className="font-semibold text-gray-900">

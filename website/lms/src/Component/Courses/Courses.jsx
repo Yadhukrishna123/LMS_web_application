@@ -17,7 +17,7 @@ const CoursesPage = () => {
   const getAllCourse = async () => {
     try {
       let res = await axios.get(
-        `${process.env.API_URL}/get_all_courses?title=${search}&category=${category}&price=${price}`
+        `${import.meta.env.VITE_API_URL}/get_all_courses?title=${search}&category=${category}&price=${price}`
       );
 
       //console.log(res);
@@ -107,12 +107,13 @@ const CoursesPage = () => {
         {currentItems &&
           currentItems.map((c, i) => {
             return (
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+              <div key={c._id} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                 <Link to={`/detailpage/${c._id}`}>
                   <img
-                    src={c.image[0]}
+                    src={c.image?.[0] || "/placeholder_course.jpg"}
                     alt={c.title}
-                    className="w-[100%] h-[250px]"
+                    onError={(e) => (e.target.src = "/placeholder_course.jpg")}
+                    className="w-full h-[250px] object-cover"
                   />
                   <div className="p-4 flex flex-col flex-grow">
                     <h3 className="text-lg font-semibold mb-1">{c.title}</h3>

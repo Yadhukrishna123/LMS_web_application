@@ -33,6 +33,7 @@ const Login = () => {
             if (res.data.success) {
                 if (res.data.isAuthentication) {
                     getUserData(res.data.user, res.data.isAuthentication)
+                    localStorage.setItem("userId", res.data.user._id);
                     toast.success(res.data.message)
                     setMessage(res.data.message)
                     await new Promise((back) => setTimeout(back, 2000))

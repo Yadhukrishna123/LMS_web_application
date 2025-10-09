@@ -13,6 +13,11 @@ import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
 import Context from './Component/AllCourseContext/Context'
+import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
+import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
+import QuizList from './Component/Quiz/QuizList'
+import TakeQuiz from './Component/Quiz/UserQuiz'
+import CheckoutPage from './Component/Purchase/CheckoutPage'
 
 
 
@@ -37,17 +42,14 @@ function App() {
           <Route path="/cateogeries" element={<CategoryBrowser />} />
 
           <Route path="/allcourses" element={<CoursesSection />} />
+          <Route path="/checkout/:courseId" element={<CheckoutPage />} />
+
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign_up" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-<<<<<<< HEAD
 
-=======
           <Route path="/enter_email" element={<FoegetPasswordOne />} />
           <Route path="/reset_password/:token" element={<ForgetPaddword />} />
->>>>>>> today-branch
-
-
           <Route path="/user_page" element={<UserPage />} />
 
           <Route path="/quizzes" element={<QuizList />} />

@@ -24,6 +24,7 @@ const Attendence = require("./Routes/attendanceRoutes")
 const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
 
+const paymentRoutes = require("./Routes/paymentRoutes");
 
 
 const app = express()
@@ -42,8 +43,8 @@ app.use("/api/v1", instructorRoutes)
 app.use("/api/v1", batchRoutes);
 app.use("/api/v1", quizroutres)
 app.use("/api/v1", Attendence)
-app.use("/api/v1", scheduleRoutes);
 
+app.use("/api/v1", paymentRoutes);
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 

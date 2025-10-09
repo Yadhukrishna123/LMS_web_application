@@ -47,6 +47,7 @@ import Attenencetracking from './components/Attendence/Attenencetracking';
 import EditProfile from './components/MyProfile/EditProfile';
 import AddSchedule from './components/AddSchedule/AddSchedule';
 import ViewSchedule from './components/AddSchedule/ViewSchedule';
+import PaymentsPage from './components/Payment/PaymentPage';
 
 
 
@@ -96,6 +97,8 @@ function App() {
 
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
+
+          <Route path="/paymentpage" element={<PaymentsPage />} />
 
         </Route>
       </Routes>
