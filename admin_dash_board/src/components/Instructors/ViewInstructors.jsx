@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash, FaSearch, FaChalkboardTeacher, FaPlus, FaLinkedin, FaGithub, FaGlobe } from 'react-icons/fa'
+import Delete from "../TableActions/Delete";
 
 
 const ViewInstuctors = () => {
   let [viewinstructor, setviewinstructor] = useState([]);
+  let [deleteClick, setDeleteClick] = useState(false)
+  let [id, setId] = useState()
+  const deleteCont = "Are you sure that you want to delete Instructor?"
   const getAllinstructors = async () => {
     try {
       let res = await axios.get("http://localhost:8080/api/v1/view_instructor");
       //console.log(res.data.data);
       setviewinstructor(res.data.data);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
     getAllinstructors();
   }, []);
+  const handleDelete = (id) => {
+    setDeleteClick(true)
+    setId(id)
+    setviewinstructor((prev) => prev.filter((i) => i._id !== id))
+  }
   return (
-     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      {deleteClick && <Delete
+        setDeleteClick={setDeleteClick}
+        deleteCont={deleteCont}
+        id={id}
+        api_end_point="http://localhost:8080/api/v1/get_instructor"
+      />}
       <div className="w-full max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
@@ -188,7 +203,7 @@ const ViewInstuctors = () => {
                             <FaEdit className="group-hover:scale-110 transition" />
                           </button>
                           <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group">
-                            <FaTrash className="group-hover:scale-110 transition" />
+                            <FaTrash className="group-hover:scale-110 transition" onClick={() => handleDelete(e._id)} />
                           </button>
                         </div>
                       </td>

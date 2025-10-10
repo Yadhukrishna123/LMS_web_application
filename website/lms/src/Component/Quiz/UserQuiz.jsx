@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
-const TakeQuiz = () => {
+const UserQuiz = () => {
   const navigate = useNavigate();
   const { quizId } = useParams();
   const [quiz, setQuiz] = useState(null);
@@ -32,7 +32,7 @@ const TakeQuiz = () => {
   const handleSubmit = () => {
     axios.post("http://localhost:8080/api/v1/submit_quiz", { quizId, answers })
       .then(res => alert(`Quiz submitted! Score: ${res.data.data.score}`))
-      navigate("/quizzes")
+    navigate("/quizzes")
       .catch(err => {
         console.error(err.response?.data || err);
         alert("Failed to submit quiz. Check console for details.");
@@ -71,4 +71,4 @@ const TakeQuiz = () => {
   );
 };
 
-export default TakeQuiz;
+export default UserQuiz;

@@ -110,6 +110,38 @@ exports.getAllUsers = async (req, res) => {
 }
 
 
+exports.getUser = async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const user = await userModal.findById(id)
+
+        if (!user) {
+            return res.status(404).json({
+                success: true,
+                message: "user not found"
+            })
+        }
+
+        res.status(200).json({
+            successs: true,
+            user,
+
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    
+}
+
+
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body

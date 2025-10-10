@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash, FaSearch, FaUserGraduate, FaPlus, FaBook, FaCalendar } from 'react-icons/fa';
+import Delete from "../TableActions/Delete";
 
 
 const ViewStudents = () => {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("")
-
+  let [deleteClick, setDeleteClick] = useState(false)
+  let [id, setId] = useState("")
+  const deleteCont = "Are you sure that you want to delete student?"
 
   const getStudents = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/view_students");
+      let res = await axios.get("http://localhost:8080/api/v1/view_students");
+      console.log(res)
       setStudents(res.data.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -21,8 +25,25 @@ const ViewStudents = () => {
     getStudents();
   }, []);
 
+  const handleDelete = (id) => {
+    setDeleteClick(true)
+    setId(id)
+  }
+
+  const onTimeDelete = () => {
+    setStudents((prev) => prev.filter((s) => s._id !== id))
+
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      {deleteClick && <Delete
+        setDeleteClick={setDeleteClick}
+        deleteCont={deleteCont}
+        id={id}
+        api_end_point="http://localhost:8080/api/v1/get_student"
+        onTimeDelete={onTimeDelete}
+      />}
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -106,8 +127,8 @@ const ViewStudents = () => {
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStudents.length > 0 ? (
-                  filteredStudents.map((s, i) => (
+                {students.length > 0 ? (
+                  students.map((s, i) => (
                     <tr
                       key={i}
                       className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all"
@@ -159,7 +180,7 @@ const ViewStudents = () => {
                             <FaEdit className="group-hover:scale-110 transition" />
                           </button>
                           <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group">
-                            <FaTrash className="group-hover:scale-110 transition" />
+                            <FaTrash className="group-hover:scale-110 transition" onClick={() => handleDelete(s._id)} />
                           </button>
                         </div>
                       </td>
@@ -191,7 +212,7 @@ const ViewStudents = () => {
             <p className="text-sm text-gray-600">
               Showing{" "}
               <span className="font-semibold text-gray-900">
-                {filteredStudents.length}
+                {students.length}
               </span>{" "}
               of{" "}
               <span className="font-semibold text-gray-900">

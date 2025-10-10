@@ -68,8 +68,9 @@ exports.getAllCourse = async (req, res) => {
 }
 
 exports.getCourse = async (req, res) => {
+    const { id } = req.params
     try {
-        const course = await courseModal.findById(req.params.id);
+        const course = await courseModal.findById(id);
         if (!course) {
             return res.status(404).json({ message: "Course not found" });
         }
@@ -77,5 +78,27 @@ exports.getCourse = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server error" });
+    }
+}
+
+exports.deleteCourse = async (req, res) => {
+    const { id } = req.params
+    try {
+        const course = await courseModal.findByIdAndDelete(id)
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "course not found"
+            })
+        }
+
+
+        res.status(201).json({
+            success: true,
+            message: "course deleted succesfully!"
+        })
+    } catch (error) {
+
     }
 }

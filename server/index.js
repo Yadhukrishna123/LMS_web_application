@@ -20,10 +20,11 @@ const instructorRoutes = require("./Routes/instructorRoutes");
 
 const quizroutres = require("./Routes/QuizRoutes")
 const Attendence = require("./Routes/attendanceRoutes")
+const feeStructoreRoutes = require("./Routes/feeStructoreRoutes");
 
 const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
-
+const studentFeeRoutes = require("./Routes/studentFeRoutes")
 
 
 const app = express()
@@ -43,6 +44,9 @@ app.use("/api/v1", batchRoutes);
 app.use("/api/v1", quizroutres)
 app.use("/api/v1", Attendence)
 app.use("/api/v1", scheduleRoutes);
+app.use("/api/v1", feeStructoreRoutes);
+app.use("/api/v1", studentFeeRoutes);
+
 
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")

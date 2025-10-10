@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { FaEdit, FaTrash, FaSearch, FaBook, FaPlus } from 'react-icons/fa'
+import Delete from '../TableActions/Delete'
 
 
 
 const ViewCourses = () => {
     let [viewcourse, setviewcourse] = useState([])
+    let [deleteClick, setDeleteClick] = useState(false)
+    const deleteCont = "Are you sure that you want to delete Course?"
+    let [id, setId] = useState("")
     const getAllCourses = async () => {
         try {
             let res = await axios.get("http://localhost:8080/api/v1/get_all_courses")
@@ -18,7 +22,7 @@ const ViewCourses = () => {
         }
     }
 
-     const truncateText = (text, maxLength = 50) => {
+    const truncateText = (text, maxLength = 50) => {
         if (text.length <= maxLength) return text
         return text.substring(0, maxLength) + '...'
     }
@@ -26,8 +30,25 @@ const ViewCourses = () => {
     useEffect(() => {
         getAllCourses()
     }, [])
+
+    const handleDelete = (id) => {
+        setDeleteClick(true)
+        setId(id)
+
+    }
+    const onTimeDelete = () => {
+             setviewcourse((prev) => prev.filter((c) => c._id !== id))
+
+    }
     return (
- <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+            {deleteClick && <Delete
+                setDeleteClick={setDeleteClick}
+                deleteCont={deleteCont}
+                id={id}
+                api_end_point="http://localhost:8080/api/v1/get_course"
+                onTimeDelete={onTimeDelete}
+            />}
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header Section */}
                 <div className="mb-8">
@@ -136,19 +157,18 @@ const ViewCourses = () => {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                                                    e.level === 'Beginner' 
-                                                        ? 'bg-green-100 text-green-700 border border-green-200' 
-                                                        : e.level === 'Intermediate'
+                                                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${e.level === 'Beginner'
+                                                    ? 'bg-green-100 text-green-700 border border-green-200'
+                                                    : e.level === 'Intermediate'
                                                         ? 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                                                         : 'bg-red-100 text-red-700 border border-red-200'
-                                                }`}>
+                                                    }`}>
                                                     {e.level}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-2">
-                                                  
+
                                                     <span className="text-sm text-gray-700">{e.instructor}</span>
                                                 </div>
                                             </td>
@@ -163,7 +183,7 @@ const ViewCourses = () => {
                                                         <FaEdit className="group-hover:scale-110 transition" />
                                                     </button>
                                                     <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group">
-                                                        <FaTrash className="group-hover:scale-110 transition" />
+                                                        <FaTrash className="group-hover:scale-110 transition" onClick={() => handleDelete(e._id)} />
                                                     </button>
                                                 </div>
                                             </td>

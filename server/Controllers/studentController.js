@@ -58,6 +58,48 @@ exports.getAllStudent = async (req, res) => {
   }
 };
 
+exports.getStudent = async (req, res) => {
+  const { id } = req.params
+  try {
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: "student not found" });
+    }
+    if (student) {
+      res.status(200).json({
+        success: true,
+        message: "student fatched successfully"
+      })
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+exports.deleteStudent = async (req, res) => {
+  const { id } = req.params
+  try {
+    const student = await Student.findByIdAndDelete(id)
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "student not found"
+      })
+    }
+
+
+    res.status(201).json({
+      success: true,
+      message: "student deleted succesfully!"
+    })
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 
 // 🔹 Assign student to a batch

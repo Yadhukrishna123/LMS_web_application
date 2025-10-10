@@ -47,6 +47,10 @@ import Attenencetracking from './components/Attendence/Attenencetracking';
 import EditProfile from './components/MyProfile/EditProfile';
 import AddSchedule from './components/AddSchedule/AddSchedule';
 import ViewSchedule from './components/AddSchedule/ViewSchedule';
+import FeeDashBoard from './components/FeeManagement/FeeDashBoard';
+import FeeStructure from './components/FeeManagement/FeeStructure';
+import StudentFees from './components/FeeManagement/StudentFees';
+import FeeCollection from './components/FeeManagement/FeeCollection';
 
 
 
@@ -85,8 +89,8 @@ function App() {
           <Route path="/Edit_profile/:id" element={<EditProfile />} />
           <Route path="/active_batches" element={<ActiveBatches />} />
           <Route path="/add_new_batches" element={<ScheduleBatch />} />
-           <Route path="/add_schedule" element={<AddSchedule />} />
-              <Route path="/view_schedules" element={<ViewSchedule />} />
+          <Route path="/add_schedule" element={<AddSchedule />} />
+          <Route path="/view_schedules" element={<ViewSchedule />} />
           <Route path="/add_students" element={<AddStudents />} />
           <Route path="/view_students" element={<ViewStudents />} />
 
@@ -96,6 +100,13 @@ function App() {
 
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
+
+          <Route path="/fee_dash_board" element={<FeeDashBoard />} />
+          <Route path="/fee_structure" element={<FeeStructure />} />
+           <Route path="/student_fees" element={<StudentFees />} />
+                      <Route path="/fee_collection" element={<FeeCollection />} />
+
+
 
         </Route>
       </Routes>

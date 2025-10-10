@@ -8,6 +8,7 @@ const Users = () => {
     let [users, setUsers] = useState([])
     let [search, setSearch] = useState("")
     let [deleteClick, setDeleteClick] = useState(false)
+    const [id, setId] = useState("")
     const deleteCont = "Are you sure that you want to delete user?"
     const getAllUsers = async () => {
         let res = await axios.get(`http://localhost:8080/api/v1/get_all_user?firstname=${search}`)
@@ -19,15 +20,23 @@ const Users = () => {
         getAllUsers()
     }, [search])
 
-    const handleDelete = () => {
+    const handleDelete = (id) => {
         setDeleteClick(true)
+        setId(id)
+    }
+    const onTimeDelete = () => {
+        setUsers((prev) => prev.filter((u) => u._id !== id))
+
     }
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
 
             {deleteClick && <Delete
-             setDeleteClick ={setDeleteClick}
-            deleteCont={deleteCont}
+                setDeleteClick={setDeleteClick}
+                deleteCont={deleteCont}
+                id={id}
+                api_end_point="http://localhost:8080/api/v1/get_user"
+                onTimeDelete={onTimeDelete}
             />}
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header Section */}
@@ -146,10 +155,10 @@ const Users = () => {
                                                     <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
                                                         <FaEdit className="group-hover:scale-110 transition" />
                                                     </button>
-                                                    <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" onClick={handleDelete}>
+                                                    <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" >
 
                                                         <FaTrash className="group-hover:scale-110 transition"
-                                                            onClick={handleDelete}
+                                                            onClick={() => handleDelete(u._id)}
                                                         />
                                                     </button>
                                                 </div>
