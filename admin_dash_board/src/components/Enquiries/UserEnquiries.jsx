@@ -11,6 +11,8 @@ const UserEnquiries = () => {
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 5;
   const [deleteClick, setDeleteClick] = useState(false);
+    const [id, setId] = useState("");
+
   const deleteCont = "Are you sure that you delete enquiry";
 
   const getAllEnquiries = async (page = 1) => {
@@ -32,8 +34,13 @@ const UserEnquiries = () => {
     getAllEnquiries(1);
   }, [search]);
 
-  const handleDelete = () => setDeleteClick(true);
-
+  const handleDelete = (id) => {
+    setDeleteClick(true);
+    setId(id)
+  }
+  const onTimeDelete = () => {
+      setEnquiry((prev)=>prev.filter((e)=>e._id === id))
+  }
   const getStatusConfig = (status) => {
     switch (status?.toLowerCase()) {
       case 'resolved':
@@ -54,7 +61,11 @@ const UserEnquiries = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      {deleteClick && <Delete setDeleteClick={setDeleteClick} deleteCont={deleteCont} />}
+      {deleteClick && <Delete
+       setDeleteClick={setDeleteClick}
+        deleteCont={deleteCont} 
+        onTimeDelete={onTimeDelete}
+        />}
       <div className="w-full max-w-7xl mx-auto">
 
         {/* Header */}
@@ -131,21 +142,25 @@ const UserEnquiries = () => {
                           <p className="text-xs text-gray-500">{e.email}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-md line-clamp-2">{e.message}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600 max-w-md line-clamp-2"></td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
-                          {statusConfig.icon}{statusConfig.label}
+                          {e.message}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center flex justify-center gap-2">
+                      <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
                         <button className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition group" title="Reply">
                           <FaEnvelope className="group-hover:scale-110 transition" />
                         </button>
-                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group" title="Edit">
+                       
+                       
+                      </td>
+                      <td  className='px-6 py-4 whitespace-nowrap'>
+                       <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group" title="Edit">
                           <FaEdit className="group-hover:scale-110 transition" />
                         </button>
                         <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" title="Delete" onClick={handleDelete}>
-                          <FaTrash className="group-hover:scale-110 transition" />
+                          <FaTrash className="group-hover:scale-110 transition" onClick={()=>handleDelete(e._id)}/>
                         </button>
                       </td>
                     </tr>

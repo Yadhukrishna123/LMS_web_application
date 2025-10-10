@@ -114,8 +114,9 @@ const Users = () => {
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {users.length > 0 ? (
                                     users.map((u, i) => (
-                                        <tr key={u._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
-                                          
+                                        <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                                            <td className="px-6 py-4 whitespace-nowrap">{i + 1}</td>
+
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <p className="text-sm font-semibold text-gray-900">
                                                     {u.firstname} {u.lastname}
@@ -129,13 +130,12 @@ const Users = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span
-                                                    className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                                                        u.role === 'admin'
+                                                    className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${u.role === 'admin'
                                                             ? 'bg-purple-100 text-purple-700 border border-purple-200'
                                                             : u.role === 'instructor'
-                                                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                            : 'bg-green-100 text-green-700 border border-green-200'
-                                                    }`}
+                                                                ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                                : 'bg-green-100 text-green-700 border border-green-200'
+                                                        }`}
                                                 >
                                                     {u.role}
                                                 </span>
@@ -192,11 +192,10 @@ const Users = () => {
                                     <button
                                         key={i}
                                         onClick={() => getAllUsers(i + 1)}
-                                        className={`px-4 py-2 border rounded-lg text-sm font-medium ${
-                                            currentPage === i + 1
+                                        className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1
                                                 ? 'bg-blue-600 text-white'
                                                 : 'border-gray-300 text-gray-700'
-                                        } hover:bg-white transition`}
+                                            } hover:bg-white transition`}
                                     >
                                         {i + 1}
                                     </button>
