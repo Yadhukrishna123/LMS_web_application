@@ -97,29 +97,24 @@ const UploadedVideos = () => {
                       </td>
                       <td className="px-6 py-4 flex items-center gap-3">
                         <div className="relative group">
-                          <img src={v.image} alt={v.title} className="w-24 h-16 rounded-lg object-cover border-2 border-blue-200 shadow-md"/>
-                          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <FaPlay className="text-white text-xl" />
-                          </div>
+                          <img src={v.image} alt={v.title} className="w-24 h-16 rounded-lg object-cover border-2 border-blue-200 shadow-md" />
+
                         </div>
                         <div>
                           <p className="text-sm font-bold text-gray-900">{v.title}</p>
-                          <p className="text-xs text-gray-500">Duration: {v.duration}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 max-w-xs line-clamp-2">{v.description}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1 bg-purple-50 px-3 py-1 rounded-full">
-                            <FaEye className="text-purple-600 text-xs" />
-                            <span className="text-xs font-semibold text-purple-700">{v.views}</span>
-                          </div>
-                        </div>
+                        {v.description}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        status
                       </td>
                       <td className="px-6 py-4 text-center">
                         {v.video ? (
                           <a href={v.video} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-lg shadow-md transition transform hover:scale-105">
-                            <FaPlay className="text-sm"/> View Video
+                            <FaPlay className="text-sm" /> View Video
                           </a>
                         ) : (
                           <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 font-medium rounded-lg">No Video</span>

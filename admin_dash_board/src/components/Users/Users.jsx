@@ -8,21 +8,24 @@ const Users = () => {
     const [search, setSearch] = useState("");
     const [deleteClick, setDeleteClick] = useState(false);
     const [id, setId] = useState("");
-    const deleteCont = "Are you sure that you want to delete user?";
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalUsers, setTotalUsers] = useState(0);
     const itemsPerPage = 5;
 
+    const deleteCont = "Are you sure that you want to delete user?";
+
+    // Fetch all users
     const getAllUsers = async (page = 1) => {
         try {
             const res = await axios.get(
                 `http://localhost:8080/api/v1/get_all_user?page=${page}&limit=${itemsPerPage}&firstname=${search}`
             );
+
             setUsers(res.data.users || []);
-            setCurrentPage(res.data.page);
-            setTotalPages(res.data.totalPages);
-            setTotalUsers(res.data.total);
+            setCurrentPage(res.data.page || 1);
+            setTotalPages(res.data.totalPages || 1);
+            setTotalUsers(res.data.total || 0);
         } catch (err) {
             console.error("Error fetching users:", err);
         }
@@ -56,15 +59,13 @@ const Users = () => {
 
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl">
-                            <FaUsers className="text-white text-2xl" />
-                        </div>
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900">User Management</h2>
-                            <p className="text-gray-600">Manage and monitor all users</p>
-                        </div>
+                <div className="mb-8 flex items-center gap-3">
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl">
+                        <FaUsers className="text-white text-2xl" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-bold text-gray-900">User Management</h2>
+                        <p className="text-gray-600">Manage and monitor all users</p>
                     </div>
                 </div>
 
@@ -80,6 +81,7 @@ const Users = () => {
                             className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                         />
                     </div>
+
                     <div className="flex items-center gap-4 mt-4 md:mt-0">
                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
                             <p className="text-sm text-gray-600">Total Users</p>
@@ -113,21 +115,11 @@ const Users = () => {
                                 {users.length > 0 ? (
                                     users.map((u, i) => (
                                         <tr key={u._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                                          
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg text-blue-700 font-semibold text-sm">
-                                                    {(currentPage - 1) * itemsPerPage + i + 1}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                                        {u.firstname?.charAt(0)}
-                                                        {u.lastname?.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-semibold text-gray-900">{`${u.firstname} ${u.lastname}`}</p>
-                                                    </div>
-                                                </div>
+                                                <p className="text-sm font-semibold text-gray-900">
+                                                    {u.firstname} {u.lastname}
+                                                </p>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <p className="text-sm text-gray-600">{u.email}</p>
@@ -184,18 +176,18 @@ const Users = () => {
                     {totalPages > 1 && (
                         <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
                             <div className="text-sm text-gray-600">
-                                Showing <span className="font-semibold text-gray-900">{users.length}</span> of{" "}
+                                Showing{" "}
+                                <span className="font-semibold text-gray-900">{users.length}</span> of{" "}
                                 <span className="font-semibold text-gray-900">{totalUsers}</span> users
                             </div>
                             <div className="flex gap-2">
                                 <button
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === 1}
                                     onClick={() => getAllUsers(currentPage - 1)}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                 >
                                     Previous
                                 </button>
-
                                 {[...Array(totalPages)].map((_, i) => (
                                     <button
                                         key={i}
@@ -209,11 +201,10 @@ const Users = () => {
                                         {i + 1}
                                     </button>
                                 ))}
-
                                 <button
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === totalPages}
                                     onClick={() => getAllUsers(currentPage + 1)}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                 >
                                     Next
                                 </button>

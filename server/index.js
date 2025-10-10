@@ -20,11 +20,9 @@ const instructorRoutes = require("./Routes/instructorRoutes");
 const quizroutres = require("./Routes/QuizRoutes")
 const Attendence = require("./Routes/attendanceRoutes")
 const feeStructoreRoutes = require("./Routes/feeStructoreRoutes");
-
 const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
 const studentFeeRoutes = require("./Routes/studentFeRoutes")
-
 const paymentRoutes = require("./Routes/paymentRoutes");
 
 
