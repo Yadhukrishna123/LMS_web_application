@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from 'react-toastify'
+import { useContext } from "react";
+import { AllCourseDetail } from "../AllCourseContext/Context";
 
 
 const QuizList = () => {
@@ -10,6 +12,10 @@ const QuizList = () => {
   const [showResult, setShowResult] = useState(false);
   let [quizz, setQuizz] = useState([])
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AllCourseDetail)
+  const [selectedOptionname, setSelectedOptionNAme] = useState("")
+  const [userAnswers, setUserAnswers] = useState([]);
+  const navigate = useNavigate()
 
 
   const getAllQuizess = async () => {
@@ -61,8 +67,10 @@ const QuizList = () => {
 
 
 
-  const handleOptionChange = (optionKey) => {
+  const handleOptionChange = (optionKey, value) => {
     setSelectedOption(optionKey);
+    setSelectedOptionNAme(value)
+
   };
 
   const handleSubmit = () => {
@@ -72,16 +80,49 @@ const QuizList = () => {
     }
 
     const currentQuestion = quizz[currentIndex];
+
+    const selectedAnswerValue = currentQuestion.options[selectedOption];
+    const correctAnswerValue = currentQuestion.options[currentQuestion.rightAnswer];
+
+    const currentAnswer = {
+      question: currentQuestion.question,
+      selectedAnswer: selectedAnswerValue,
+      correctAnswer: correctAnswerValue,
+    };
+
     if (selectedOption === currentQuestion.rightAnswer) {
-      setScore(score + 1);
-      
+      setScore((prev) => prev + 1);
     }
 
+    const sendQuizResult = async (answerData) => {
+      try {
+        const payload = {
+          userName: `${user.firstname} ${user.lastname}`,
+          email: user.email,
+          score: score,
+          totalQuestions: quizz.length,
+          answers: answerData
+
+        };
+        console.log(payload);
+        let subRes = await axios.post("http://localhost:8080/api/v1/send_quiz_result", payload);
+        console.log(subRes);
+      } catch (error) {
+        console.error("Error sending quiz result:", error);
+      }
+    };
+
+    // Add current answer to the array
+    let updatedAnswers = [...userAnswers, currentAnswer];
+
     if (currentIndex + 1 < quizz.length) {
+      setUserAnswers(updatedAnswers);
       setCurrentIndex(currentIndex + 1);
       setSelectedOption("");
     } else {
+      setUserAnswers(updatedAnswers);
       setShowResult(true);
+      sendQuizResult(updatedAnswers);
     }
   };
 
@@ -133,7 +174,7 @@ const QuizList = () => {
                       name="option"
                       // value={key}
                       checked={selectedOption === key}
-                      onChange={() => handleOptionChange(key)}
+                      onChange={() => handleOptionChange(key, value)}
                       className="mr-4 w-5 h-5 text-indigo-600"
                     />
                     <div className="flex items-center">
@@ -185,6 +226,7 @@ const QuizList = () => {
                 setCurrentIndex(0);
                 setScore(0);
                 setSelectedOption("");
+                setUserAnswers([])
               }}
               className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg px-10 py-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg"
             >
