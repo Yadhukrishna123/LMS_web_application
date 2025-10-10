@@ -48,9 +48,18 @@ const ViewSchedule = () => {
       setLoading(false);
     }
   };
+<<<<<<< HEAD
 
   useEffect(() => {
     getAllSchedule();
+=======
+  //console.log(schedules);
+
+  useEffect(() => {
+    getAllSchedule();
+   // console.log(schedules);
+
+>>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
   }, []);
 
   const changeWeek = (direction) => {
@@ -124,6 +133,7 @@ const isMatchingDay = (schedule, day) => {
             Loading schedules...
           </div>
         ) : (
+<<<<<<< HEAD
           <div className="overflow-x-auto bg-white rounded-xl shadow-md">
             <table className="w-full border-collapse min-w-[900px]">
               <thead>
@@ -189,6 +199,26 @@ const isMatchingDay = (schedule, day) => {
                 ))}
               </tbody>
             </table>
+=======
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" >
+            {schedules.map((schedule, index) => (
+              <div
+              key={index}
+              className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-blue-600"
+              onClick={() => handleShowPopup(true, schedule._id)}
+            >
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {schedule.course}
+              </h3>
+              <p className="text-sm text-blue-200 mb-1">
+                Batch: {schedule.batch}
+              </p>
+              <p className="text-sm text-blue-200 mb-1">
+                Instructor: {schedule.instructor}
+              </p>
+            </div>
+            ))}
+>>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
           </div>
         )}
       </div>

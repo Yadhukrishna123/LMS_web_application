@@ -43,6 +43,7 @@ exports.addInstructor = async (req, res) => {
     }
 }
 
+<<<<<<< HEAD
 exports.viewInstructors = async (rea, res) => {
     try {
         let query = {};
@@ -117,3 +118,32 @@ exports.deleteInstructor = async (req, res) => {
         });
     }
 }
+=======
+exports.viewInstructors = async (req, res) => {
+    try {
+        const { page = 1, limit = 5, search } = req.query;
+        const query = {};
+
+        if (search) {
+            query.name = { $regex: search, $options: "i" };
+        }
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const total = await instructorModel.countDocuments(query);
+        const data = await instructorModel.find(query).skip(skip).limit(parseInt(limit));
+
+        res.status(200).json({
+            success: true,
+            data,
+            page: parseInt(page),
+            totalPages: Math.ceil(total / parseInt(limit)),
+            totalItems: total
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+>>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c

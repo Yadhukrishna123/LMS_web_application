@@ -49,19 +49,30 @@ exports.createBatch = async (req, res) => {
 
 exports.viewAllBatches = async (req, res) => {
     try {
-        const { batchName, status } = req.query;
-        let query = {};
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const batchName = req.query.batchName || "";
+        const status = req.query.status || "";
 
+        let query = {};
         if (batchName) query.batchName = { $regex: batchName, $options: "i" };
         if (status) query.status = status;
 
+        const totalItems = await batchmodals.countDocuments(query);
+        const totalPages = Math.ceil(totalItems / limit);
+
         const batches = await batchmodals.find(query)
-            .populate("course", "title")       
-            .populate("instructor", "name");   
+            .populate("course", "title")
+            .populate("instructor", "name")
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         res.status(200).json({
             success: true,
             data: batches,
+            page,
+            totalPages,
+            totalItems,
         });
     } catch (error) {
         res.status(500).json({
@@ -69,4 +80,17 @@ exports.viewAllBatches = async (req, res) => {
             message: error.message,
         });
     }
+};
+
+exports.getAllBatches = async (req, res) => {
+  try {
+    const batches = await batchmodals
+      .find()
+      .populate("course", "title")
+      .populate("instructor", "name");
+
+    res.status(200).json({ success: true, data: batches });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };

@@ -47,10 +47,13 @@ import Attenencetracking from './components/Attendence/Attenencetracking';
 import EditProfile from './components/MyProfile/EditProfile';
 import AddSchedule from './components/AddSchedule/AddSchedule';
 import ViewSchedule from './components/AddSchedule/ViewSchedule';
+
 import FeeDashBoard from './components/FeeManagement/FeeDashBoard';
 import FeeStructure from './components/FeeManagement/FeeStructure';
 import StudentFees from './components/FeeManagement/StudentFees';
 import FeeCollection from './components/FeeManagement/FeeCollection';
+
+import PaymentsPage from './components/Payment/PaymentPage';
 
 
 
@@ -85,7 +88,6 @@ function App() {
           <Route path="/login" element={<LoginInstitution />} />
           <Route path="/my_profile" element={<ProtectedRoutes isAuthentication={auth}><MyProfile /></ProtectedRoutes>} />
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />
-          {/* <Route path="/edit_profile" element={<ProtectedRoutes isAuthentication={auth}><EditProfile /></ProtectedRoutes>} /> */}
           <Route path="/Edit_profile/:id" element={<EditProfile />} />
           <Route path="/active_batches" element={<ActiveBatches />} />
           <Route path="/add_new_batches" element={<ScheduleBatch />} />
@@ -101,12 +103,12 @@ function App() {
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
 
+
           <Route path="/fee_dash_board" element={<FeeDashBoard />} />
           <Route path="/fee_structure" element={<FeeStructure />} />
-           <Route path="/student_fees" element={<StudentFees />} />
-                      <Route path="/fee_collection" element={<FeeCollection />} />
-
-
+          <Route path="/student_fees" element={<StudentFees />} />
+          <Route path="/fee_collection" element={<FeeCollection />} />
+         <Route path="/paymentpage" element={<PaymentsPage />} />
 
         </Route>
       </Routes>

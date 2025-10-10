@@ -12,12 +12,21 @@ import UserPage from './Component/UserPage/UserPage'
 import CoursesSection from './Component/Courses/Courses'
 import Footer from './Component/Footer/Footer'
 import About from './Component/About/About'
+
 import Context, { AllCourseDetail } from './Component/AllCourseContext/Context'
 import QuizList from './Component/Quiz/QuizList'
 // import UserQuiz from './Component/Quiz/UserQuiz'
 import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
 import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
 import ProtectedRoutes from './Utils/ProtectedRoutes'
+
+
+import Context from './Component/AllCourseContext/Context'
+import FoegetPasswordOne from './Component/ForgetPassword/FoegetPasswordOne'
+import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
+import QuizList from './Component/Quiz/QuizList'
+import TakeQuiz from './Component/Quiz/UserQuiz'
+import CheckoutPage from './Component/Purchase/CheckoutPage'
 
 
 
@@ -52,6 +61,8 @@ function App() {
 
 
         <Route path="/user_page" element={<UserPage />} />
+        <Route path="/checkout/:courseId" element={<CheckoutPage />} />
+
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={authentication}><QuizList /> </ProtectedRoutes>} />
         {/* <Route path="/take_quiz/:quizId" element={<UserQuiz userId={user?._id} />} /> */}
@@ -60,6 +71,8 @@ function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
+
+
 
 
   )

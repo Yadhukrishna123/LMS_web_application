@@ -12,7 +12,7 @@ const Detailpage = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:8080/courses/${id}`)
+      .get(`http://localhost:8080/api/v1/courses/${id}`)
       .then((res) => {
         setCourse(res.data);
         setLoading(false);
@@ -164,7 +164,8 @@ const Detailpage = () => {
 
       {/* Buttons */}
       <div className="flex gap-4 mt-6">
-        <button className="bg-purple-500 text-white px-6 py-3 rounded hover:bg-purple-600">
+        <button onClick={() => navigate(`/checkout/${course._id}`)}
+         className="bg-purple-500 text-white px-6 py-3 rounded hover:bg-purple-600">
           Enroll Now
         </button>
         <button

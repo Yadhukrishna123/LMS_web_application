@@ -47,64 +47,98 @@ const AttendanceListing = () => {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE}/view_all_batches`);
+        const res = await fetch(`${API_BASE}/get_all_batches`);
         const data = await res.json();
         if (data.success) setBatches(data.data);
       } catch {
         setError("Failed to fetch batches");
-      } finally {
-        setLoading(false);
       }
     };
     fetchBatches();
   }, []);
 
   // Fetch all students once
-  useEffect(() => {
-    const fetchAllStudents = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE}/view_students`);
-        const data = await res.json();
-        if (data.success) {
-          setAllStudents(
-            data.data.map((s) => ({
-              ...s,
-              status: "unmarked",
-              time: "--:--",
-              avatar: getInitials(s.name),
-            }))
-          );
-        }
-      } catch {
-        setError("Failed to fetch students");
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  const fetchAllStudents = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}/view_students`);
+      const data = await res.json();
+      if (data.success) {
+        const uniqueStudents = Array.from(new Map(data.data.map((s) => [s._id, s])).values());
+        setAllStudents(uniqueStudents);
+
+        // ✅ Show all students by default
+        setStudents(
+          uniqueStudents.map((s) => ({
+            id: s._id,
+            name: s.name,
+            rollNo: s.rollNo || "-",
+            email: s.email,
+            status: "unmarked",
+            time: "--:--",
+            avatar: getInitials(s.name),
+          }))
+        );
       }
-    };
-    fetchAllStudents();
-  }, []);
+    } catch {
+      setError("Failed to fetch students");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchAllStudents();
+}, []);
 
-  // Update students when batch changes
-  useEffect(() => {
-    const filtered = batch
-      ? allStudents.filter((s) => String(s.batch?._id || s.batch) === String(batch))
-      : [...allStudents];
+// Filter students by batch (only if a batch is selected)
+useEffect(() => {
+  if (!allStudents.length) return;
 
-    const mapped = filtered.map((s) => ({
-      id: s._id,
-      name: s.name,
-      rollNo: s.rollNo || "-",
-      email: s.email,
-      status: s.status || "unmarked",
-      time: s.time || "--:--",
-      avatar: s.avatar,
-    }));
-
-    setStudents(mapped);
+  if (!batch) {
+    // No batch selected, show all students
+    setStudents(
+      allStudents.map((s) => ({
+        id: s._id,
+        name: s.name,
+        rollNo: s.rollNo || "-",
+        email: s.email,
+        status: "unmarked",
+        time: "--:--",
+        avatar: getInitials(s.name),
+      }))
+    );
     setAttendanceId(null);
-  }, [batch, allStudents]);
+    return;
+  }
+
+  // Batch is selected, fetch students for that batch
+  const fetchBatchStudents = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}/students_by_batch/${batch}`);
+      const data = await res.json();
+      if (data.success) {
+        setStudents(
+          data.data.map((s) => ({
+            id: s._id,
+            name: s.name,
+            rollNo: s.rollNo || "-",
+            email: s.email,
+            status: "unmarked",
+            time: "--:--",
+            avatar: getInitials(s.name),
+          }))
+        );
+        setAttendanceId(null);
+      }
+    } catch {
+      setError("Failed to fetch batch students");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchBatchStudents();
+}, [batch, allStudents]);
 
   // Fetch existing attendance
   const fetchOrCreateAttendance = async () => {
