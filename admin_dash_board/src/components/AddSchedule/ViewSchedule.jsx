@@ -48,18 +48,13 @@ const ViewSchedule = () => {
       setLoading(false);
     }
   };
-<<<<<<< HEAD
+
 
   useEffect(() => {
     getAllSchedule();
-=======
-  //console.log(schedules);
 
-  useEffect(() => {
-    getAllSchedule();
-   // console.log(schedules);
 
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
+ 
   }, []);
 
   const changeWeek = (direction) => {
@@ -96,7 +91,7 @@ const isMatchingDay = (schedule, day) => {
       {showPopup && <SchedulePopup />}
 
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
@@ -127,99 +122,98 @@ const isMatchingDay = (schedule, day) => {
           </div>
         </div>
 
-        {/* Schedule Grid */}
+        {/* Schedule Content */}
         {loading ? (
           <div className="text-center py-10 text-gray-600 text-lg">
             Loading schedules...
           </div>
         ) : (
-<<<<<<< HEAD
-          <div className="overflow-x-auto bg-white rounded-xl shadow-md">
-            <table className="w-full border-collapse min-w-[900px]">
-              <thead>
-                <tr>
-                  <th className="w-24 bg-blue-600 text-white p-3 text-left">
-                    Time
-                  </th>
-                  {daysOfWeek.map((day, i) => (
-                    <th
-                      key={i}
-                      className="bg-blue-600 text-white text-center p-3 border-l"
-                    >
-                      <div className="flex flex-col items-center">
-                        <span className="font-semibold">
-                          {day.toLocaleDateString("en-US", { weekday: "short" })}
-                        </span>
-                        <span className="text-sm opacity-90">
-                          {day.getDate()}{" "}
-                          {day.toLocaleDateString("en-US", { month: "short" })}{" "}
-                          {day.getFullYear()}
-                        </span>
-                      </div>
+          <>
+            {/* Weekly Table View */}
+            <div className="overflow-x-auto bg-white rounded-xl shadow-md">
+              <table className="w-full border-collapse min-w-[900px]">
+                <thead>
+                  <tr>
+                    <th className="w-24 bg-blue-600 text-white p-3 text-left">
+                      Time
                     </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {timeSlots.map((time, i) => (
-                  <tr key={i} className="border-t hover:bg-blue-50">
-                    <td className="p-3 font-semibold text-gray-700">{time}</td>
-
-                    {daysOfWeek.map((day, j) => {
-                      const schedule = schedules.find(
-                        (s) => isWithinTimeRange(s, time) && isMatchingDay(s, day)
-                      );
-
-                      return (
-                        <td
-                          key={j}
-                          className="h-24 border-l text-center align-top p-2"
-                        >
-                          {schedule ? (
-                            <div
-                              onClick={() =>
-                                handleShowPopup(true, schedule._id)
-                              }
-                              className="bg-blue-600 text-white rounded-lg p-2 text-sm cursor-pointer hover:bg-blue-700 transition"
-                            >
-                              <p className="font-semibold">{schedule.course}</p>
-                              <p className="text-xs">{schedule.batch}</p>
-                              <p className="text-xs">
-                                {schedule.startTime} - {schedule.endTime}
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="text-gray-300 text-xs">—</div>
-                          )}
-                        </td>
-                      );
-                    })}
+                    {daysOfWeek.map((day, i) => (
+                      <th
+                        key={i}
+                        className="bg-blue-600 text-white text-center p-3 border-l"
+                      >
+                        <div className="flex flex-col items-center">
+                          <span className="font-semibold">
+                            {day.toLocaleDateString("en-US", { weekday: "short" })}
+                          </span>
+                          <span className="text-sm opacity-90">
+                            {day.getDate()}{" "}
+                            {day.toLocaleDateString("en-US", { month: "short" })}{" "}
+                            {day.getFullYear()}
+                          </span>
+                        </div>
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-=======
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" >
-            {schedules.map((schedule, index) => (
-              <div
-              key={index}
-              className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-blue-600"
-              onClick={() => handleShowPopup(true, schedule._id)}
-            >
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {schedule.course}
-              </h3>
-              <p className="text-sm text-blue-200 mb-1">
-                Batch: {schedule.batch}
-              </p>
-              <p className="text-sm text-blue-200 mb-1">
-                Instructor: {schedule.instructor}
-              </p>
+                </thead>
+
+                <tbody>
+                  {timeSlots.map((time, i) => (
+                    <tr key={i} className="border-t hover:bg-blue-50">
+                      <td className="p-3 font-semibold text-gray-700">{time}</td>
+                      {daysOfWeek.map((day, j) => {
+                        const schedule = schedules.find(
+                          (s) => isWithinTimeRange(s, time) && isMatchingDay(s, day)
+                        );
+                        return (
+                          <td
+                            key={j}
+                            className="h-24 border-l text-center align-top p-2"
+                          >
+                            {schedule ? (
+                              <div
+                                onClick={() => handleShowPopup(true, schedule._id)}
+                                className="bg-blue-600 text-white rounded-lg p-2 text-sm cursor-pointer hover:bg-blue-700 transition"
+                              >
+                                <p className="font-semibold">{schedule.course}</p>
+                                <p className="text-xs">{schedule.batch}</p>
+                                <p className="text-xs">
+                                  {schedule.startTime} - {schedule.endTime}
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="text-gray-300 text-xs">—</div>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            ))}
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
-          </div>
+
+            {/* Grid Card View */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
+              {schedules.map((schedule, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-blue-600"
+                  onClick={() => handleShowPopup(true, schedule._id)}
+                >
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {schedule.course}
+                  </h3>
+                  <p className="text-sm text-blue-200 mb-1">
+                    Batch: {schedule.batch}
+                  </p>
+                  <p className="text-sm text-blue-200 mb-1">
+                    Instructor: {schedule.instructor}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

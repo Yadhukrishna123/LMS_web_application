@@ -1,236 +1,174 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaSearch, FaUserGraduate, FaPlus, FaBook, FaCalendar } from 'react-icons/fa';
-import Delete from "../TableActions/Delete";
+import { FaTrashAlt, FaSearch } from "react-icons/fa";
 
 const ViewStudents = () => {
   const [students, setStudents] = useState([]);
-<<<<<<< HEAD
-  const [search, setSearch] = useState("")
-  let [deleteClick, setDeleteClick] = useState(false)
-  let [id, setId] = useState("")
-  const deleteCont = "Are you sure that you want to delete student?"
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
+  const lastIndex = currentPage * recordsPerPage;
+  const firstIndex = lastIndex - recordsPerPage;
+  const currentStudents = filtered.slice(firstIndex, lastIndex);
+  const totalPages = Math.ceil(filtered.length / recordsPerPage);
+
+  // Fetch students
   const getStudents = async () => {
     try {
-      let res = await axios.get("http://localhost:8080/api/v1/view_students");
-      console.log(res)
-      setStudents(res.data.data);
-=======
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const itemsPerPage = 5;
-
-  const getStudents = async (page = 1) => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/v1/view_students", {
-        params: { page, limit: itemsPerPage, search },
-      });
-      setStudents(res.data.data || []);
-      setCurrentPage(res.data.page);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
+      const res = await axios.get("http://localhost:8080/api/v1/get_students");
+      setStudents(res.data.students || []);
+      setFiltered(res.data.students || []);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching students:", error);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
+  // Delete student
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this student?")) return;
+    try {
+      await axios.delete(`http://localhost:8080/api/v1/delete_student/${id}`);
+      setStudents((prev) => prev.filter((s) => s._id !== id));
+      setFiltered((prev) => prev.filter((s) => s._id !== id));
+    } catch (err) {
+      console.error("Error deleting student:", err);
+    }
+  };
+
+  // Search filter
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearch(value);
+    setFiltered(
+      students.filter(
+        (s) =>
+          s.name.toLowerCase().includes(value) ||
+          s.email.toLowerCase().includes(value) ||
+          s.course.toLowerCase().includes(value)
+      )
+    );
     setCurrentPage(1);
-    getStudents(1);
-  }, [search]);
+  };
 
-  const handleDelete = (id) => {
-    setDeleteClick(true)
-    setId(id)
-  }
-
-  const onTimeDelete = () => {
-    setStudents((prev) => prev.filter((s) => s._id !== id))
-
-  }
+  useEffect(() => {
+    getStudents();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      {deleteClick && <Delete
-        setDeleteClick={setDeleteClick}
-        deleteCont={deleteCont}
-        id={id}
-        api_end_point="http://localhost:8080/api/v1/get_student"
-        onTimeDelete={onTimeDelete}
-      />}
-      <div className="w-full max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6">
         {/* Header */}
-        <div className="mb-8 flex items-center gap-3">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl">
-            <FaUserGraduate className="text-white text-2xl" />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">Student Management</h2>
-            <p className="text-gray-600">Manage and monitor all students</p>
-          </div>
-        </div>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <h1 className="text-3xl font-bold text-gray-800">View Students</h1>
 
-        {/* Controls */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-96">
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="relative w-full md:w-1/3">
+            <FaSearch className="absolute top-3 left-3 text-gray-400" />
             <input
               type="text"
+              placeholder="Search students..."
               value={search}
-              placeholder="Search by name..."
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              onChange={handleSearch}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
-
-          <div className="flex items-center gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
-              <p className="text-sm text-gray-600">Total Students</p>
-              <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
-            </div>
-            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
-              <FaPlus /> Add Student
-            </button>
-          </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-            <h3 className="text-xl font-semibold text-white">All Students</h3>
+        {/* Loading */}
+        {loading ? (
+          <div className="text-center py-10 text-gray-600 text-lg">
+            Loading students...
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Student ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Student</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Contact</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Enrolled Courses</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Registration Date</th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody className="bg-white divide-y divide-gray-200">
-                {students.length > 0 ? (
-                  students.map((s, i) => (
-<<<<<<< HEAD
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-10 text-gray-600 text-lg">
+            No students found.
+          </div>
+        ) : (
+          <>
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-200 rounded-lg">
+                <thead className="bg-blue-600 text-white">
+                  <tr>
+                    <th className="p-3 text-left">#</th>
+                    <th className="p-3 text-left">Name</th>
+                    <th className="p-3 text-left">Email</th>
+                    <th className="p-3 text-left">Course</th>
+                    <th className="p-3 text-left">Batch</th>
+                    <th className="p-3 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentStudents.map((student, index) => (
                     <tr
-                      key={i}
-                      className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all"
+                      key={student._id}
+                      className="border-t hover:bg-blue-50 transition"
                     >
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-700">
-                        {s.studentId}
+                      <td className="p-3 font-medium text-gray-700">
+                        {firstIndex + index + 1}
                       </td>
-=======
-                    <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all">
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-700">{s.studentId}</td>
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
-                      <td className="px-6 py-4 flex items-center gap-3">
-                        <img src={s.profileImage} alt={s.name} className="w-12 h-12 rounded-full object-cover border-2 border-blue-300 shadow-md" />
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900">{s.name}</p>
-                          <p className="text-xs text-gray-500">{s.email}</p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{s.phone}</td>
-                      <td className="px-6 py-4 flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
-                          <FaBook className="text-white text-sm" />
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">{s.courseEnrolled}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${s.status === "Active" ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}>
-                          {s.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 flex items-center gap-2 text-sm text-gray-600">
-                        <FaCalendar className="text-gray-400 text-sm" />
-                        {new Date(s.joinedAt).toLocaleDateString()}
-                      </td>
-<<<<<<< HEAD
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex justify-center gap-2">
-                          <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
-                            <FaEdit className="group-hover:scale-110 transition" />
-                          </button>
-                          <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group">
-                            <FaTrash className="group-hover:scale-110 transition" onClick={() => handleDelete(s._id)} />
-                          </button>
-                        </div>
-=======
-                      <td className="px-6 py-4 text-center flex justify-center gap-2">
-                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"><FaEdit className="group-hover:scale-110 transition" /></button>
-                        <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group"><FaTrash className="group-hover:scale-110 transition" /></button>
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
+                      <td className="p-3">{student.name}</td>
+                      <td className="p-3">{student.email}</td>
+                      <td className="p-3">{student.course}</td>
+                      <td className="p-3">{student.batch}</td>
+                      <td className="p-3 text-center">
+                        <button
+                          onClick={() => handleDelete(student._id)}
+                          className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition"
+                        >
+                          <FaTrashAlt />
+                        </button>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                          <FaUserGraduate className="text-gray-400 text-2xl" />
-                        </div>
-                        <p className="text-gray-500 font-medium">No students found</p>
-                        <p className="text-gray-400 text-sm">Try adjusting your search</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-<<<<<<< HEAD
-          {/* Footer */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-            <p className="text-sm text-gray-600">
-              Showing{" "}
-              <span className="font-semibold text-gray-900">
-                {students.length}
-              </span>{" "}
-              of{" "}
-              <span className="font-semibold text-gray-900">
-                {students.length}
-              </span>{" "}
-              students
-            </p>
-            <div className="flex gap-2">
-              <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">
-                Previous
-              </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-                1
-              </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">
-                Next
-              </button>
-=======
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <p className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</p>
-              <div className="flex gap-2">
-                <button disabled={currentPage === 1} onClick={() => getStudents(currentPage - 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Previous</button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button key={i} onClick={() => getStudents(i + 1)} className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'border-gray-300 text-gray-700'} hover:bg-white transition`}>{i + 1}</button>
-                ))}
-                <button disabled={currentPage === totalPages} onClick={() => getStudents(currentPage + 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Next</button>
-              </div>
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
+
+            {/* Pagination */}
+            <div className="flex justify-between items-center mt-6">
+              <p className="text-gray-600">
+                Showing {firstIndex + 1}–
+                {Math.min(lastIndex, filtered.length)} of {filtered.length}
+              </p>
+
+              <div className="flex gap-2">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className={`px-4 py-2 rounded-lg ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-500"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  Prev
+                </button>
+
+                <span className="px-4 py-2 bg-gray-100 rounded-lg text-gray-700 font-medium">
+                  {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className={`px-4 py-2 rounded-lg ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-500"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -4,26 +4,15 @@ import { FaEdit, FaSearch, FaTrash, FaUserPlus, FaUsers } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
 
 const Users = () => {
-<<<<<<< HEAD
-    let [users, setUsers] = useState([])
-    let [search, setSearch] = useState("")
-    let [deleteClick, setDeleteClick] = useState(false)
-    const [id, setId] = useState("")
-    const deleteCont = "Are you sure that you want to delete user?"
-    const getAllUsers = async () => {
-        let res = await axios.get(`http://localhost:8080/api/v1/get_all_user?firstname=${search}`)
-        console.log(res);
-        setUsers(res.data.user)
-    }
-=======
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [deleteClick, setDeleteClick] = useState(false);
+    const [id, setId] = useState("");
+    const deleteCont = "Are you sure that you want to delete user?";
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalUsers, setTotalUsers] = useState(0);
     const itemsPerPage = 5;
-    const deleteCont = "Are you sure that you want to delete user?";
 
     const getAllUsers = async (page = 1) => {
         try {
@@ -38,39 +27,33 @@ const Users = () => {
             console.error("Error fetching users:", err);
         }
     };
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
 
     useEffect(() => {
         setCurrentPage(1);
         getAllUsers(1);
     }, [search]);
 
-    const handleDelete = () => setDeleteClick(true);
-
-<<<<<<< HEAD
     const handleDelete = (id) => {
-        setDeleteClick(true)
-        setId(id)
-    }
+        setDeleteClick(true);
+        setId(id);
+    };
+
     const onTimeDelete = () => {
-        setUsers((prev) => prev.filter((u) => u._id !== id))
+        setUsers((prev) => prev.filter((u) => u._id !== id));
+    };
 
-    }
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+            {deleteClick && (
+                <Delete
+                    setDeleteClick={setDeleteClick}
+                    deleteCont={deleteCont}
+                    id={id}
+                    api_end_point="http://localhost:8080/api/v1/get_user"
+                    onTimeDelete={onTimeDelete}
+                />
+            )}
 
-            {deleteClick && <Delete
-                setDeleteClick={setDeleteClick}
-                deleteCont={deleteCont}
-                id={id}
-                api_end_point="http://localhost:8080/api/v1/get_user"
-                onTimeDelete={onTimeDelete}
-            />}
-=======
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-            {deleteClick && <Delete setDeleteClick={setDeleteClick} deleteCont={deleteCont} />}
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -127,22 +110,24 @@ const Users = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {users.length > 0 ? users.map((u, i) => (
-                                    <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg text-blue-700 font-semibold text-sm">
-                                                {(currentPage - 1) * itemsPerPage + i + 1}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                                    {u.firstname.charAt(0)}{u.lastname.charAt(0)}
+                                {users.length > 0 ? (
+                                    users.map((u, i) => (
+                                        <tr key={u._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg text-blue-700 font-semibold text-sm">
+                                                    {(currentPage - 1) * itemsPerPage + i + 1}
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-semibold text-gray-900">{`${u.firstname} ${u.lastname}`}</p>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                        {u.firstname?.charAt(0)}
+                                                        {u.lastname?.charAt(0)}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-gray-900">{`${u.firstname} ${u.lastname}`}</p>
+                                                    </div>
                                                 </div>
-<<<<<<< HEAD
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <p className="text-sm text-gray-600">{u.email}</p>
@@ -151,12 +136,15 @@ const Users = () => {
                                                 <p className="text-sm text-gray-600">{u.phone}</p>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${u.role === 'admin'
-                                                    ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                                                    : u.role === 'instructor'
-                                                        ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                        : 'bg-green-100 text-green-700 border border-green-200'
-                                                    }`}>
+                                                <span
+                                                    className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                                        u.role === 'admin'
+                                                            ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                                            : u.role === 'instructor'
+                                                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                            : 'bg-green-100 text-green-700 border border-green-200'
+                                                    }`}
+                                                >
                                                     {u.role}
                                                 </span>
                                             </td>
@@ -165,39 +153,17 @@ const Users = () => {
                                                     <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
                                                         <FaEdit className="group-hover:scale-110 transition" />
                                                     </button>
-                                                    <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" >
-
-                                                        <FaTrash className="group-hover:scale-110 transition"
-                                                            onClick={() => handleDelete(u._id)}
-                                                        />
+                                                    <button
+                                                        className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group"
+                                                        onClick={() => handleDelete(u._id)}
+                                                    >
+                                                        <FaTrash className="group-hover:scale-110 transition" />
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
-=======
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap"><p className="text-sm text-gray-600">{u.email}</p></td>
-                                        <td className="px-6 py-4 whitespace-nowrap"><p className="text-sm text-gray-600">{u.phone}</p></td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${u.role === 'admin'
-                                                ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                                                : u.role === 'instructor'
-                                                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                    : 'bg-green-100 text-green-700 border border-green-200'
-                                                }`}>{u.role}</span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"><FaEdit /></button>
-                                                <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" onClick={handleDelete}><FaTrash /></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )) : (
->>>>>>> 9ed03048aa67943d6ce3867b34a7271126eb0e1c
                                     <tr>
                                         <td colSpan="6" className="px-6 py-12 text-center">
                                             <div className="flex flex-col items-center gap-3">
@@ -218,28 +184,39 @@ const Users = () => {
                     {totalPages > 1 && (
                         <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
                             <div className="text-sm text-gray-600">
-                                Showing <span className="font-semibold text-gray-900">{users.length}</span> of <span className="font-semibold text-gray-900">{totalUsers}</span> users
+                                Showing <span className="font-semibold text-gray-900">{users.length}</span> of{" "}
+                                <span className="font-semibold text-gray-900">{totalUsers}</span> users
                             </div>
                             <div className="flex gap-2">
                                 <button
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === 1}
                                     onClick={() => getAllUsers(currentPage - 1)}
-                                >Previous</button>
+                                >
+                                    Previous
+                                </button>
 
                                 {[...Array(totalPages)].map((_, i) => (
                                     <button
                                         key={i}
                                         onClick={() => getAllUsers(i + 1)}
-                                        className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'border-gray-300 text-gray-700'} hover:bg-white transition`}
-                                    >{i + 1}</button>
+                                        className={`px-4 py-2 border rounded-lg text-sm font-medium ${
+                                            currentPage === i + 1
+                                                ? 'bg-blue-600 text-white'
+                                                : 'border-gray-300 text-gray-700'
+                                        } hover:bg-white transition`}
+                                    >
+                                        {i + 1}
+                                    </button>
                                 ))}
 
                                 <button
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
                                     disabled={currentPage === totalPages}
                                     onClick={() => getAllUsers(currentPage + 1)}
-                                >Next</button>
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
                     )}
