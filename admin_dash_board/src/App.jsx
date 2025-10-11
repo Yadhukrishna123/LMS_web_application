@@ -38,7 +38,6 @@ import AddInstructors from './components/Instructors/AddInstructors';
 
 import ViewQuizes from './components/Quizes/ViewQuizes';
 import Addquizes from './components/Quizes/Addquizes';
-import QuizSubmissions from './components/Quizes/UserSubmission';
 import AttendanceListing from './components/Attendence/AttendanceListing';
 import Attenencetracking from './components/Attendence/Attenencetracking';
 
@@ -54,6 +53,7 @@ import StudentFees from './components/FeeManagement/StudentFees';
 import FeeCollection from './components/FeeManagement/FeeCollection';
 
 import PaymentsPage from './components/Payment/PaymentPage';
+import UserSubmission from './components/Quizes/UserSubmission';
 
 
 
@@ -98,7 +98,7 @@ function App() {
 
           <Route path="/add_quizes" element={<Addquizes />} />
           <Route path="/view_quizes" element={<ViewQuizes />} />
-          <Route path="/submissions" element={<QuizSubmissions />} />
+                    <Route path="/user_submited_answer" element={<UserSubmission />} />
 
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />

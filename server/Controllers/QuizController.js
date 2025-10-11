@@ -134,3 +134,25 @@ exports.userSubmitAnswer = async (req, res) => {
     });
   }
 }
+exports.getAllSubmittedQuizz = async (req, res) => {
+   try {
+    const submitQuizz = await submitanswer.find();
+
+    if (!submitQuizz) {
+      return res.status(400).json({
+        success: false,
+        message: "Faild to fetch users submited quiz"
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      submitQuizz,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}

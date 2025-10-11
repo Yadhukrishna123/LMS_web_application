@@ -15,7 +15,7 @@ const QuizList = () => {
   const { user } = useContext(AllCourseDetail)
   const [selectedOptionname, setSelectedOptionNAme] = useState("")
   const [userAnswers, setUserAnswers] = useState([]);
-  const navigate = useNavigate()
+  // const navigete = useNavigate()
 
 
   const getAllQuizess = async () => {
@@ -61,11 +61,6 @@ const QuizList = () => {
   }
 
   let currentQuestion = quizz[currentIndex]
-
-
-
-
-
 
   const handleOptionChange = (optionKey, value) => {
     setSelectedOption(optionKey);
