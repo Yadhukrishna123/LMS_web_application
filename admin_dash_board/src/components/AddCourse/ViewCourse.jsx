@@ -16,7 +16,8 @@ const ViewCourses = () => {
   const itemsPerPage = 5;
   const deleteCont = "Are you sure you want to delete this course?";
 
-  const getAllCourses = async (page = 1) => {
+  // Fetch courses for table (paginated)
+  const getCourses = async (page = 1) => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/get_all_courses", {
         params: { title: search, page, limit: itemsPerPage },
@@ -29,13 +30,26 @@ const ViewCourses = () => {
     }
   };
 
+  // Fetch all courses (for PDF/Print)
+  const getAllCourses = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/v1/get_all_courses", {
+        params: { title: search, page: 1, limit: 1000 },
+      });
+      return res.data.data || [];
+    } catch (error) {
+      console.error("Error fetching all courses:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
-    getAllCourses();
+    getCourses();
   }, []);
 
   useEffect(() => {
     setCurrentPage(1);
-    getAllCourses(1);
+    getCourses(1);
   }, [search]);
 
   const handleDelete = (courseId) => {
@@ -52,11 +66,11 @@ const ViewCourses = () => {
     return text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
   };
 
-  const handleExportPDF = () => {
-    if (!courses || courses.length === 0) {
-      alert("No courses to export");
-      return;
-    }
+  // Export PDF
+  const handleExportPDF = async () => {
+    const allCourses = await getAllCourses();
+    if (!allCourses.length) return alert("No courses to export");
+
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text("Course List", 14, 15);
@@ -64,7 +78,7 @@ const ViewCourses = () => {
     doc.setTextColor(100);
 
     const tableColumn = ["Course", "Price", "Duration", "Level", "Instructor", "Category"];
-    const tableRows = courses.map((course) => [
+    const tableRows = allCourses.map((course) => [
       course.title || "-",
       course.price ? `₹ ${course.price}` : "-",
       course.duration || "-",
@@ -84,8 +98,41 @@ const ViewCourses = () => {
     doc.save("Courses_List.pdf");
   };
 
-  const handlePrint = () => {
-    const printContent = document.getElementById("course-table-section").innerHTML;
+  // Print all courses
+  const handlePrint = async () => {
+    const allCourses = await getAllCourses();
+    if (!allCourses.length) return alert("No courses to print");
+
+    let printTable = `
+      <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Price</th>
+            <th>Duration</th>
+            <th>Level</th>
+            <th>Instructor</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    allCourses.forEach((course) => {
+      printTable += `
+        <tr>
+          <td>${course.title || "-"}</td>
+          <td>${course.price ? `₹ ${course.price}` : "-"}</td>
+          <td>${course.duration || "-"}</td>
+          <td>${course.level || "-"}</td>
+          <td>${course.instructor?.name || course.instructor || "-"}</td>
+          <td>${course.category?.name || course.category || "-"}</td>
+        </tr>
+      `;
+    });
+
+    printTable += `</tbody></table>`;
+
     const printWindow = window.open("", "", "width=900,height=700");
     printWindow.document.write(`
       <html>
@@ -100,7 +147,7 @@ const ViewCourses = () => {
         </head>
         <body>
           <h2>Course List</h2>
-          ${printContent}
+          ${printTable}
         </body>
       </html>
     `);
@@ -110,7 +157,6 @@ const ViewCourses = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      {/* Delete Confirmation */}
       {deleteClick && (
         <Delete
           setDeleteClick={setDeleteClick}
@@ -134,7 +180,7 @@ const ViewCourses = () => {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between flex-wrap">
           <div className="relative w-full md:w-96">
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -145,7 +191,7 @@ const ViewCourses = () => {
               className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Courses</p>
               <p className="text-2xl font-bold text-blue-600">{courses?.length || 0}</p>
@@ -170,8 +216,8 @@ const ViewCourses = () => {
           </div>
         </div>
 
-        {/* Courses Table */}
-        <div id="course-table-section" className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* Table */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Courses</h3>
           </div>
@@ -238,7 +284,7 @@ const ViewCourses = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="px-6 py-12 text-center">
+                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
                           <FaBook className="text-gray-400 text-2xl" />
@@ -255,36 +301,16 @@ const ViewCourses = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <div className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</div>
-              <div className="flex gap-2">
-                <button
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                  disabled={currentPage === 1}
-                  onClick={() => getAllCourses(currentPage - 1)}
-                >
-                  Previous
-                </button>
-
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-2 flex-wrap gap-2">
+              <p className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</p>
+              <div className="flex gap-2 flex-wrap">
+                <button disabled={currentPage === 1} onClick={() => getCourses(currentPage - 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Previous</button>
                 {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => getAllCourses(i + 1)}
-                    className={`px-4 py-2 border rounded-lg text-sm font-medium ${
-                      currentPage === i + 1 ? "bg-blue-600 text-white" : "border-gray-300 text-gray-700"
-                    } hover:bg-white transition`}
-                  >
+                  <button key={i} onClick={() => getCourses(i + 1)} className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? "bg-blue-600 text-white" : "border-gray-300 text-gray-700"} hover:bg-white transition`}>
                     {i + 1}
                   </button>
                 ))}
-
-                <button
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                  disabled={currentPage === totalPages}
-                  onClick={() => getAllCourses(currentPage + 1)}
-                >
-                  Next
-                </button>
+                <button disabled={currentPage === totalPages} onClick={() => getCourses(currentPage + 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Next</button>
               </div>
             </div>
           )}

@@ -56,72 +56,106 @@ const ViewInstructors = () => {
     setInstructors((prev) => prev.filter((i) => i._id !== deleteId));
   };
 
-  // ✅ PDF Export
-  const handleExportPDF = () => {
-    if (!instructors || instructors.length === 0) {
-      alert("No instructors to export");
-      return;
-    }
-
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Instructor List", 14, 15);
-    doc.setFontSize(11);
-    doc.setTextColor(100);
-
-    const tableColumn = [
-      "Name",
-      "Email",
-      "Phone",
-      "Specialization",
-      "Experience",
-      "Qualification",
-    ];
-
-    const tableRows = instructors.map((inst) => [
-      inst.name || "-",
-      inst.email || "-",
-      inst.phone || "-",
-      inst.specialization || "-",
-      inst.experience ? `${inst.experience} years` : "-",
-      inst.qualification || "-",
-    ]);
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 25,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [59, 130, 246] },
+  const getAllInstructorsForExport = async () => {
+  try {
+    const res = await axios.get("http://localhost:8080/api/v1/view_instructor", {
+      params: { page: 1, limit: 1000, search },
     });
+    return res.data.data || [];
+  } catch (err) {
+    console.error("Error fetching all instructors:", err);
+    return [];
+  }
+};
 
-    doc.save("Instructor_List.pdf");
-  };
+// PDF Export
+const handleExportPDF = async () => {
+  const allInstructors = await getAllInstructorsForExport();
+  if (!allInstructors.length) return alert("No instructors to export");
 
-  // ✅ Print functionality
-  const handlePrint = () => {
-    const printContent = document.getElementById("instructor-table-section").innerHTML;
-    const printWindow = window.open("", "", "width=900,height=700");
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Instructor List</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-            th { background-color: #f5f5f5; }
-          </style>
-        </head>
-        <body>
-          <h2>Instructor List</h2>
-          ${printContent}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-  };
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Instructor List", 14, 15);
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+
+  const tableColumn = ["Name", "Email", "Phone", "Specialization", "Experience", "Qualification"];
+  const tableRows = allInstructors.map((inst) => [
+    inst.name || "-",
+    inst.email || "-",
+    inst.phone || "-",
+    inst.specialization || "-",
+    inst.experience ? `${inst.experience} years` : "-",
+    inst.qualification || "-",
+  ]);
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 25,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [59, 130, 246] },
+  });
+
+  doc.save("Instructor_List.pdf");
+};
+
+// Print all instructors
+const handlePrint = async () => {
+  const allInstructors = await getAllInstructorsForExport();
+  if (!allInstructors.length) return alert("No instructors to print");
+
+  let printTable = `
+    <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Specialization</th>
+          <th>Experience</th>
+          <th>Qualification</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  allInstructors.forEach((inst) => {
+    printTable += `
+      <tr>
+        <td>${inst.name || "-"}</td>
+        <td>${inst.email || "-"}</td>
+        <td>${inst.phone || "-"}</td>
+        <td>${inst.specialization || "-"}</td>
+        <td>${inst.experience ? inst.experience + " years" : "-"}</td>
+        <td>${inst.qualification || "-"}</td>
+      </tr>
+    `;
+  });
+
+  printTable += `</tbody></table>`;
+
+  const printWindow = window.open("", "", "width=900,height=700");
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Instructor List</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+          th { background-color: #f5f5f5; }
+        </style>
+      </head>
+      <body>
+        <h2>Instructor List</h2>
+        ${printTable}
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { FaEdit, FaTrash, FaSearch, FaLayerGroup, FaPlus, FaFilePdf, FaPrint, FaImage } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaLayerGroup, FaPlus, FaFilePdf, FaPrint } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -16,14 +16,11 @@ const ViewCategory = () => {
 
   const deleteCont = "Are you sure that you delete category";
 
+  // Fetch paginated categories for table
   const getCategories = async (page = 1) => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/view_All_categories", {
-        params: {
-          page,
-          limit: itemsPerPage,
-          title: search
-        }
+        params: { page, limit: itemsPerPage, title: search }
       });
       setCategories(res.data.data || []);
       setCurrentPage(res.data.page || page);
@@ -31,6 +28,19 @@ const ViewCategory = () => {
       setTotalItems(res.data.totalItems || res.data.data?.length || 0);
     } catch (error) {
       console.error("Error fetching categories:", error);
+    }
+  };
+
+  // Fetch all categories for PDF/Print
+  const getAllCategories = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/api/v1/view_All_categories", {
+        params: { page: 1, limit: 1000, title: search }
+      });
+      return res.data.data || [];
+    } catch (error) {
+      console.error("Error fetching all categories:", error);
+      return [];
     }
   };
 
@@ -42,12 +52,11 @@ const ViewCategory = () => {
   const handleDelete = () => setDeleteClick(true);
   const clearFilters = () => setSearch("");
 
-  // Export PDF function
-  const handleExportPDF = () => {
-    if (!categories || categories.length === 0) {
-      alert("No categories to export");
-      return;
-    }
+  // Export PDF
+  const handleExportPDF = async () => {
+    const allCategories = await getAllCategories();
+    if (!allCategories.length) return alert("No categories to export");
+
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text("Course Categories", 14, 15);
@@ -55,7 +64,7 @@ const ViewCategory = () => {
     doc.setTextColor(100);
 
     const tableColumn = ["#", "Category", "Description"];
-    const tableRows = categories.map((cat, index) => [
+    const tableRows = allCategories.map((cat, index) => [
       index + 1,
       cat.title,
       cat.description
@@ -72,9 +81,37 @@ const ViewCategory = () => {
     doc.save("Course_Categories.pdf");
   };
 
-  // Print function
-  const handlePrint = () => {
-    const printContent = document.getElementById("category-table-section").innerHTML;
+  // Print
+  const handlePrint = async () => {
+    const allCategories = await getAllCategories();
+    if (!allCategories.length) return alert("No categories to print");
+
+    let printTable = `
+      <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Preview</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    allCategories.forEach((cat, index) => {
+      printTable += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${cat.title}</td>
+          <td>${cat.description}</td>
+          <td><img src="${cat.image && cat.image.length > 0 ? cat.image[0] : 'https://via.placeholder.com/80'}" width="80" height="60" /></td>
+        </tr>
+      `;
+    });
+
+    printTable += `</tbody></table>`;
+
     const printWindow = window.open("", "", "width=900,height=700");
     printWindow.document.write(`
       <html>
@@ -85,11 +122,12 @@ const ViewCategory = () => {
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
             th { background-color: #f5f5f5; }
+            img { border-radius: 8px; }
           </style>
         </head>
         <body>
           <h2>Course Categories</h2>
-          ${printContent}
+          ${printTable}
         </body>
       </html>
     `);
@@ -126,12 +164,7 @@ const ViewCategory = () => {
           </div>
 
           <div className="flex items-center gap-4 flex-wrap">
-            <button
-              onClick={clearFilters}
-              className="px-5 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition"
-            >
-              Clear Filters
-            </button>
+            <button onClick={clearFilters} className="px-5 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition">Clear Filters</button>
 
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Categories</p>
@@ -183,12 +216,12 @@ const ViewCategory = () => {
                         <p className="text-sm text-gray-600 max-w-md line-clamp-2">{e.description}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="relative group">
-                          <img src={e.image} alt={e.title} className="w-20 h-20 rounded-xl object-cover border-2 border-blue-200 shadow-md transition-transform group-hover:scale-105" />
-                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-xl transition-all flex items-center justify-center">
-                            <FaImage className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </div>
-                        </div>
+                        <img
+                          src={e.image && e.image.length > 0 ? e.image[0] : 'https://via.placeholder.com/80'}
+                          alt={e.title}
+                          className="w-30 h-20 rounded-xl object-cover border-2 border-blue-200 shadow-md transition-transform group-hover:scale-105"
+                          onError={(event) => { event.target.src = 'https://via.placeholder.com/80'; }}
+                        />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
                         <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition transform hover:scale-105"><FaEdit /></button>
@@ -198,9 +231,7 @@ const ViewCategory = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
-                      No categories found.
-                    </td>
+                    <td colSpan="4" className="px-6 py-12 text-center text-gray-500">No categories found.</td>
                   </tr>
                 )}
               </tbody>

@@ -51,63 +51,103 @@ const ViewStudents = () => {
     }
   };
 
-  // ✅ Export PDF
-  const handleExportPDF = () => {
-    if (!students || students.length === 0) {
-      alert("No students to export");
-      return;
-    }
-
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Students List", 14, 15);
-    doc.setFontSize(11);
-    doc.setTextColor(100);
-
-    const tableColumn = ["#", "Name", "Email", "Course", "Batch"];
-    const tableRows = students.map((s, index) => [
-      index + 1,
-      s.name || "-",
-      s.email || "-",
-      s.courseEnrolled || "-",
-      s.batch?.batchName || "-",
-    ]);
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 25,
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [59, 130, 246] },
+  const getAllStudentsForExport = async () => {
+  try {
+    const res = await axios.get("http://localhost:8080/api/v1/view_students", {
+      params: { page: 1, limit: 1000, search },
     });
+    return res.data.data || [];
+  } catch (err) {
+    console.error("Error fetching all students:", err);
+    return [];
+  }
+};
 
-    doc.save("Students_List.pdf");
-  };
+// Updated PDF Export
+const handleExportPDF = async () => {
+  const allStudents = await getAllStudentsForExport();
+  if (!allStudents.length) return alert("No students to export");
 
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Students List", 14, 15);
+  doc.setFontSize(11);
+  doc.setTextColor(100);
 
-  const handlePrint = () => {
-    const printContent = document.getElementById("student-table-section").innerHTML;
-    const printWindow = window.open("", "", "width=900,height=700");
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Students List</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-            th { background-color: #f5f5f5; }
-          </style>
-        </head>
-        <body>
-          <h2>Students List</h2>
-          ${printContent}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-  };
+  const tableColumn = ["#", "Name", "Email", "Course", "Batch"];
+  const tableRows = allStudents.map((s, index) => [
+    index + 1,
+    s.name || "-",
+    s.email || "-",
+    s.courseEnrolled || "-",
+    s.batch?.batchName || "-",
+  ]);
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 25,
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [59, 130, 246] },
+  });
+
+  doc.save("Students_List.pdf");
+};
+
+// Updated Print
+const handlePrint = async () => {
+  const allStudents = await getAllStudentsForExport();
+  if (!allStudents.length) return alert("No students to print");
+
+  let printTable = `
+    <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Course</th>
+          <th>Batch</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  allStudents.forEach((s, index) => {
+    printTable += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${s.name || "-"}</td>
+        <td>${s.email || "-"}</td>
+        <td>${s.courseEnrolled || "-"}</td>
+        <td>${s.batch?.batchName || "-"}</td>
+      </tr>
+    `;
+  });
+
+  printTable += `</tbody></table>`;
+
+  const printWindow = window.open("", "", "width=900,height=700");
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Students List</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+          th { background-color: #f5f5f5; }
+        </style>
+      </head>
+      <body>
+        <h2>Students List</h2>
+        ${printTable}
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">

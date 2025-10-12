@@ -29,15 +29,16 @@ exports.viewAllCourseCatago = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const search = req.query.title || "";
 
-    // Build query for search
     const query = search ? { title: { $regex: search, $options: "i" } } : {};
 
     const totalItems = await cateogry.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
 
+    // Use .lean() to return plain JS objects instead of Mongoose documents
     const data = await cateogry.find(query)
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     res.status(200).json({
       success: true,
