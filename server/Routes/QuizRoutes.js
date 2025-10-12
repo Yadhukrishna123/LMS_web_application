@@ -15,6 +15,6 @@ router.get("/get_all_quizz", getAllQuizz);
 
 // // Submissions
 // router.post("/submit_quiz", submitQuiz);
-// router.get("/all_submissions", getAllSubmissions);
+//  router.get("/all_submissions", getAllSubmissions);
 
 module.exports = router;

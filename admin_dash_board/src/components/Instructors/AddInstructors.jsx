@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const AddInstructors = () => {
-  const navigate = useNavigate();
-
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
@@ -19,13 +16,15 @@ const AddInstructors = () => {
     website: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const preset_key = "arsmfwi7";
   const cloud_name = "dnqlt6cit";
 
   const handleChange = (e) => {
     const { name, files, value } = e.target;
     if (files && files.length > 0) {
-      setInputs({ ...inputs, [name]: files[0] }); 
+      setInputs({ ...inputs, [name]: files[0] });
     } else {
       setInputs({ ...inputs, [name]: value });
     }
@@ -33,35 +32,22 @@ const AddInstructors = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       let img_url = null;
       if (inputs.image) {
         const formData = new FormData();
         formData.append("file", inputs.image);
         formData.append("upload_preset", preset_key);
-
-        let imageRes = await axios.post(
+        const imageRes = await axios.post(
           `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
           formData
         );
-
         img_url = imageRes.data.secure_url;
       }
-
-      let payloads = {
-        ...inputs,
-        image: img_url, 
-      };
-
-      let res = await axios.post(
-        "http://localhost:8080/api/v1/add_instructor",
-        payloads
-      );
-      console.log(res.data);
-
-      alert("Instructor added successfully...!");
-      navigate("/view_Instuctors");
+      const payload = { ...inputs, image: img_url };
+      await axios.post("http://localhost:8080/api/v1/add_instructor", payload);
+      alert("Instructor added successfully!");
       setInputs({
         name: "",
         email: "",
@@ -77,124 +63,181 @@ const AddInstructors = () => {
       });
     } catch (error) {
       console.error(error);
-      alert(" Error adding instructor");
+      alert("Error adding instructor");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add Instructor</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={inputs.name}
-          onChange={handleChange}
-          required
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={inputs.email}
-          onChange={handleChange}
-          required
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          value={inputs.phone}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <textarea
-          name="bio"
-          placeholder="Short Bio"
-          value={inputs.bio}
-          onChange={handleChange}
-          rows="3"
-          required
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        ></textarea>
-
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={handleChange}
-          required
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="specialization"
-          placeholder="Specialization (e.g. AI, Web Dev)"
-          value={inputs.specialization}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="number"
-          name="experience"
-          placeholder="Experience (years)"
-          value={inputs.experience}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="qualification"
-          placeholder="Qualification (e.g. MSc, PhD)"
-          value={inputs.qualification}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="linkedin"
-          placeholder="LinkedIn URL"
-          value={inputs.linkedin}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="github"
-          placeholder="GitHub URL"
-          value={inputs.github}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <input
-          type="text"
-          name="website"
-          placeholder="Personal Website"
-          value={inputs.website}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-purple-100 to-pink-50 rounded-3xl">
+      <div className="relative bg-white rounded-3xl shadow-2xl p-10 w-full max-w-2xl border border-white border-opacity-30 backdrop-blur-xl ">
+        <div className="text-center mb-10">
+          <div className="inline-block p-3 bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full mb-4 shadow-lg">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 bg-clip-text text-transparent mb-2">
+            Add Instructor
+          </h1>
+          <p className="text-gray-500">Enter the details below for a new instructor</p>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-7"
         >
-          Add Instructor
-        </button>
-      </form>
+          {/* Personal Info */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 grid gap-6 mb-3 shadow">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={inputs.name}
+                onChange={handleChange}
+                required
+                placeholder="Full Name"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={inputs.email}
+                onChange={handleChange}
+                required
+                placeholder="Email"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                value={inputs.phone}
+                onChange={handleChange}
+                placeholder="Phone"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+          </div>
+          {/* Bio & Image */}
+          <div className="bg-gradient-to-r from-indigo-50 to-pink-50 rounded-2xl p-6 grid gap-6 mb-3 shadow">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Short Bio</label>
+              <textarea
+                name="bio"
+                value={inputs.bio}
+                onChange={handleChange}
+                required
+                rows="3"
+                placeholder="Short Bio"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 transition duration-300 outline-none resize-none hover:border-purple-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Image</label>
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-2 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+          </div>
+          {/* Professional Details */}
+          <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-green-50 rounded-2xl p-6 grid gap-6 mb-3 shadow grid-cols-1 sm:grid-cols-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Specialization</label>
+              <input
+                type="text"
+                name="specialization"
+                value={inputs.specialization}
+                onChange={handleChange}
+                placeholder="e.g. AI, Web Dev"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Experience</label>
+              <input
+                type="number"
+                name="experience"
+                value={inputs.experience}
+                onChange={handleChange}
+                placeholder="Years"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Qualification</label>
+              <input
+                type="text"
+                name="qualification"
+                value={inputs.qualification}
+                onChange={handleChange}
+                placeholder="e.g. MSc, PhD"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+          </div>
+          {/* Links */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 grid gap-6 mb-3 shadow grid-cols-1 sm:grid-cols-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">LinkedIn</label>
+              <input
+                type="text"
+                name="linkedin"
+                value={inputs.linkedin}
+                onChange={handleChange}
+                placeholder="LinkedIn URL"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">GitHub</label>
+              <input
+                type="text"
+                name="github"
+                value={inputs.github}
+                onChange={handleChange}
+                placeholder="GitHub URL"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Website</label>
+              <input
+                type="text"
+                name="website"
+                value={inputs.website}
+                onChange={handleChange}
+                placeholder="Personal Website"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+          </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 flex items-center justify-center ${
+              loading ? "bg-blue-400 cursor-not-allowed opacity-70" : ""
+            }`}
+          >
+            {loading && (
+              <span className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            )}
+            {loading ? "Saving..." : "Add Instructor"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

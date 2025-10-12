@@ -25,13 +25,16 @@ const InstructorForm = ({ data, updateData }) => {
   };
 
   return (
-    <section>
-      <h3 className="text-lg font-semibold mb-3">C. Instructor Details</h3>
-      <div className="space-y-3">
+    <div className="p-6">
+      <h3 className="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-gray-200">
+        C. Instructor Details
+      </h3>
+
+      <div className="space-y-4">
         <select
           value={data.instructorDetails?._id || ""}
           onChange={handleSelectInstructor}
-          className="w-full border p-2 rounded"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select Instructor</option>
           {instructors.map((inst) => (
@@ -42,19 +45,45 @@ const InstructorForm = ({ data, updateData }) => {
         </select>
 
         {data.instructorDetails?.name && (
-          <div className="mt-3 p-3 border rounded bg-gray-50">
-            <p><strong>Name:</strong> {data.instructorDetails.name}</p>
-            <p><strong>Bio:</strong> {data.instructorDetails.bio}</p>
-            <p><strong>Specialization:</strong> {data.instructorDetails.specialization}</p>
-            <p><strong>Experience:</strong> {data.instructorDetails.experience}</p>
-            <p><strong>Qualification:</strong> {data.instructorDetails.qualification}</p>
-            <p><strong>LinkedIn:</strong> {data.instructorDetails.linkedin}</p>
-            <p><strong>GitHub:</strong> {data.instructorDetails.github}</p>
-            <p><strong>Facebook:</strong> {data.instructorDetails.facebook}</p>
+          <div className="p-4 border border-gray-300 rounded-2xl bg-white shadow-sm space-y-2">
+            <div className="flex items-center gap-4">
+              {data.instructorDetails.image && (
+                <img
+                  src={data.instructorDetails.image}
+                  alt={data.instructorDetails.name}
+                  className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                />
+              )}
+              <div>
+                <p className="text-lg font-semibold text-gray-800">{data.instructorDetails.name}</p>
+                <p className="text-sm text-gray-500">{data.instructorDetails.bio}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-700">
+              {data.instructorDetails.specialization && (
+                <p><strong>Specialization:</strong> {data.instructorDetails.specialization}</p>
+              )}
+              {data.instructorDetails.experience && (
+                <p><strong>Experience:</strong> {data.instructorDetails.experience}</p>
+              )}
+              {data.instructorDetails.qualification && (
+                <p><strong>Qualification:</strong> {data.instructorDetails.qualification}</p>
+              )}
+              {data.instructorDetails.linkedin && (
+                <p><strong>LinkedIn:</strong> <a href={data.instructorDetails.linkedin} target="_blank" className="text-blue-500 underline">{data.instructorDetails.linkedin}</a></p>
+              )}
+              {data.instructorDetails.github && (
+                <p><strong>GitHub:</strong> <a href={data.instructorDetails.github} target="_blank" className="text-blue-500 underline">{data.instructorDetails.github}</a></p>
+              )}
+              {data.instructorDetails.facebook && (
+                <p><strong>Facebook:</strong> <a href={data.instructorDetails.facebook} target="_blank" className="text-blue-500 underline">{data.instructorDetails.facebook}</a></p>
+              )}
+            </div>
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 };
 

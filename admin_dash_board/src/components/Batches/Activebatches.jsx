@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaSearch, FaChalkboardTeacher, FaPlus, FaCalendar } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaSearch,
+  FaChalkboardTeacher,
+  FaPlus,
+  FaFilePdf,
+  FaPrint,
+} from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const ActiveBatches = () => {
   const [batches, setBatches] = useState([]);
@@ -12,9 +22,12 @@ const ActiveBatches = () => {
 
   const getBatches = async (page = 1) => {
     try {
-      const res = await axios.get("http://localhost:8080/api/v1/view_all_batches", {
-        params: { page, limit: itemsPerPage, batchName: search },
-      });
+      const res = await axios.get(
+        "http://localhost:8080/api/v1/view_all_batches",
+        {
+          params: { page, limit: itemsPerPage, batchName: search },
+        }
+      );
       setBatches(res.data.data || []);
       setCurrentPage(res.data.page);
       setTotalPages(res.data.totalPages);
@@ -29,6 +42,82 @@ const ActiveBatches = () => {
     getBatches(1);
   }, [search]);
 
+  // Export PDF
+  const handleExportPDF = () => {
+    if (!batches || batches.length === 0) {
+      alert("No batches to export");
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Batches List", 14, 15);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+
+    const tableColumn = [
+      "#",
+      "Batch Name",
+      "Code",
+      "Course",
+      "Instructor",
+      "Mode",
+      "Seats",
+      "Status",
+      "Dates",
+    ];
+    const tableRows = batches.map((b, index) => [
+      index + 1,
+      b.batchName,
+      b.batchCode,
+      b.course?.title || "-",
+      b.instructor?.name || "-",
+      b.mode,
+      b.maxSeats,
+      b.status,
+      `${new Date(b.startDate).toLocaleDateString()} - ${new Date(
+        b.endDate
+      ).toLocaleDateString()}`,
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [59, 130, 246] },
+    });
+
+    doc.save("Batches_List.pdf");
+  };
+
+  // Print
+  const handlePrint = () => {
+    const printContent = document.getElementById(
+      "batch-table-section"
+    ).innerHTML;
+    const printWindow = window.open("", "", "width=900,height=700");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Batches List</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background-color: #f5f5f5; }
+          </style>
+        </head>
+        <body>
+          <h2>Batches List</h2>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="w-full max-w-7xl mx-auto">
@@ -38,7 +127,9 @@ const ActiveBatches = () => {
             <FaChalkboardTeacher className="text-white text-2xl" />
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Batch Management</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Batch Management
+            </h2>
             <p className="text-gray-600">Manage and monitor all batches</p>
           </div>
         </div>
@@ -61,57 +152,115 @@ const ActiveBatches = () => {
               <p className="text-sm text-gray-600">Total Batches</p>
               <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
             </div>
-            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+            <button
+              onClick={handleExportPDF}
+              className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center gap-2"
+            >
+              <FaFilePdf /> Export PDF
+            </button>
+            <button
+              onClick={handlePrint}
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl flex items-center gap-2"
+            >
+              <FaPrint /> Print
+            </button>
+            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl flex items-center gap-2">
               <FaPlus /> Add Batch
             </button>
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div
+          id="batch-table-section"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+        >
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Batches</h3>
           </div>
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Batch Name</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Code</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Course</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Instructor</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Mode</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Seats</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Dates</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Description</th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Batch Name
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Code
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Course
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Instructor
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Mode
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Seats
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Dates
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">
+                    Description
+                  </th>
+                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase">
+                    Actions
+                  </th>
                 </tr>
               </thead>
-
               <tbody className="bg-white divide-y divide-gray-200">
                 {batches.length > 0 ? (
                   batches.map((batch, i) => (
-                    <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all">
-                      <td className="px-6 py-4 font-medium text-gray-800">{batch.batchName}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.batchCode}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.course?.title || "N/A"}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.instructor?.name || "N/A"}</td>
+                    <tr key={i} className="hover:bg-blue-50 transition">
+                      <td className="px-6 py-4 font-medium text-gray-800">
+                        {batch.batchName}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.batchCode}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.course?.title || "N/A"}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.instructor?.name || "N/A"}
+                      </td>
                       <td className="px-6 py-4 text-gray-600">{batch.mode}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.maxSeats}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.status}</td>
-                      <td className="px-6 py-4 text-gray-600">{new Date(batch.startDate).toLocaleDateString()} - {new Date(batch.endDate).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-gray-600">{batch.description?.slice(0, 40)}...</td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.maxSeats}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.status}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {new Date(batch.startDate).toLocaleDateString()} -{" "}
+                        {new Date(batch.endDate).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {batch.description?.slice(0, 40)}...
+                      </td>
                       <td className="px-6 py-4 text-center flex justify-center gap-2">
-                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition"><FaEdit /></button>
-                        <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition"><FaTrash /></button>
+                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition">
+                          <FaEdit />
+                        </button>
+                        <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition">
+                          <FaTrash />
+                        </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="10" className="px-6 py-12 text-center text-gray-500">
+                    <td
+                      colSpan="10"
+                      className="px-6 py-12 text-center text-gray-500"
+                    >
                       No batches found.
                     </td>
                   </tr>
@@ -122,16 +271,38 @@ const ActiveBatches = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-2">
-              <p className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</p>
+            <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-2">
+              <p className="text-sm text-gray-600">
+                Showing page {currentPage} of {totalPages}
+              </p>
               <div className="flex gap-2">
-                <button disabled={currentPage === 1} onClick={() => getBatches(currentPage - 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Previous</button>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => getBatches(currentPage - 1)}
+                  className="px-4 py-2 border rounded-lg text-sm text-gray-700 hover:bg-white"
+                >
+                  Previous
+                </button>
                 {[...Array(totalPages)].map((_, i) => (
-                  <button key={i} onClick={() => getBatches(i + 1)} className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'border-gray-300 text-gray-700'} hover:bg-white transition`}>
+                  <button
+                    key={i}
+                    onClick={() => getBatches(i + 1)}
+                    className={`px-4 py-2 border rounded-lg text-sm font-medium ${
+                      currentPage === i + 1
+                        ? "bg-blue-600 text-white"
+                        : "border-gray-300 text-gray-700"
+                    } hover:bg-white`}
+                  >
                     {i + 1}
                   </button>
                 ))}
-                <button disabled={currentPage === totalPages} onClick={() => getBatches(currentPage + 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Next</button>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => getBatches(currentPage + 1)}
+                  className="px-4 py-2 border rounded-lg text-sm text-gray-700 hover:bg-white"
+                >
+                  Next
+                </button>
               </div>
             </div>
           )}

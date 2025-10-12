@@ -17,6 +17,7 @@ const CurriculumForm = ({ data, updateData }) => {
   };
 
   const addLesson = (i) => {
+    if (!newLesson.title) return;
     const modulesCopy = [...data.modules];
     modulesCopy[i].lessons.push(newLesson);
     updateData("modules", modulesCopy);
@@ -30,53 +31,55 @@ const CurriculumForm = ({ data, updateData }) => {
   };
 
   return (
-    <section>
-      <h3 className="text-lg font-semibold mb-3">B. Curriculum / Syllabus</h3>
-      <div className="flex gap-2 mb-2">
+    <div className="p-6 space-y-6">
+      {/* Section Title */}
+      <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+        B. Curriculum / Syllabus
+      </h3>
+
+      {/* Add Module */}
+      <div className="flex flex-col md:flex-row gap-3 mb-4">
         <input
           type="text"
           placeholder="Module Name"
           value={newModule.name}
-          onChange={(e) =>
-            setNewModule({ ...newModule, name: e.target.value })
-          }
-          className="border p-2 rounded flex-grow"
+          onChange={(e) => setNewModule({ ...newModule, name: e.target.value })}
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="button"
           onClick={addModule}
-          className="bg-blue-500 text-white px-4 rounded"
+          className="px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition"
         >
           Add Module
         </button>
       </div>
 
+      {/* Existing Modules */}
       {data.modules.map((m, i) => (
-        <div key={i} className="border rounded p-3 my-2">
-          <h4 className="font-semibold">{m.name}</h4>
+        <div key={i} className="border border-gray-300 rounded-2xl p-4 mb-4 bg-white shadow-sm">
+          <h4 className="font-semibold text-gray-800 mb-2">{m.name}</h4>
+
+          {/* Lessons */}
           {m.lessons.map((l, j) => (
-            <p key={j} className="ml-4 text-sm">
+            <p key={j} className="ml-4 text-sm text-gray-700">
               • {l.title} ({l.type})
             </p>
           ))}
 
           {/* Add Lesson */}
-          <div className="flex gap-2 mt-2">
+          <div className="flex flex-col md:flex-row gap-3 mt-4">
             <input
               type="text"
               placeholder="Lesson Title"
               value={newLesson.title}
-              onChange={(e) =>
-                setNewLesson({ ...newLesson, title: e.target.value })
-              }
-              className="border p-2 rounded flex-grow"
+              onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })}
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={newLesson.type}
-              onChange={(e) =>
-                setNewLesson({ ...newLesson, type: e.target.value })
-              }
-              className="border p-2 rounded"
+              onChange={(e) => setNewLesson({ ...newLesson, type: e.target.value })}
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option>Video</option>
               <option>Document</option>
@@ -86,14 +89,14 @@ const CurriculumForm = ({ data, updateData }) => {
             <button
               type="button"
               onClick={() => addLesson(i)}
-              className="bg-green-500 text-white px-3 rounded"
+              className="px-5 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow transition"
             >
               Add Lesson
             </button>
           </div>
         </div>
       ))}
-    </section>
+    </div>
   );
 };
 

@@ -7,7 +7,11 @@ import {
   FaCalendar,
   FaEdit,
   FaTrash,
+  FaFilePdf,
+  FaPrint,
 } from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const PaymentsPage = () => {
   const [payments, setPayments] = useState([]);
@@ -16,7 +20,6 @@ const PaymentsPage = () => {
   const fetchPayments = async () => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/all");
-      //console.log("Fetched payments:", res.data.data);
       setPayments(res.data?.data || []);
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -27,57 +30,121 @@ const PaymentsPage = () => {
     fetchPayments();
   }, []);
 
-  // Filtered payments based on search
-const filteredPayments = (payments || []).filter((p) => {
-  const name = p.userId?.name?.toLowerCase() || "";
-  const email = p.userId?.email?.toLowerCase() || "";
-  const course = p.courseId?.title?.toLowerCase() || "";
-  const query = search.toLowerCase();
-  return name.includes(query) || email.includes(query) || course.includes(query);
-});
+  const filteredPayments = (payments || []).filter((p) => {
+    const name = p.userId?.name?.toLowerCase() || "";
+    const email = p.userId?.email?.toLowerCase() || "";
+    const course = p.courseId?.title?.toLowerCase() || "";
+    const query = search.toLowerCase();
+    return name.includes(query) || email.includes(query) || course.includes(query);
+  });
+
+  // Export PDF
+  const handleExportPDF = () => {
+    if (!filteredPayments || filteredPayments.length === 0) {
+      alert("No payments to export");
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Payments List", 14, 15);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+
+    const tableColumn = [
+      "Sl No.",
+      "Course",
+      "User",
+      "Email",
+      "Amount (₹)",
+      "Payment ID",
+      "Status",
+      "Date",
+    ];
+    const tableRows = filteredPayments.map((p, index) => [
+      index + 1,
+      p.courseId?.title || "N/A",
+      p.userId ? `${p.userId.firstname} ${p.userId.lastname}` : "N/A",
+      p.userId?.email || "N/A",
+      p.amount,
+      p.paymentId,
+      p.status || "Pending",
+      p.date ? new Date(p.date).toLocaleDateString() : "N/A",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [34, 197, 94] },
+    });
+
+    doc.save("Payments_List.pdf");
+  };
+
+  // Print
+  const handlePrint = () => {
+    const printContent = document.getElementById("payments-table-section").innerHTML;
+    const printWindow = window.open("", "", "width=900,height=700");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Payments List</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background-color: #f5f5f5; }
+          </style>
+        </head>
+        <body>
+          <h2>Payments List</h2>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-gradient-to-br from-green-500 to-teal-500 p-3 rounded-xl">
-              <FaDollarSign className="text-white text-2xl" />
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900">Payments Management</h2>
-              <p className="text-gray-600">Manage and monitor all transactions</p>
-            </div>
+        <div className="mb-8 flex items-center gap-3">
+          <div className="bg-gradient-to-br from-green-500 to-teal-500 p-3 rounded-xl">
+            <FaDollarSign className="text-white text-2xl" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Payments Management</h2>
+            <p className="text-gray-600">Manage and monitor all transactions</p>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search Bar */}
-            <div className="relative w-full md:w-96">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={search}
-                placeholder="Search by user, email, or course..."
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-              />
-            </div>
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between flex-wrap">
+          <div className="relative w-full md:w-96 mb-4 md:mb-0">
+            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              placeholder="Search by user, email, or course..."
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <button onClick={handleExportPDF} className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center gap-2">
+              <FaFilePdf /> Export PDF
+            </button>
+            <button onClick={handlePrint} className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl flex items-center gap-2">
+              <FaPrint /> Print
+            </button>
+            <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg flex items-center gap-2">
+              <FaPlus /> Add Payment
+            </button>
 
-            {/* Stats + Add */}
-            <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 px-4 py-2 rounded-xl border border-green-200">
-                <p className="text-sm text-gray-600">Total Payments</p>
-                <p className="text-2xl font-bold text-green-600">{payments?.length || 0}</p>
-              </div>
-              <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
-                <FaPlus />
-                Add Payment
-              </button>
-            </div>
           </div>
         </div>
 

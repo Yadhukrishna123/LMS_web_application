@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaSearch, FaChalkboardTeacher, FaPlus, FaLinkedin, FaGithub, FaGlobe } from 'react-icons/fa';
+import {
+  FaEdit,
+  FaTrash,
+  FaSearch,
+  FaChalkboardTeacher,
+  FaPlus,
+  FaLinkedin,
+  FaGithub,
+  FaGlobe,
+} from "react-icons/fa";
 import Delete from "../TableActions/Delete";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const ViewInstructors = () => {
   const [instructors, setInstructors] = useState([]);
@@ -14,6 +25,7 @@ const ViewInstructors = () => {
   const deleteCont = "Are you sure that you want to delete this Instructor?";
   const itemsPerPage = 5;
 
+  // ✅ Fetch all instructors
   const getAllInstructors = async (page = 1) => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/view_instructor", {
@@ -28,25 +40,99 @@ const ViewInstructors = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    setDeleteClick(true);
-    setDeleteId(id);
-  };
-
-  // Refetch on search or first load
+  // ✅ Refetch when search changes
   useEffect(() => {
     setCurrentPage(1);
     getAllInstructors(1);
   }, [search]);
 
+  const handleDelete = (id) => {
+    setDeleteClick(true);
+    setDeleteId(id);
+  };
+
+  // ✅ Refresh list after deletion
+  const onTimeDelete = () => {
+    setInstructors((prev) => prev.filter((i) => i._id !== deleteId));
+  };
+
+  // ✅ PDF Export
+  const handleExportPDF = () => {
+    if (!instructors || instructors.length === 0) {
+      alert("No instructors to export");
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Instructor List", 14, 15);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+
+    const tableColumn = [
+      "Name",
+      "Email",
+      "Phone",
+      "Specialization",
+      "Experience",
+      "Qualification",
+    ];
+
+    const tableRows = instructors.map((inst) => [
+      inst.name || "-",
+      inst.email || "-",
+      inst.phone || "-",
+      inst.specialization || "-",
+      inst.experience ? `${inst.experience} years` : "-",
+      inst.qualification || "-",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [59, 130, 246] },
+    });
+
+    doc.save("Instructor_List.pdf");
+  };
+
+  // ✅ Print functionality
+  const handlePrint = () => {
+    const printContent = document.getElementById("instructor-table-section").innerHTML;
+    const printWindow = window.open("", "", "width=900,height=700");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Instructor List</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            th { background-color: #f5f5f5; }
+          </style>
+        </head>
+        <body>
+          <h2>Instructor List</h2>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      {/* ✅ Delete Confirmation */}
       {deleteClick && (
         <Delete
           setDeleteClick={setDeleteClick}
           deleteCont={deleteCont}
           id={deleteId}
           api_end_point="http://localhost:8080/api/v1/get_instructor"
+          onTimeDelete={onTimeDelete}
         />
       )}
 
@@ -62,7 +148,7 @@ const ViewInstructors = () => {
           </div>
         </div>
 
-        {/* Controls */}
+        {/* ✅ Controls */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:w-96">
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -75,19 +161,35 @@ const ViewInstructors = () => {
             />
           </div>
 
-          <div className="flex items-center gap-4">
+         <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Instructors</p>
               <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
             </div>
+
+            {/* ✅ New buttons */}
+            <button
+              onClick={handleExportPDF}
+              className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2"
+            >
+              Export PDF
+            </button>
+
+            <button
+              onClick={handlePrint}
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2"
+            >
+              Print
+            </button>
+
             <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
               <FaPlus /> Add Instructor
             </button>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* ✅ Table Section (used in print) */}
+        <div id="instructor-table-section" className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Instructors</h3>
           </div>
