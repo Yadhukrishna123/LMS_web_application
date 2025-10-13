@@ -6,6 +6,7 @@ const CheckoutPage = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const userEmail = localStorage.getItem("userEmail");
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/courses/${courseId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_course/${courseId}`);
         setCourse(res.data);
       } catch (error) {
         console.error("Error fetching course:", error);
@@ -72,7 +73,7 @@ const CheckoutPage = () => {
       },
       prefill: {
         name: `${formData.firstName} ${formData.lastName}`,
-        email: "user@example.com",
+        email: userEmail,
       },
       theme: { color: "#8b5cf6" },
     };

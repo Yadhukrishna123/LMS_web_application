@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaSearch, FaDollarSign, FaPlus, FaCalendar, FaEdit, FaTrash, FaFilePdf, FaPrint } from "react-icons/fa";
+import { FaSearch, FaDollarSign, FaPlus, FaEdit, FaTrash, FaFilePdf, FaPrint } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -11,12 +11,17 @@ const PaymentsPage = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   // Fetch all payments
   const fetchPayments = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/all`);
       setPayments(res.data?.data || []);
+      setCurrentPage(1);
     } catch (err) {
       console.error("Error fetching payments:", err);
     } finally {
@@ -28,6 +33,7 @@ const PaymentsPage = () => {
     fetchPayments();
   }, []);
 
+  // Filtered payments based on search
   const filteredPayments = payments.filter((p) => {
     const name = p.userId?.firstname?.toLowerCase() + " " + p.userId?.lastname?.toLowerCase() || "";
     const email = p.userId?.email?.toLowerCase() || "";
@@ -36,7 +42,17 @@ const PaymentsPage = () => {
     return name.includes(query) || email.includes(query) || course.includes(query);
   });
 
-  // Export PDF with all payments
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+  const currentRecords = filteredPayments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const goPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
+  const goNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+
+  // Export PDF
   const handleExportPDF = () => {
     if (!filteredPayments.length) return alert("No payments to export");
 
@@ -69,7 +85,7 @@ const PaymentsPage = () => {
     doc.save("Payments_List.pdf");
   };
 
-  // Print all payments
+  // Print table
   const handlePrint = () => {
     const printWindow = window.open("", "_blank", "width=900,height=700");
     const tableRows = filteredPayments
@@ -167,14 +183,13 @@ const PaymentsPage = () => {
         </div>
 
         {/* Table */}
-        <div id="payments-table-section" className="bg-white rounded-2xl shadow-xl overflow-x-auto">
+        <div className="bg-white rounded-2xl shadow-xl overflow-x-auto">
           <div className="bg-gradient-to-r from-green-500 to-teal-500 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Transactions</h3>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Sl No.</th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Course</th>
@@ -190,12 +205,14 @@ const PaymentsPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="px-6 py-12 text-center text-gray-500">Loading payments...</td>
+                  <td colSpan="9" className="px-6 py-12 text-center text-gray-500">
+                    Loading payments...
+                  </td>
                 </tr>
-              ) : filteredPayments.length ? (
-                filteredPayments.map((p, i) => (
+              ) : currentRecords.length ? (
+                currentRecords.map((p, i) => (
                   <tr key={p._id} className="hover:bg-green-50 transition">
-                    <td className="px-6 py-4">{i + 1}</td>
+                    <td className="px-6 py-4">{(currentPage - 1) * itemsPerPage + i + 1}</td>
                     <td className="px-6 py-4">{p.courseId?.title || "N/A"}</td>
                     <td className="px-6 py-4">{p.userId ? `${p.userId.firstname} ${p.userId.lastname}` : "N/A"}</td>
                     <td className="px-6 py-4">{p.userId?.email || "N/A"}</td>
@@ -221,12 +238,51 @@ const PaymentsPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="px-6 py-12 text-center text-gray-500">No payments found</td>
+                  <td colSpan="9" className="px-6 py-12 text-center text-gray-500">
+                    No payments found
+                  </td>
                 </tr>
               )}
             </tbody>
           </table>
-          </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-4 rounded-2xl">
+              <div className="text-sm text-gray-600">
+                Showing page {currentPage} of {totalPages}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={goPrev}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      currentPage === i + 1
+                        ? "bg-blue-600 text-white"
+                        : "border border-gray-300 text-gray-700 hover:bg-white"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={goNext}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

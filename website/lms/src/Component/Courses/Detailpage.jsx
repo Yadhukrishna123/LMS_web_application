@@ -12,7 +12,7 @@ const Detailpage = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:8080/api/v1/courses/${id}`)
+      .get(`http://localhost:8080/api/v1/get_course/${id}`)
       .then((res) => {
         setCourse(res.data);
         setLoading(false);

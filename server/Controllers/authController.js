@@ -181,6 +181,13 @@ exports.forgotPassword = async (req, res) => {
             "Password Reset",
             `Hello ${user.firstname},\n\nClick here to reset your password:\n${resetUrl}\n\nThis link is valid for 15 minutes.`
         )
+        await sendMail(
+            studentEmail,
+            `Course Purchase: ${courseTitle}`,
+            null,
+            `<h2>Purchase Successful!</h2><p>You purchased <b>${courseTitle}</b> for ₹${price}.</p>`,
+            { studentName, courseTitle, price, date: new Date() }
+        );
 
         res.status(200).json({
             success: true,
