@@ -1,16 +1,47 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const institutionSchema = new mongoose.Schema({
-    name: String,
-    phone: String,
-    email: String,
-    password: String,
-    address: String,
-   
+const institutionSchema = new mongoose.Schema(
+    {
+        institutionName: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        adminFullName: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        adminEmail: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+        },
+        adminPassword: {
+            type: String,
+            required: true,
+            minlength: 6,
+        },
+        websiteUrl: {
+            type: String,
+            default: "",
+        },
+        image: {
+            type: [String],
+            required: true,
 
+        },
+        status: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "pending",
+        },
+    },
+    { timestamps: true }
+);
 
-});
+const Institution = mongoose.model("Institution", institutionSchema);
 
-const adminModal = mongoose.model("institutio", institutionSchema)
-
-module.exports = adminModal
+module.exports = Institution;

@@ -1,4 +1,5 @@
 const Quiz = require("../modals/quizes");
+const submitanswer = require("../modals/quizAnswerSubmiters")
 
 // // Create quiz
 // exports.createQuiz = async (req, res) => {
@@ -92,6 +93,61 @@ exports.getAllQuizz = async (req, res) => {
     res.status(200).json({
       success: true,
       quizz,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+exports.userSubmitAnswer = async (req, res) => {
+  try {
+    const { userName, email, quizName, score, totalQuestions, answers } = req.body;
+    if (!userName || !email || score === undefined || !totalQuestions || !answers || !answers.length) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const newSubmission = await submitanswer.create({
+      userName,
+      email,
+      quizName,
+      score,
+      totalQuestions,
+      answers
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Quiz submitted successfully",
+      submission: newSubmission,
+    });
+  } catch (error) {
+    console.error("Error submitting quiz:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+exports.getAllSubmittedQuizz = async (req, res) => {
+   try {
+    const submitQuizz = await submitanswer.find();
+
+    if (!submitQuizz) {
+      return res.status(400).json({
+        success: false,
+        message: "Faild to fetch users submited quiz"
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      submitQuizz,
     });
   } catch (error) {
     res.status(500).json({

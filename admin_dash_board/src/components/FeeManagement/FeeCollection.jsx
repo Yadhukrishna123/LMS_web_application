@@ -1,7 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { FaSearch, FaMoneyBillWave, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaSearch, FaMoneyBillWave, FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 
 const FeeCollection = () => {
@@ -32,8 +34,41 @@ const FeeCollection = () => {
 
     }
 
+    const handleDownload = (c) => {
+        const doc = new jsPDF()
+        doc.setFontSize(18);
+        doc.text("Student Fee Receipt", 70, 15);
 
-    // const totalCollected = feeRecords.reduce((acc, record) => acc + record.amountCollected, 0);
+        doc.setFontSize(12);
+        doc.text(`Receipt No: ${c.receiptNo}`, 14, 30);
+        doc.text(`Date: ${c.paymentDate}`, 150, 30);
+
+        doc.text("Student Information", 14, 45);
+        doc.setFontSize(12);
+        doc.text(`Student Name: ${c.studentName}`, 14, 55);
+        doc.text(`Course / Semester: ${c.courseName}`, 14, 65);
+        doc.text(`Mode of Payment: ${c.modeOfPayment}`, 14, 75);
+        doc.text(`Collected By: ${c.amountPaid}`, 14, 85);
+        doc.text(`Remarks: ${c.remarks || "-"}`, 14, 95);
+
+        doc.autoTable({
+            startY: 110,
+            head: [["Description", "Amount (₹)"]],
+            body: [
+                ["Total Fee", c.totalFee],
+                ["Amount Paid", c.amountPaid],
+                ["Balance", c.totalFee - c.amountPaid],
+            ],
+        });
+
+
+        const finalY = doc.lastAutoTable.finalY || 130;
+        doc.text("Thank you for your payment!", 70, finalY + 20);
+        doc.text("This is a computer-generated receipt.", 55, finalY + 30);
+
+        doc.save(`Receipt_${c.receiptNo}.pdf`);
+
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
@@ -83,6 +118,8 @@ const FeeCollection = () => {
                                     <th className="text-left py-4 px-6 font-semibold">Collected By</th>
                                     <th className="text-left py-4 px-6 font-semibold">Remarks</th>
                                     <th className="text-center py-4 px-6 font-semibold">Actions</th>
+                                    <th className="text-center py-4 px-6 font-semibold">Download receipt</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,6 +177,18 @@ const FeeCollection = () => {
                                                     >
                                                         <FaTrash />
                                                     </button>
+                                                </div>
+                                            </td>
+
+                                            <td className="py-4 px-6">
+                                                <div className="flex gap-2 justify-center">
+                                                    <button
+                                                        className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                                                        title="Edit"
+                                                    >
+                                                        <FaDownload onClick={() => handleDownload(c)} />
+                                                    </button>
+
                                                 </div>
                                             </td>
                                         </tr>

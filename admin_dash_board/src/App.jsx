@@ -38,7 +38,6 @@ import AddInstructors from './components/Instructors/AddInstructors';
 
 import ViewQuizes from './components/Quizes/ViewQuizes';
 import Addquizes from './components/Quizes/Addquizes';
-import QuizSubmissions from './components/Quizes/UserSubmission';
 import AttendanceListing from './components/Attendence/AttendanceListing';
 import Attenencetracking from './components/Attendence/Attenencetracking';
 
@@ -54,6 +53,9 @@ import StudentFees from './components/FeeManagement/StudentFees';
 import FeeCollection from './components/FeeManagement/FeeCollection';
 
 import PaymentsPage from './components/Payment/PaymentPage';
+import UserSubmission from './components/Quizes/UserSubmission';
+import AllInstitute from './components/AddInstitution/AllInstitute';
+import RegistrationRequest from './components/AddInstitution/RegistrationRequest';
 
 
 
@@ -79,6 +81,8 @@ function App() {
           <Route path="/user_enquiries" element={<ProtectedRoutes isAuthentication={auth}><UserEnquiries /></ProtectedRoutes>} />
           <Route path="/add_course" element={<ProtectedRoutes isAuthentication={auth}><AddCourse /></ProtectedRoutes>} />
           <Route path="/add_institution" element={<AddInstitution />} />
+           <Route path="/institutes_listing" element={<AllInstitute />} />
+            <Route path="/registration_request" element={<RegistrationRequest />} />
           <Route path="/add_course_cateogry" element={<AddCategory />} />
           <Route path="/view_course_cateogry" element={<ViewCategory />} />
           <Route path="/view_course" element={<ViewCourses />} />
@@ -98,7 +102,7 @@ function App() {
 
           <Route path="/add_quizes" element={<Addquizes />} />
           <Route path="/view_quizes" element={<ViewQuizes />} />
-          <Route path="/submissions" element={<QuizSubmissions />} />
+          <Route path="/user_submited_answer" element={<UserSubmission />} />
 
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
@@ -108,7 +112,7 @@ function App() {
           <Route path="/fee_structure" element={<FeeStructure />} />
           <Route path="/student_fees" element={<StudentFees />} />
           <Route path="/fee_collection" element={<FeeCollection />} />
-         <Route path="/paymentpage" element={<PaymentsPage />} />
+          <Route path="/paymentpage" element={<PaymentsPage />} />
 
         </Route>
       </Routes>

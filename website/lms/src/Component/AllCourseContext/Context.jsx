@@ -21,7 +21,7 @@ export const Context = (props) => {
     }
     
     return (
-        <AllCourseDetail.Provider value={{ getUserData, authentication, userLogout }}>
+        <AllCourseDetail.Provider value={{ getUserData, authentication, userLogout , user, }}>
             {props.children}
         </AllCourseDetail.Provider>
     )
