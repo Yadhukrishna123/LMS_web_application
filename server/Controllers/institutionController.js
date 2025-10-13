@@ -5,45 +5,108 @@ const bcrypt = require("bcrypt")
 
 
 exports.addInstitution = async (req, res) => {
-    const { name, phone, email, password, address } = req.body
+    const { institutionName, adminFullName, adminEmail, adminPassword, websiteUrl, image } = req.body
 
     try {
-        if (!name || !phone || !email || !password || !address) {
+        if (!institutionName || !adminFullName || !adminEmail || !adminPassword || !image) {
             return res.status(400).json({
                 message: "All fields are required"
             })
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(adminPassword, 10)
 
 
-        const useinstitution = await institutionModal.create({
-            name,
-            phone,
-            email,
-            password: hashedPassword,
-            address
+        const institution = await institutionModal.create({
+            institutionName,
+            adminFullName,
+            adminEmail,
+            adminPassword: hashedPassword,
+            websiteUrl,
+            image
 
 
         })
 
-        if (!useinstitution) {
+        if (!institution) {
             return res.status(400).json({
                 success: false,
-                message: "Faild to register"
+                message: "Faild to register instituton"
             })
         }
 
         res.status(200).json({
             success: true,
-            message: "Successfully registerd",
-            useinstitution
+            message: "Successfully registerd your institution",
+            institution
         })
     } catch (error) {
         res.status(500).json({
             success: false,
             message: error.message
         });
+    }
+}
+
+exports.getAllInstitute = async (req, res) => {
+    try {
+        let { institutionName } = req.query;
+        let query = {};
+        if (institutionName) {
+            query.institutionName = { $regex: institutionName, $options: "i" };
+        }
+        const institutions = await institutionModal.find(query);
+
+        if (!institutions) {
+            return res.status(400).json({
+                success: false,
+                message: "Faild to fetch institutions"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            institutions,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
+
+exports.updateStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const { id } = req.params
+
+        if (!["approved", "rejected"].includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid status value" });
+        }
+
+        const updateStatus = await institutionModal.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        )
+
+        if (!updateStatus) {
+            return res.status(404).json({
+                success: false,
+                message: "Institution not found",
+            });
+        }
+        res.status(200).json({
+            success: true,
+            messgae: "status updated successfuly",
+            updateStatus
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
 }
 
