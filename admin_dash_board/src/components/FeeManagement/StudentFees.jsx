@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaMoneyBillWave } from 'react-icons/fa';
 import AddStudentFee from './AddStudentFee';
 import axios from 'axios';
+import Delete from '../TableActions/Delete';
 
 
 const StudentFees = () => {
@@ -9,8 +10,9 @@ const StudentFees = () => {
     const [payments, setPayments] = useState([]);
     const [search, setSearch] = useState("");
     const [feeStructore, setFeStructore] = useState([])
-
-
+    const [deleteClick, setDeleteClick] = useState(false);
+    const [id, setId] = useState("");
+    const deleteCont = "Are you sure that you want to delete?";
 
     const getAllFeeStructore = async () => {
         let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee_structore")
@@ -25,42 +27,27 @@ const StudentFees = () => {
     }, []);
 
 
+    const handleDelete = (id) => {
+        setDeleteClick(true)
+        setId(id)
+    }
+    const onTimeDelete = () => {
+        setFeStructore((prev) => prev.filter((s) => s._id !== id));
 
-
-    // const calculateBalance = () => {
-    //     const paid = parseFloat(formData.amountPaid) || 0;
-    //     return formData.totalFee - paid;
-    // };
-
-
-    // const resetForm = () => {
-    //     setFormData({
-    //         studentName: '',
-    //         course: '',
-    //         batch: '',
-    //         totalFee: 0,
-    //         amountPaid: '',
-    //         modeOfPayment: 'Cash',
-    //         paymentDate: new Date().toISOString().split('T')[0],
-    //         remarks: ''
-    //     });
-    // };
-
-
-
-
-
-    const filteredPayments = payments.filter(p =>
-        p.studentName.toLowerCase().includes(search.toLowerCase()) ||
-        p.course.toLowerCase().includes(search.toLowerCase()) ||
-        p.batch.toLowerCase().includes(search.toLowerCase())
-    );
+    };
 
     const totalCollected = payments.reduce((acc, p) => acc + p.amountPaid, 0);
     const totalBalance = payments.reduce((acc, p) => acc + p.balance, 0);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+            {deleteClick && <Delete
+                setDeleteClick={setDeleteClick}
+                id={id}
+                deleteCont={deleteCont}
+                api_end_point="http://localhost:8080/api/v1/get_student_fee_structore"
+                onTimeDelete={onTimeDelete}
+            />}
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -165,14 +152,14 @@ const StudentFees = () => {
                                             <td className="py-4 px-6">
                                                 <div className="flex gap-2 justify-center">
                                                     <button
-                                                        onClick={() => handleEdit(payment)}
+                                                        // onClick={() => handleEdit(payment)}
                                                         className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
                                                         title="Edit"
                                                     >
                                                         <FaEdit />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(payment.id)}
+                                                        onClick={() => handleDelete(p._id)}
                                                         className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                                                         title="Delete"
                                                     >

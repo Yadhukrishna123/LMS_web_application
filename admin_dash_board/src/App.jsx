@@ -56,6 +56,7 @@ import PaymentsPage from './components/Payment/PaymentPage';
 import UserSubmission from './components/Quizes/UserSubmission';
 import AllInstitute from './components/AddInstitution/AllInstitute';
 import RegistrationRequest from './components/AddInstitution/RegistrationRequest';
+import DueManagement from './components/FeeManagement/DueManagement';
 
 
 
@@ -112,6 +113,7 @@ function App() {
           <Route path="/fee_structure" element={<FeeStructure />} />
           <Route path="/student_fees" element={<StudentFees />} />
           <Route path="/fee_collection" element={<FeeCollection />} />
+           <Route path="/due_fees" element={<DueManagement />} />
           <Route path="/paymentpage" element={<PaymentsPage />} />
 
         </Route>
