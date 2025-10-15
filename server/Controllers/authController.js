@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const userModal = require("../modals/users")
-const sendMail = require("../Utils/sendEmail")
+const sendPasswordResetEmail = require("../Utils/sendPasswordResetEmail");
 const crypto = require("crypto")
 
 
@@ -154,10 +154,9 @@ exports.deleteUser = async (req, res) => {
     
 }
 
-
 exports.forgotPassword = async (req, res) => {
     try {
-        const { email } = req.body
+        const { email } = req.body;
         const user = await userModal.findOne({ email });
 
         if (!user) {
@@ -167,74 +166,64 @@ exports.forgotPassword = async (req, res) => {
             });
         }
 
-        const resetToken = crypto.randomBytes(32).toString("hex")
-        user.resetToken = resetToken
-        user.resetTokenExpiry = Date.now() + 15 * 60 * 1000;
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        user.resetToken = resetToken;
+        user.resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
 
         await user.save();
-        console.log(resetToken)
-        const resetUrl = `http://localhost:5174/reset_password/${resetToken}`;
 
+        const resetUrl = `http://localhost:5173/reset_password/${resetToken}`;
+        console.log("Reset URL:", resetUrl);
 
-        await sendMail(
-            user.email,
-            "Password Reset",
-            `Hello ${user.firstname},\n\nClick here to reset your password:\n${resetUrl}\n\nThis link is valid for 15 minutes.`
-        )
-        await sendMail(
-            studentEmail,
-            `Course Purchase: ${courseTitle}`,
-            null,
-            `<h2>Purchase Successful!</h2><p>You purchased <b>${courseTitle}</b> for ₹${price}.</p>`,
-            { studentName, courseTitle, price, date: new Date() }
-        );
+        // Send password reset email
+        await sendPasswordResetEmail(user.email, resetUrl, user.firstname);
 
         res.status(200).json({
             success: true,
             message: "Reset link sent to your email",
-        })
-    } catch (error) {
+        });
 
+    } catch (error) {
+        console.error("Forgot Password Error:", error);
+        res.status(500).json({ success: false, message: "Something went wrong" });
     }
-}
+};
 
 exports.resetPAssword = async (req, res) => {
     try {
-        const { token } = req.params
-        const { password } = req.body
+        const { token } = req.params;
+        const { password } = req.body;
 
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-            return res.status(400).json({
-                success: false,
-                message: "Password must be at least 8 characters, include uppercase, lowercase, number, and special character."
-            })
-        }
+        // Password validation rules
+        if (password.length < 8)
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters." });
+        if (!/[A-Z]/.test(password))
+            return res.status(400).json({ success: false, message: "Password must include at least one uppercase letter." });
+        if (!/[a-z]/.test(password))
+            return res.status(400).json({ success: false, message: "Password must include at least one lowercase letter." });
+        if (!/\d/.test(password))
+            return res.status(400).json({ success: false, message: "Password must include at least one number." });
+        if (!/[@$!%*?&]/.test(password))
+            return res.status(400).json({ success: false, message: "Password must include at least one special character (@$!%*?&)." });
 
+        // Find user by token and check expiry
         const user = await userModal.findOne({
             resetToken: token,
-            resetTokenExpiry: { $gt: Date.now() }
-        })
-        if (!user) {
-            return res.status(400).json({ success: false, message: "Invalid or expired token" });
-        }
+            resetTokenExpiry: { $gt: Date.now() },
+        });
+        if (!user) return res.status(400).json({ success: false, message: "Invalid or expired token" });
 
+        // Update password
         const hashedPassword = await bcrypt.hash(password, 10);
         user.password = hashedPassword;
         user.resetToken = undefined;
         user.resetTokenExpiry = undefined;
-
         await user.save();
-        //  console.log("Reset Token:", resetToken);
-        res.status(200).json(
-            {
-                success: true,
-                message: "Password reset successful, please login again."
-            });
 
+        res.status(200).json({ success: true, message: "Password reset successful, please login again." });
     } catch (error) {
-        console.error("Reset password error:", error);
+        console.error("Reset Password Error:", error);
         res.status(500).json({ success: false, message: "Server error" });
     }
-}
-
+};

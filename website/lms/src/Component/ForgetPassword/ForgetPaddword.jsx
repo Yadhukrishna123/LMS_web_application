@@ -3,6 +3,8 @@ import axios from "axios"
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
+import { MdCreateNewFolder, MdOutlineSecurity, MdQuickreply } from 'react-icons/md';
+import { RiAccountPinCircleFill } from "react-icons/ri";
 
 
 const ForgetPaddword = () => {
@@ -20,58 +22,65 @@ const ForgetPaddword = () => {
 
 
 
+  const validatePassword = (pwd) => {
+    if (pwd.length < 8) return "Password must be at least 8 characters long.";
+    if (!/[A-Z]/.test(pwd)) return "Password must include at least one uppercase letter.";
+    if (!/[a-z]/.test(pwd)) return "Password must include at least one lowercase letter.";
+    if (!/\d/.test(pwd)) return "Password must include at least one number.";
+    if (!/[@$!%*?&]/.test(pwd)) return "Password must include at least one special character (@$!%*?&).";
+    return null;
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Frontend validation
+    const pwdError = validatePassword(password);
+    if (pwdError) return setError(pwdError);
+
     if (password !== confirmPassword) {
-      setError("password do not match")
-      setSuccess("")
-      return
+      return setError("Passwords do not match.");
     }
+
     try {
-      let res = await axios.post(`${import.meta.env.VITE_API_URL}/reset_password/${token}`, {
-        password
-      })
-      console.log(res);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/reset_password/${token}`, { password });
+
       if (res.data.success) {
-        toast.success(res.data.message)
-        setSuccess(res.data.success)
-
-        await new Promise((back) => setTimeout(back, 3000))
-        navigate("/login")
+        toast.success(res.data.message);
+        setSuccess(res.data.message);
+        setTimeout(() => navigate("/login"), 3000);
       }
-
-    } catch (error) {
-      console.log(error);
-      setError("Failed to reset password. Please try again.")
-      setSuccess("")
+    } catch (err) {
+      // Display backend validation message
+      setError(err.response?.data?.message || "Failed to reset password. Please try again.");
     }
-  }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-400 via-white-500 to-purple-600 p-4">
       <ToastContainer />
-      <div className="w-full max-w-6xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div className="w-full max-w-5xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left Side - Hero Section */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-500 via-white-500 to-yellow-600 p-12 flex-col justify-center relative overflow-hidden">
           {/* Decorative circles */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-white opacity-10 rounded-full -ml-48 -mb-48"></div>
-
+          
           <div className="relative z-10">
-            <div className="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-8 backdrop-blur-sm">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-              </svg>
+            <div className="w-16 h-16 bg-opacity-20 rounded-2xl flex items-center justify-center mb-8 backdrop-blur-sm">
+              
             </div>
+            <MdCreateNewFolder className='w-10 h-10 text-white' />
             <h1 className="text-5xl font-bold text-white mb-4 leading-tight">Create a New Password</h1>
             <p className="text-blue-100 text-lg">Choose a strong password to secure your account</p>
           </div>
 
           <div className="relative z-10 space-y-6">
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+              <div className="w-12 h-12 bg-white bg-opacity-10 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                <MdOutlineSecurity className='w-6 h-6 text-yellow-400' />
               </div>
               <div>
                 <h3 className="text-white font-semibold text-lg mb-1">Strong Security</h3>
@@ -80,10 +89,9 @@ const ForgetPaddword = () => {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+              <div className="w-12 h-12 bg-white bg-opacity-10 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                <RiAccountPinCircleFill className='w-6 h-6 text-blue-400'/>
+
               </div>
               <div>
                 <h3 className="text-white font-semibold text-lg mb-1">Protected Account</h3>
@@ -92,10 +100,8 @@ const ForgetPaddword = () => {
             </div>
 
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="w-12 h-12 bg-white bg-opacity-10 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                <MdQuickreply className='w-6 h-6 text-green-400'/>
               </div>
               <div>
                 <h3 className="text-white font-semibold text-lg mb-1">Quick Process</h3>

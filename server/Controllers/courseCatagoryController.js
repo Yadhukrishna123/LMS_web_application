@@ -54,3 +54,22 @@ exports.viewAllCourseCatago = async (req, res) => {
     });
   }
 };
+exports.viewAllCourseCategories = async (req, res) => {
+  try {
+    const search = req.query.title || "";
+    const query = search ? { title: { $regex: search, $options: "i" } } : {};
+    const data = await cateogry.find(query).lean();
+    const totalItems = data.length;
+
+    res.status(200).json({
+      success: true,
+      data,
+      totalItems,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

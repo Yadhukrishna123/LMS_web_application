@@ -23,8 +23,8 @@ const LoginInstitution = () => {
 
         try {
             let res = await axios.post("http://localhost:8080/api/v1/login_institute", {
-                email: inputs.email,
-                password: inputs.password
+                email: inputs.email,         // backend expects adminEmail
+                password: inputs.password    // backend expects adminPassword
             })
             console.log(res);
             if (res.data.success) {
@@ -35,8 +35,9 @@ const LoginInstitution = () => {
             }
 
         } catch (error) {
-
-        }
+    console.error(error.response?.data)
+    toast.error(error.response?.data?.message || "Login failed")
+}
 
     }
 

@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaSearch, FaLayerGroup, FaPlus, FaFilePdf, FaPrint } f
 import Delete from '../TableActions/Delete';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Link } from 'react-router-dom';
 
 const ViewCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -178,10 +179,11 @@ const ViewCategory = () => {
             <button onClick={handlePrint} className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl flex items-center gap-2">
               <FaPrint /> Print
             </button>
-
-            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
-              <FaPlus /> Add Category
-            </button>
+            <Link to="/add_course_cateogry">
+              <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                <FaPlus /> Add Category
+              </button>
+            </Link>
           </div>
         </div>
 

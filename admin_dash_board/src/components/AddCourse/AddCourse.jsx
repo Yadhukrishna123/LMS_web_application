@@ -36,7 +36,7 @@ const AddCourse = () => {
       try {
         const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
         setInstructors(instRes.data.data);
-        const catRes = await axios.get("http://localhost:8080/api/v1/view_All_categories");
+        const catRes = await axios.get("http://localhost:8080/api/v1/view_All_course_categories");
         setCategories(catRes.data.data);
       } catch (error) {
         console.error("Error fetching lists:", error);
@@ -44,6 +44,8 @@ const AddCourse = () => {
     };
     fetchData();
   }, []);
+  //console.log(categories);
+  
 
   const updateCourseData = (field, value) => {
     setCourseData((prev) => ({ ...prev, [field]: value }));

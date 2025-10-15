@@ -111,34 +111,30 @@ exports.updateStatus = async (req, res) => {
 }
 
 exports.loginInstitute = async (req, res) => {
-    const { email, password } = req.body
+    const { email, password } = req.body;
     try {
-        const institute = await institutionModal.findOne({ email })
+        const institute = await institutionModal.findOne({ adminEmail: email }); // fix here
         if (!institute) {
             return res.status(401).json({
                 success: false,
-                message: "Invalued email "
-            })
+                message: "Invalid email"
+            });
         }
 
-        const isPassword = await bcrypt.compare(password, institute.password)
-
+        const isPassword = await bcrypt.compare(password, institute.adminPassword);
         if (!isPassword) {
             return res.status(401).json({
                 success: false,
                 message: "Wrong password"
-            })
+            });
         }
-
-
 
         res.status(200).json({
             success: true,
-            message: "You are successfully sign in",
+            message: "You have successfully signed in",
             isAuthentication: true,
             institute,
-
-        })
+        });
 
     } catch (error) {
         res.status(500).json({
@@ -146,7 +142,7 @@ exports.loginInstitute = async (req, res) => {
             message: error.message
         });
     }
-}
+};
 
 
 exports.institutionProfile = async (req, res) => {
