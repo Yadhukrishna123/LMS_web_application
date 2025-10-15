@@ -80,10 +80,10 @@ function App() {
           <Route path="/upload_recorded_video" element={<ProtectedRoutes isAuthentication={auth}><UploadVideos /></ProtectedRoutes>} />
           <Route path="/recorded_sessions" element={<ProtectedRoutes isAuthentication={auth}><UploadedVideos /></ProtectedRoutes>} />
           <Route path="/user_enquiries" element={<ProtectedRoutes isAuthentication={auth}><UserEnquiries /></ProtectedRoutes>} />
-          <Route path="/add_course" element={<ProtectedRoutes isAuthentication={auth}><AddCourse /></ProtectedRoutes>} />
+          <Route path="/add_course" element={<AddCourse />}/>
           <Route path="/add_institution" element={<AddInstitution />} />
-           <Route path="/institutes_listing" element={<AllInstitute />} />
-            <Route path="/registration_request" element={<RegistrationRequest />} />
+          <Route path="/institutes_listing" element={<AllInstitute />} />
+          <Route path="/registration_request" element={<RegistrationRequest />} />
           <Route path="/add_course_cateogry" element={<AddCategory />} />
           <Route path="/view_course_cateogry" element={<ViewCategory />} />
           <Route path="/view_course" element={<ViewCourses />} />
@@ -113,7 +113,7 @@ function App() {
           <Route path="/fee_structure" element={<FeeStructure />} />
           <Route path="/student_fees" element={<StudentFees />} />
           <Route path="/fee_collection" element={<FeeCollection />} />
-           <Route path="/due_fees" element={<DueManagement />} />
+          <Route path="/due_fees" element={<DueManagement />} />
           <Route path="/paymentpage" element={<PaymentsPage />} />
 
         </Route>

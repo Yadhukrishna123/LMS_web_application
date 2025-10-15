@@ -16,7 +16,7 @@ const DueManagement = () => {
         let stuDetails = await axios.get("http://localhost:8080/api/v1/view_students")
         console.log(stuDetails);
         console.log(res);
-        
+
         setFeeDetail(res.data.feeStructore)
         setStudntDetails(stuDetails.data.data)
 
@@ -127,14 +127,17 @@ const DueManagement = () => {
                                     <th className="px-4 py-4 text-right text-sm font-semibold">Paid Amount</th>
                                     <th className="px-4 py-4 text-right text-sm font-semibold">Pending Amount</th>
                                     <th className="px-4 py-4 text-center text-sm font-semibold">Due Date</th>
-                                    <th className="px-4 py-4 text-center text-sm font-semibold">Status</th>
                                     <th className="px-4 py-4 text-left text-sm font-semibold">Contact Info</th>
                                     <th className="px-4 py-4 text-center text-sm font-semibold">Reminder</th>
                                     <th className="px-4 py-4 text-center text-sm font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {feedetail.length === 0 ? (<p>no student founf</p>) : (
+                                {feedetail.length === 0 ? (<tr>
+                                    <td colSpan="10" className="text-center py-12 text-slate-500">
+                                        No payment records found.
+                                    </td>
+                                </tr>) : (
                                     feedetail.map((f, i) => {
                                         return (
                                             <tr
@@ -193,34 +196,7 @@ const DueManagement = () => {
                                                     </div>
                                                 </td>
 
-                                                {/* Status */}
-                                                <td className="px-4 py-4 text-center">
-                                                    {status === 'success' && (
-                                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
-                                                            <FiCheckCircle className="w-3 h-3" />
-                                                            Completed
-                                                        </span>
-                                                    )}
-                                                    {status === 'overdue' && (
-                                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
-                                                            <FiAlertCircle className="w-3 h-3" />
-                                                            Overdue
-                                                        </span>
-                                                    )}
-                                                    {status === 'warning' && (
-                                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
-                                                            <FiClock className="w-3 h-3" />
-                                                            Due Soon
-                                                        </span>
-                                                    )}
-                                                    {status === 'pending' && (
-                                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                                                            <FiClock className="w-3 h-3" />
-                                                            Pending
-                                                        </span>
-                                                    )}
-                                                    pending
-                                                </td>
+
 
                                                 {/* Contact Info */}
                                                 <td className="px-4 py-4">

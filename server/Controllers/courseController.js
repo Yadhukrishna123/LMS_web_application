@@ -6,18 +6,36 @@ exports.createCourse = async (req, res) => {
             title,
             description,
             price,
+            isFree,
             duration,
-            level,
-            instructorDetails,
             category,
+            tags,
             image,
+            instructorName,
+            instructorBio,
+            hasMonthlyPayment,
+            monthlyAmount,
         } = req.body;
 
-        if (!title || !description || !price || !duration || !level || !category) {
+        if (!title || !description || !price || !duration || !instructorName || !category) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        const course = await courseModal.create(req.body);
+    const formattedTags = typeof tags === "string" ? tags.split(",").map(tag => tag.trim()) : tags;
+        const course = await courseModal.create({
+            title,
+            description,
+            price,
+            isFree,
+            duration,
+            category,
+            tags:formattedTags || [],
+            image,
+            instructorName,
+            instructorBio,
+            hasMonthlyPayment,
+            monthlyAmount,
+        });
 
         res.status(200).json({
             success: true,
