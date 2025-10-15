@@ -183,12 +183,13 @@ const PaymentsPage = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-x-auto">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-green-500 to-teal-500 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Transactions</h3>
           </div>
 
-          <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Sl No.</th>
@@ -245,6 +246,7 @@ const PaymentsPage = () => {
               )}
             </tbody>
           </table>
+          </div>
 
           {/* Pagination Footer */}
           {totalPages > 1 && (
