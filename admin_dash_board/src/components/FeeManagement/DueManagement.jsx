@@ -7,18 +7,35 @@ const DueManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const [feedetail, setFeeDetail] = useState([])
-    const [stuDentDails, setStudntDetails] = useState([])
+    const [loading, setLoading] = useState(false)
 
 
 
     const getAllData = async () => {
-        let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee_structore")
-        let stuDetails = await axios.get("http://localhost:8080/api/v1/view_students")
-        console.log(stuDetails);
-        console.log(res);
+        try {
+            setLoading(true)
+            let resOne = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            let resTwo = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            let paymentData = resOne.data.paymentDetails
+            let studentFeeData = resTwo.data.feeStructore
 
-        setFeeDetail(res.data.feeStructore)
-        setStudntDetails(stuDetails.data.data)
+            console.log("resOne", resOne);
+            console.log("resTwo", resTwo);
+
+            const fullPayment = ([...paymentData, ...studentFeeData])
+
+            const avoiDuplicatePAyment = [
+                ...new Map(fullPayment.map((payment) => [payment.receiptNo, payment])).values()
+            ]
+            setFeeDetail(avoiDuplicatePAyment)
+
+
+        } catch (error) {
+
+        } finally {
+            setLoading(true)
+        }
+
 
     }
 
@@ -36,6 +53,15 @@ const DueManagement = () => {
         if (due - today < 7 * 24 * 60 * 60 * 1000) return 'warning';
         return 'pending';
     };
+
+    const getDueDate = (date) => {
+        const [month, day, year] = date.split("/").map(Number);
+        const startDate = new Date(year, month - 1, day);
+        const dueDate = new Date(startDate);
+        dueDate.setMonth(dueDate.getMonth() + 1);
+        const pad = (n) => n.toString().padStart(2, "0");
+        return `${pad(dueDate.getMonth() + 1)}/${pad(dueDate.getDate())}/${dueDate.getFullYear()}`;
+    }
 
 
 
@@ -124,6 +150,8 @@ const DueManagement = () => {
                                     <th className="px-4 py-4 text-left text-sm font-semibold">Student Info</th>
                                     <th className="px-4 py-4 text-left text-sm font-semibold">Course</th>
                                     <th className="px-4 py-4 text-right text-sm font-semibold">Total Fee</th>
+                                    <th className="px-4 py-4 text-right text-sm font-semibold">Payment date</th>
+
                                     <th className="px-4 py-4 text-right text-sm font-semibold">Paid Amount</th>
                                     <th className="px-4 py-4 text-right text-sm font-semibold">Pending Amount</th>
                                     <th className="px-4 py-4 text-center text-sm font-semibold">Due Date</th>
@@ -154,8 +182,7 @@ const DueManagement = () => {
                                                         <div>
                                                             <p className="font-semibold text-gray-900">{f.studentName}</p>
                                                             {
-                                                                stuDentDails.find((s) => s.name === f.studentName)?.studentId
-                                                                || "N/A"
+                                                                f.studentId
                                                             }
                                                         </div>
                                                     </div>
@@ -171,18 +198,21 @@ const DueManagement = () => {
 
                                                 {/* Total Fee */}
                                                 <td className="px-4 py-4 text-right">
-                                                    <span className="text-sm font-medium text-gray-900">₹{f.totalFee}</span>
+                                                    <span className="text-sm font-medium text-gray-900">₹{f.amount}</span>
+                                                </td>
+                                                <td className="px-4 py-4 text-right">
+                                                    <span className="text-sm font-medium text-gray-900">₹{f.date}</span>
                                                 </td>
 
                                                 {/* Paid Amount */}
                                                 <td className="px-4 py-4 text-right">
-                                                    <span className="text-sm font-medium text-emerald-600">₹{f.amountPaid}</span>
+                                                    <span className="text-sm font-medium text-emerald-600">₹{f.hasMonthlyPayment === true ? f.monthlyAmount : "Payment complete"}</span>
                                                 </td>
 
                                                 {/* Pending Amount */}
                                                 <td className="px-4 py-4 text-right">
                                                     <span className="text-sm font-bold text-red-600">
-                                                        ₹{f.balance}
+                                                        ₹{f.hasMonthlyPayment === true ? f.amount - f.monthlyAmount : "No pending amount"}
                                                     </span>
                                                 </td>
 
@@ -191,7 +221,9 @@ const DueManagement = () => {
                                                     <div className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 rounded-lg">
                                                         <FiCalendar className="w-3 h-3 text-amber-600" />
                                                         <span className="text-xs font-medium text-gray-700">
-                                                            date
+                                                            {
+                                                                f.hasMonthlyPayment === true ? getDueDate(f.date) : "No due date"
+                                                            }
                                                         </span>
                                                     </div>
                                                 </td>
@@ -203,11 +235,12 @@ const DueManagement = () => {
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-1 text-xs text-gray-600">
                                                             <FiPhone className="w-3 h-3" />
-                                                            <span>{stuDentDails.find((s) => s.name === f.studentName)?.phone}</span>
+                                                            <span>{f.billingDetails.phone}</span>
+
                                                         </div>
                                                         <div className="flex items-center gap-1 text-xs text-gray-600">
                                                             <FiMail className="w-3 h-3" />
-                                                            <span className="truncate max-w-32">{stuDentDails.find((s) => s.name === f.studentName)?.email}</span>
+                                                            <span className="truncate max-w-32">{f.userEmail}</span>
                                                         </div>
                                                     </div>
                                                 </td>

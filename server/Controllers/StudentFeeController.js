@@ -2,52 +2,113 @@ const studentFeeModal = require("../modals/studentFee")
 
 
 exports.createStudentFee = async (req, res) => {
-    const { studentName,
+    const {
+        razorpay_order_id,
+        razorpay_payment_id,
+        courseId,
         courseName,
-        batch,
-        totalFee,
-        amountPaid,
-        modeOfPayment,
-        paymentDate,
-        remarks } = req.body
+        userId,
+        studentName,
+        studentId,
+        username,
+        userEmail,
+        amount,
+        date,
+        status,
+        hasMonthlyPayment,
+        monthlyAmount,
+        billingDetails,
+        paymentMethod,
+        bank,
+        wallet,
+        vpa
+    } = req.body;
 
     try {
-
-        if (!studentName || !courseName || !batch || !totalFee || !remarks) {
+       
+        if (!studentName || !courseName || !amount) {
             return res.status(400).json({
                 success: false,
-                message: "Missing required fields"
+                message: "Missing required fields: studentName, courseName, or amount"
             });
         }
+
+       
+        const defaultBilling = {
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone: "",
+            country: "",
+            address: "",
+            apartment: "",
+            city: "",
+            state: "",
+            zipCode: ""
+        };
+
         const studentFee = await studentFeeModal.create({
-            studentName,
+            razorpay_order_id: razorpay_order_id || "N/A",
+            razorpay_payment_id: razorpay_payment_id || "N/A",
+            courseId,
             courseName,
-            batch,
-            totalFee,
-            amountPaid,
-            modeOfPayment,
-            paymentDate,
-            remarks
-        })
+            userId,
+            studentName,
+            studentId,
+            username,
+            userEmail,
+            amount,
+            date: date || new Date().toLocaleDateString("en-US"),
+            status: status || "success",
+            hasMonthlyPayment: hasMonthlyPayment || false,
+            monthlyAmount: monthlyAmount || 0,
+            billingDetails: { ...defaultBilling, ...billingDetails },
+            paymentMethod: paymentMethod || "",
+            bank: bank || "",
+            wallet: wallet || "",
+            vpa: vpa || ""
+        });
 
-        if (!studentFee) {
-            return res.status(404).json({
-                success: false, message: "Faild to create fee structure"
-            })
-        }
+        return res.status(201).json({
+            success: true,
+            message: "Successfully created student fee structure",
+            studentFee
+        });
 
-        if (studentFee) {
-            res.status(200).json({
-                success: true,
-                message: "Successfully created student fee structure",
-                studentFee
-            })
-        }
     } catch (error) {
-        console.error(err);
-        res.status(500).json({ message: "Server error" });
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message
+        });
     }
-}
+};
+
+exports.getAllStudentFees = async (req, res) => {
+    try {
+        const studentFees = await studentFeeModal.find();
+
+        if (!studentFees || studentFees.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No student fees found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            studentFees
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message
+        });
+    }
+};
 
 exports.getAllFeeStructore = async (req, res) => {
     try {
@@ -113,6 +174,6 @@ exports.deleteFeeStructore = async (req, res) => {
             })
         }
     } catch (error) {
-        
+
     }
 }

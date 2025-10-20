@@ -2,7 +2,7 @@ const Batch = require("../modals/batches");
 const Student = require("../modals/students");
 
 const generateStudentId = async () => {
-  const lastStudent = await Student.findOne({}).sort({ _id: -1 }); // sort by MongoDB _id descending
+  const lastStudent = await Student.findOne({}).sort({ _id: -1 }); 
   if (!lastStudent || !lastStudent.studentId) return "STD001";
 
   const lastNum = parseInt(lastStudent.studentId.replace("STD", ""));
@@ -10,10 +10,10 @@ const generateStudentId = async () => {
   return "STD" + newNum.toString().padStart(3, "0");
 };
 
-// 🔹 Add student
+
 exports.addStudent = async (req, res) => {
   try {
-    const { name, email, phone, age, gender, profileImage, courseEnrolled, address, batch } = req.body;
+    const { name, email, phone, age, gender,accoutRegisterdEmail, profileImage, courseEnrolled, address, batch } = req.body;
 
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, message: "Name, Email and Phone are required" });
@@ -26,6 +26,7 @@ exports.addStudent = async (req, res) => {
       name,
       email,
       phone,
+      accoutRegisterdEmail,
       age,
       gender,
       profileImage,

@@ -23,6 +23,8 @@ import ProtectedRoutes from './Utils/ProtectedRoutes'
 
 import TakeQuiz from './Component/Quiz/UserQuiz'
 import CheckoutPage from './Component/Purchase/CheckoutPage'
+import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
+import AddStudent from './Component/AddStudentDetails/AddStudent'
 
 
 
@@ -57,7 +59,9 @@ function App() {
 
 
         <Route path="/user_page" element={<UserPage />} />
+        <Route path="/add_student_details" element={<AddStudent />} />
         <Route path="/checkout/:courseId" element={<CheckoutPage />} />
+        <Route path="/payment_success" element={<PurchaseSucccessCard />} />
 
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={authentication}><QuizList /> </ProtectedRoutes>} />

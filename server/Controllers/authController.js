@@ -89,29 +89,21 @@ exports.login = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
     try {
-        let { page = 1, limit = 5, firstname } = req.query;
 
-        page = parseInt(page);
-        limit = parseInt(limit);
 
-        let query = {};
-        if (firstname) {
-            query.firstname = { $regex: firstname, $options: "i" };
+        const users = await userModal.find()
+        if(!users){
+            return  res.status(400).json({
+            success: false,
+            messsage:"Users noy found",
+
+        });
         }
-
-        const total = await userModal.countDocuments(query);
-        const totalPages = Math.ceil(total / limit);
-
-        const users = await userModal.find(query)
-            .skip((page - 1) * limit)
-            .limit(limit);
 
         res.status(200).json({
             success: true,
             users,
-            page,
-            totalPages,
-            total
+
         });
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -151,7 +143,7 @@ exports.getUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
-    
+
 }
 
 

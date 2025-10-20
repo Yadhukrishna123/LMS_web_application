@@ -21,7 +21,7 @@ exports.createCourse = async (req, res) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-    const formattedTags = typeof tags === "string" ? tags.split(",").map(tag => tag.trim()) : tags;
+        const formattedTags = typeof tags === "string" ? tags.split(",").map(tag => tag.trim()) : tags;
         const course = await courseModal.create({
             title,
             description,
@@ -29,7 +29,7 @@ exports.createCourse = async (req, res) => {
             isFree,
             duration,
             category,
-            tags:formattedTags || [],
+            tags: formattedTags || [],
             image,
             instructorName,
             instructorBio,
@@ -48,31 +48,13 @@ exports.createCourse = async (req, res) => {
 }
 exports.getAllCourse = async (req, res) => {
     try {
-        const { title, category, price, duration, page = 1, limit = 5 } = req.query;
-        const query = {};
 
-        if (title) query.title = { $regex: title, $options: "i" };
-        if (category && category.toLowerCase() !== "all") query.category = category.toLowerCase();
-
-        if (price) {
-            if (price === "1-1000") query.price = { $gte: 1, $lte: 1000 };
-            else if (price === "1000-2000") query.price = { $gte: 1000, $lte: 2000 };
-            else if (price === "2000-3000") query.price = { $gte: 2000, $lte: 3000 };
-        }
-
-        if (duration) query.duration = duration;
-
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-        const total = await courseModal.countDocuments(query);
-
-        const data = await courseModal.find(query).skip(skip).limit(parseInt(limit));
+        const data = await courseModal.find()
 
         res.status(200).json({
             success: true,
             data,
-            page: parseInt(page),
-            totalPages: Math.ceil(total / parseInt(limit)),
-            totalItems: total,
+
         });
     } catch (error) {
         res.status(500).json({

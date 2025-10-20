@@ -16,8 +16,8 @@ const FeeCollection = () => {
 
 
     const getAllFeecollection = async () => {
-        let res = await axios.get(`http://localhost:8080/api/v1/get_all_student_fee_structore?studentName=${search}`)
-        setCollections(res.data.feeStructore)
+        let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+        setCollections(res.data.paymentDetails)
     }
 
     useEffect(() => {
@@ -41,23 +41,23 @@ const FeeCollection = () => {
 
         doc.setFontSize(12);
         doc.text(`Receipt No: ${c.receiptNo}`, 14, 30);
-        doc.text(`Date: ${c.paymentDate}`, 150, 30);
+        doc.text(`Date: ${c.date}`, 150, 30);
 
         doc.text("Student Information", 14, 45);
         doc.setFontSize(12);
         doc.text(`Student Name: ${c.studentName}`, 14, 55);
         doc.text(`Course / Semester: ${c.courseName}`, 14, 65);
-        doc.text(`Mode of Payment: ${c.modeOfPayment}`, 14, 75);
-        doc.text(`Collected By: ${c.amountPaid}`, 14, 85);
+        doc.text(`Mode of Payment: ${c.paymentMethod}`, 14, 75);
+        doc.text(`Collected By: ${c.monthlyAmount}`, 14, 85);
         doc.text(`Remarks: ${c.remarks || "-"}`, 14, 95);
 
         doc.autoTable({
             startY: 110,
             head: [["Description", "Amount (₹)"]],
             body: [
-                ["Total Fee", c.totalFee],
-                ["Amount Paid", c.amountPaid],
-                ["Balance", c.totalFee - c.amountPaid],
+                ["Total Fee", c.amount],
+                ["Amount Paid", c.monthlyAmount],
+                ["Balance", c.amount - c.monthlyAmount],
             ],
         });
 
@@ -145,18 +145,18 @@ const FeeCollection = () => {
                                                 {c.courseName}
                                             </td>
                                             <td className="py-4 px-6 font-bold text-green-600">
-                                                ₹{c.totalFee}
+                                                ₹{c.amount}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
-                                                    {c.modeOfPayment}
+                                                    {c.paymentMethod}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
-                                                {c.paymentDate}
+                                                {c.date}
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
-                                                {c.amountPaid}
+                                                {c.hasMonthlyPayment === true ? c.monthlyAmount : "payment complete"}
                                             </td>
                                             <td className="py-4 px-6 text-slate-600 text-sm">
                                                 {c.remarks || '-'}

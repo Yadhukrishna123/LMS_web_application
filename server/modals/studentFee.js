@@ -2,48 +2,97 @@ const mongoose = require("mongoose");
 
 const studentFeeSchema = new mongoose.Schema(
     {
-        studentName: {
+        razorpay_order_id: {
             type: String,
-            required: true,
-
+            
+            default: "N/A",
+        },
+        razorpay_payment_id: {
+            type: String,
+            
+            default: "N/A",
+        },
+        courseId: {
+            type: String,
+            ref: "Course",
+            required: true
         },
         courseName: {
             type: String,
-            required: true,
-
+            required: true
         },
-        batch: {
+        userId: {
             type: String,
-
+            ref: "User",
+            required: true
         },
-        totalFee: {
-            type: Number,
-            required: true,
-
+        studentName: {
+            type: String,
+            required: true
         },
-        amountPaid: {
-            type: Number,
-            required: true,
-
+        studentId: {
+            type: String,
+            required: true
         },
-        balance: {
+
+        username: {
+            type: String,
+            required: true
+        },
+        userEmail: {
+            type: String,
+            required: true
+        },
+        amount: {
             type: Number,
-            default: function () {
-                return this.totalFee - this.amountPaid;
+            required: true
+        },
+        date: {
+            type: String,
+            default: () => new Date().toLocaleDateString("en-US")
+        },
+        status: {
+            type: String,
+            enum: ["success", "failed"],
+            required: true
+        },
+        hasMonthlyPayment: {
+            type: Boolean,
+            default: false
+        },
+        monthlyAmount: {
+            type: Number,
+            default: 0
+        },
+        billingDetails: {
+            firstName: {
+                type: String,
+                required: true
             },
-        },
-        modeOfPayment: {
-            type: String,
-            required: true,
-        },
-        paymentDate: {
-            type: Date,
-            required: true,
-        },
-        remarks: {
-            type: String,
+            lastName: {
+                type: String,
+                required: true
+            },
+            email: {
+                type: String,
+                required: true
+            },
+            phone: {
+                type: String,
+                required: true
+            },
+            country: String,
+            address: String,
+            apartment: String,
+            city: String,
+            state: String,
+            zipCode: String,
 
         },
+        paymentMethod: { type: String },
+        bank: { type: String },
+        wallet: { type: String },
+        vpa: { type: String },
         receiptNo: {
             type: String,
             unique: true,

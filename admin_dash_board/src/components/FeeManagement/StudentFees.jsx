@@ -12,11 +12,22 @@ const StudentFees = () => {
     const [feeStructore, setFeStructore] = useState([])
     const [deleteClick, setDeleteClick] = useState(false);
     const [id, setId] = useState("");
+    const [loading, setLoading] = useState(false)
     const deleteCont = "Are you sure that you want to delete?";
 
     const getAllFeeStructore = async () => {
-        let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee_structore")
-        setFeStructore(res.data.feeStructore)
+        try {
+            setLoading(true)
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            setFeStructore(res.data.feeStructore)
+            console.log(res);
+
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
+
     }
 
 
@@ -26,6 +37,7 @@ const StudentFees = () => {
 
     }, []);
 
+    // console.log(feeStructore);
 
     const handleDelete = (id) => {
         setDeleteClick(true)
@@ -77,7 +89,7 @@ const StudentFees = () => {
 
                                 className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
                             >
-                                <FaPlus /> Add Payment
+                                <FaPlus /> Add student fees
                             </button>
 
                         </div>
@@ -109,7 +121,7 @@ const StudentFees = () => {
                                 {feeStructore.length === 0 ? (
                                     <tr>
                                         <td colSpan="10" className="text-center py-12 text-slate-500">
-                                            No payment records found. Click "Add Payment" to create one.
+                                            No payment records found.
                                         </td>
                                     </tr>
                                 ) : (
@@ -120,6 +132,7 @@ const StudentFees = () => {
                                         >
                                             <td className="py-4 px-6 font-semibold text-slate-800">
                                                 {p.studentName}
+
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
                                                 {p.courseName}
@@ -130,21 +143,21 @@ const StudentFees = () => {
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 font-bold text-blue-600">
-                                                ₹{p.totalFee.toLocaleString()}
+                                                ₹{p.amount}
                                             </td>
                                             <td className="py-4 px-6 font-bold text-green-600">
-                                                ₹{p.amountPaid.toLocaleString()}
+                                                ₹{p.monthlyAmount}
                                             </td>
                                             <td className="py-4 px-6 font-bold text-orange-600">
-                                                ₹{p.balance.toLocaleString()}
+                                                ₹{p.amount - p.monthlyAmount}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
-                                                    {p.modeOfPayment}
+                                                    {p.paymentMethod}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
-                                                {new Date(p.paymentDate).toLocaleDateString('en-IN')}
+                                                {p.date}
                                             </td>
                                             <td className="py-4 px-6 text-slate-600 text-sm">
                                                 {p.remarks || '-'}

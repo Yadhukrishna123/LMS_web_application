@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaPen, FaUserCircle } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 const UserPage = () => {
     return (
@@ -19,15 +20,17 @@ const UserPage = () => {
                             <h2 className="text-2xl font-bold">John Doe</h2>
                         </div>
                         <div className='ml-5 mt-2'>
-                            <FaPen style={{cursor:"pointer"}} color='green'/>
+                            <FaPen style={{ cursor: "pointer" }} color='green' />
                         </div>
                     </div>
                     <p className="text-gray-500">johndoe@example.com</p>
                     <p className="text-gray-500 mt-1">Member since: Jan 2023</p>
 
+                    <Link to="/add_student_details">
+                        <button>Add student details</button>
 
-
-
+                    </Link>
+                   
                 </div>
             </div>
 

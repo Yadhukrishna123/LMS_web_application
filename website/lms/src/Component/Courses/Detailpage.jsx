@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { AllCourseDetail } from "../AllCourseContext/Context";
+import { useContext } from "react";
 
 const Detailpage = () => {
+  const { sentDataToCheckoutPage } = useContext(AllCourseDetail)
   const { id } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
@@ -79,8 +82,8 @@ const Detailpage = () => {
         {course.isFree
           ? "Free"
           : course.pricing?.discount
-          ? `₹${course.pricing.discount} (Original: ₹${course.price})`
-          : `₹${course.price}`}
+            ? `₹${course.pricing.discount} (Original: ₹${course.price})`
+            : `₹${course.price}`}
       </p>
 
       {/* Tags */}
@@ -164,10 +167,14 @@ const Detailpage = () => {
 
       {/* Buttons */}
       <div className="flex gap-4 mt-6">
-        <button onClick={() => navigate(`/checkout/${course._id}`)}
-         className="bg-purple-500 text-white px-6 py-3 rounded hover:bg-purple-600">
-          Enroll Now
-        </button>
+        <Link to={`/checkout/${course._id}`}>
+          <button
+            onClick={(sentDataToCheckoutPage(course))}
+            className="bg-purple-500 text-white px-6 py-3 rounded hover:bg-purple-600">
+
+            Enroll Now
+          </button>
+        </Link>
         <button
           onClick={() => navigate(-1)}
           className="bg-gray-300 text-gray-800 px-6 py-3 rounded hover:bg-gray-400"
