@@ -29,17 +29,15 @@ exports.getAllEnquiry = async (req, res) => {
 
     let query = {};
     if (name) {
-      query.name = { $regex: name, $options: "i" }; // case-insensitive name search
+      query.name = { $regex: name, $options: "i" }; 
     }
 
-    // Count total items for pagination
     const totalItems = await enquiryModal.countDocuments(query);
     const totalPages = Math.ceil(totalItems / limit);
 
-    // Fetch paginated data
     const data = await enquiryModal
       .find(query)
-      .sort({ createdAt: -1 }) // newest first
+      .sort({ createdAt: -1 }) 
       .skip((page - 1) * limit)
       .limit(limit);
 

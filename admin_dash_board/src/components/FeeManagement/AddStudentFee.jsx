@@ -5,37 +5,54 @@ import { toast, ToastContainer } from 'react-toastify'
 
 const AddStudentFee = ({ setShowForm }) => {
     let [students, setStudents] = useState([])
-    let [batches, setBatches] = useState([])
     let [courses, setCourses] = useState([])
+    let [users, setUsers] = useState([])
     let [loading, setLoading] = useState(false)
     let paymentModes = ["cash", "upi", "card", "netbank"]
     const [input, setInput] = useState({
         studentName: "",
         courseName: "",
-        batch: "",
         totalFee: 0,
         amountPaid: "",
         modeOfPayment: "",
         paymentDate: "",
-        remarks: ""
+        remarks: "",
+        country: "",
+        Appartment: "",
+        City: "",
+        statue: "",
+        zipcode: "",
+        address: ""
     })
 
     const getAllData = async () => {
-        let getallStudent = await axios.get("http://localhost:8080/api/v1/view_students")
-        let getallBatch = await axios.get("http://localhost:8080/api/v1/view_all_batches")
-        let getallCourse = await axios.get("http://localhost:8080/api/v1/get_all_courses")
+        setLoading(true)
+        try {
+            let getallStudent = await axios.get("http://localhost:8080/api/v1/view_students")
+            let getallCourse = await axios.get("http://localhost:8080/api/v1/get_all_courses")
+            let getAllUsers = await axios.get("http://localhost:8080/api/v1/get_all_user")
 
+            console.log(getallStudent);
+            setStudents(getallStudent.data.data)
+            console.log(students)
+            console.log(getallCourse)
+            setCourses(getallCourse.data.data)
+            console.log(getAllUsers)
+            setUsers(getAllUsers.data.users)
+            console.log(users);
 
-        setStudents(getallStudent.data.data)
-        setBatches(getallBatch.data.data)
-        setCourses(getallCourse.data.data)
-        console.log(getallCourse);
-
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
         getAllData()
     }, [])
+
+
     const handleInputChange = (e) => {
         const { name, value } = e.target
 
@@ -49,27 +66,73 @@ const AddStudentFee = ({ setShowForm }) => {
             });
         }
     }
+
+
+    const studentId = students.find((s) => s.name === input.studentName)?.studentId
+    const studentEmail = students.find((s) => s.name === input.studentName)?.accoutRegisterdEmail
+    console.log(studentEmail)
+    const userId = users.find((u) => u.email === studentEmail)?._id
+    const firstName = users.find((u) => u.email === studentEmail)?.firstname
+    const lastname = users.find((u) => u.email === studentEmail)?.lastname
+    const phone = users.find((u) => u.email === studentEmail)?.phone
+    console.log(userId);
+    console.log(firstName)
+    console.log(lastname)
+    console.log(phone)
+
+
+
+
+
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault(e)
         setLoading(true)
         try {
             let payload = {
+                razorpay_order_id: null,
+                razorpay_payment_id: null,
                 studentName: input.studentName,
+                studentId: studentId,
+                userId: userId,
+                courseId: courses.find((c) => c.title === input.courseName)?._id,
                 courseName: input.courseName,
-                batch: input.batch,
-                totalFee: input.totalFee,
-                amountPaid: input.amountPaid,
-                modeOfPayment: input.modeOfPayment,
-                paymentDate: input.paymentDate,
-                remarks: input.remarks
-            }
-            let res = await axios.post("http://localhost:8080/api/v1/add_student_fee_structore", payload)
-            console.log(res);
-            if (res.data.success) {
-                toast.success(res.data.message)
-                setShowForm(false)
+                username: students.find((s) => s.name === input.studentName)?.name,
+                userEmail: students.find((s) => s.name === input.studentName)?.accoutRegisterdEmail,
+                hasMonthlyPayment: input.amountPaid ? true : false,
+                monthlyAmount: input.amountPaid,
+                amount: input.totalFee,
+                date: new Date().toLocaleDateString("en-US"),
+                status: "success",
+                paymentMethod: input.modeOfPayment,
+                billingDetails: {
+                    firstName: firstName,
+                    lastName: lastname,
+                    email: students.find((s) => s.name === input.studentName)?.accoutRegisterdEmail,
+                    phone: phone,
+                    country: input.country,
+                    address: input.address,
+                    apartment: input.Appartment,
+                    city: input.City,
+                    state: input.statue,
+                    zipCode: input.zipcode
+                }
             }
 
+
+
+
+            const [feeres, paymentRes] = await Promise.all([
+                axios.post("http://localhost:8080/api/v1/add_student_fee_structore", payload),
+                axios.post("http://localhost:8080/api/v1/save_db", payload)
+            ])
+            console.log(feeres, paymentRes)
+            if (feeres.data.success && paymentRes.data.success) {
+                toast.success("Successfully purchases course")
+                setShowForm(false)
+            }
         } catch (error) {
             console.log(error.message)
         } finally {
@@ -142,7 +205,7 @@ const AddStudentFee = ({ setShowForm }) => {
                         </div>
 
                         {/* Batch */}
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-semibold text-slate-700 mb-2">
                                 Batch
                             </label>
@@ -159,7 +222,7 @@ const AddStudentFee = ({ setShowForm }) => {
                                     )
                                 })}
                             </select>
-                        </div>
+                        </div> */}
 
                         {/* Total Fee (Auto-fetched) */}
                         <div>
@@ -243,6 +306,107 @@ const AddStudentFee = ({ setShowForm }) => {
                             />
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                Country *
+                            </label>
+                            <input
+                                type="text"
+                                name="country"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                Address *
+                            </label>
+                            <input
+                                type="text"
+                                name="address"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                Appartment *
+                            </label>
+                            <input
+                                type="text"
+                                name="Appartment"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                City *
+                            </label>
+                            <input
+                                type="text"
+                                name="City"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                State *
+                            </label>
+                            <input
+                                type="text"
+                                name="statue"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                Zip code *
+                            </label>
+                            <input
+                                type="text"
+                                name="zipcode"
+                                // value={formData.amountPaid}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter amount paid"
+                            />
+                        </div>
                         {/* Remarks */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-semibold text-slate-700 mb-2">

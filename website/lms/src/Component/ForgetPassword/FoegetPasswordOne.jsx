@@ -1,9 +1,9 @@
 import axios from "axios"
 import React, { useState } from 'react';
-import { Mail, ArrowLeft, Lock, CheckCircle, Shield } from 'lucide-react';
 import { SiQuicklook } from "react-icons/si";
-import { MdOutlineMarkEmailRead  } from "react-icons/md";
-import { FaShippingFast, FaUserLock  } from "react-icons/fa";
+import { MdMail, MdArrowBack, MdLock, MdCheckCircle } from 'react-icons/md';
+import { MdOutlineMarkEmailRead } from "react-icons/md";
+import { FaShippingFast, FaUserLock } from "react-icons/fa";
 
 const FoegetPasswordOne = () => {
     const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ const FoegetPasswordOne = () => {
         e.preventDefault();
         try {
             let res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot_password`, {
-        email
+                email
             });
             console.log('Password reset requested for:', email);
             setMessage("Password reset link sent! Check your email.");
@@ -41,13 +41,13 @@ const FoegetPasswordOne = () => {
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
                                     <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
-                                        <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                                        <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
                                     </svg>
                                 </div>
                                 <h1 className="text-3xl font-bold text-white">EduLearn</h1>
                             </div>
-                           
+
                             <h2 className="text-4xl font-bold text-white mb-4"> Reset Your Password</h2>
                             <p className="text-white text-opacity-90 text-lg">
                                 We'll help you get back to learning in no time
@@ -56,35 +56,35 @@ const FoegetPasswordOne = () => {
 
                         {/* Features List */}
                         <div className="relative z-10 space-y-6">
-                          <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                              <MdOutlineMarkEmailRead className='w-6 h-6 text-green-500' />
+                            <div className="flex items-start space-x-4">
+                                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                                    <MdOutlineMarkEmailRead className='w-6 h-6 text-green-500' />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-semibold text-lg mb-1">Check Your Email</h3>
+                                    <p className="text-blue-100 text-sm">We'll send you a reset link</p>
+                                </div>
                             </div>
-                            <div>
-                              <h3 className="text-white font-semibold text-lg mb-1">Check Your Email</h3>
-                              <p className="text-blue-100 text-sm">We'll send you a reset link</p>
-                            </div>
-                          </div>
 
-                          <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                              <FaUserLock className='w-6 h-6 text-purple-500' />
+                            <div className="flex items-start space-x-4">
+                                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                                    <FaUserLock className='w-6 h-6 text-purple-500' />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-semibold text-lg mb-1">Secure Process</h3>
+                                    <p className="text-blue-100 text-sm">Your account security is our priority</p>
+                                </div>
                             </div>
-                            <div>
-                              <h3 className="text-white font-semibold text-lg mb-1">Secure Process</h3>
-                              <p className="text-blue-100 text-sm">Your account security is our priority</p>
-                            </div>
-                          </div>
 
-                          <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                              <FaShippingFast className='w-6 h-6 text-yellow-500' />
+                            <div className="flex items-start space-x-4">
+                                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                                    <FaShippingFast className='w-6 h-6 text-yellow-500' />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-semibold text-lg mb-1">Quick Recovery</h3>
+                                    <p className="text-blue-100 text-sm">Get back to your courses instantly</p>
+                                </div>
                             </div>
-                            <div>
-                              <h3 className="text-white font-semibold text-lg mb-1">Quick Recovery</h3>
-                              <p className="text-blue-100 text-sm">Get back to your courses instantly</p>
-                            </div>
-                          </div>
                         </div>
                     </div>
                 </div>
@@ -97,14 +97,14 @@ const FoegetPasswordOne = () => {
                             href="/login"
                             className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium transition mb-6"
                         >
-                            <ArrowLeft className="w-4 h-4 mr-1" />
+                            <MdArrowBack className="w-4 h-4 mr-1" />
                             Back to login
                         </a>
 
                         {/* Header */}
                         <div className="text-center mb-8">
                             <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mb-4">
-                                <Lock className="w-7 h-7 text-white" />
+                                <MdLock className="w-7 h-7 text-white" />
                             </div>
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
                             <p className="text-gray-500">No worries! Enter your email and we'll send you reset instructions</p>
@@ -116,7 +116,7 @@ const FoegetPasswordOne = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <MdMail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
                                         type="email"
                                         name="email"
@@ -133,7 +133,7 @@ const FoegetPasswordOne = () => {
                             {message && (
                                 <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
+                                        <MdCheckCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
                                         <p className="font-medium text-sm">{message}</p>
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@ const FoegetPasswordOne = () => {
                                 onClick={handleSubmit}
                                 className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3.5 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                             >
-                                <Mail className="w-5 h-5" />
+                                <MdMail className="w-5 h-5" />
                                 Send Reset Link
                             </button>
                         </div>

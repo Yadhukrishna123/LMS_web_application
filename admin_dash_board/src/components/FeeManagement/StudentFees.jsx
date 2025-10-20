@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaMoneyBillWave } from 'react-icons/fa';
 import AddStudentFee from './AddStudentFee';
 import axios from 'axios';
+import Delete from '../TableActions/Delete';
 
 
 const StudentFees = () => {
@@ -9,12 +10,24 @@ const StudentFees = () => {
     const [payments, setPayments] = useState([]);
     const [search, setSearch] = useState("");
     const [feeStructore, setFeStructore] = useState([])
-
-
+    const [deleteClick, setDeleteClick] = useState(false);
+    const [id, setId] = useState("");
+    const [loading, setLoading] = useState(false)
+    const deleteCont = "Are you sure that you want to delete?";
 
     const getAllFeeStructore = async () => {
-        let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee_structore")
-        setFeStructore(res.data.feeStructore)
+        try {
+            setLoading(true)
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            setFeStructore(res.data.feeStructore)
+            console.log(res);
+
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
+
     }
 
 
@@ -24,43 +37,29 @@ const StudentFees = () => {
 
     }, []);
 
+    // console.log(feeStructore);
 
+    const handleDelete = (id) => {
+        setDeleteClick(true)
+        setId(id)
+    }
+    const onTimeDelete = () => {
+        setFeStructore((prev) => prev.filter((s) => s._id !== id));
 
-
-    // const calculateBalance = () => {
-    //     const paid = parseFloat(formData.amountPaid) || 0;
-    //     return formData.totalFee - paid;
-    // };
-
-
-    // const resetForm = () => {
-    //     setFormData({
-    //         studentName: '',
-    //         course: '',
-    //         batch: '',
-    //         totalFee: 0,
-    //         amountPaid: '',
-    //         modeOfPayment: 'Cash',
-    //         paymentDate: new Date().toISOString().split('T')[0],
-    //         remarks: ''
-    //     });
-    // };
-
-
-
-
-
-    const filteredPayments = payments.filter(p =>
-        p.studentName.toLowerCase().includes(search.toLowerCase()) ||
-        p.course.toLowerCase().includes(search.toLowerCase()) ||
-        p.batch.toLowerCase().includes(search.toLowerCase())
-    );
+    };
 
     const totalCollected = payments.reduce((acc, p) => acc + p.amountPaid, 0);
     const totalBalance = payments.reduce((acc, p) => acc + p.balance, 0);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+            {deleteClick && <Delete
+                setDeleteClick={setDeleteClick}
+                id={id}
+                deleteCont={deleteCont}
+                api_end_point="http://localhost:8080/api/v1/get_student_fee_structore"
+                onTimeDelete={onTimeDelete}
+            />}
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -90,7 +89,7 @@ const StudentFees = () => {
 
                                 className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium"
                             >
-                                <FaPlus /> Add Payment
+                                <FaPlus /> Add student fees
                             </button>
 
                         </div>
@@ -122,7 +121,7 @@ const StudentFees = () => {
                                 {feeStructore.length === 0 ? (
                                     <tr>
                                         <td colSpan="10" className="text-center py-12 text-slate-500">
-                                            No payment records found. Click "Add Payment" to create one.
+                                            No payment records found.
                                         </td>
                                     </tr>
                                 ) : (
@@ -133,6 +132,7 @@ const StudentFees = () => {
                                         >
                                             <td className="py-4 px-6 font-semibold text-slate-800">
                                                 {p.studentName}
+
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
                                                 {p.courseName}
@@ -143,21 +143,21 @@ const StudentFees = () => {
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 font-bold text-blue-600">
-                                                ₹{p.totalFee.toLocaleString()}
+                                                ₹{p.amount}
                                             </td>
                                             <td className="py-4 px-6 font-bold text-green-600">
-                                                ₹{p.amountPaid.toLocaleString()}
+                                                ₹{p.monthlyAmount}
                                             </td>
                                             <td className="py-4 px-6 font-bold text-orange-600">
-                                                ₹{p.balance.toLocaleString()}
+                                                ₹{p.amount - p.monthlyAmount}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
-                                                    {p.modeOfPayment}
+                                                    {p.paymentMethod}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
-                                                {new Date(p.paymentDate).toLocaleDateString('en-IN')}
+                                                {p.date}
                                             </td>
                                             <td className="py-4 px-6 text-slate-600 text-sm">
                                                 {p.remarks || '-'}
@@ -165,14 +165,14 @@ const StudentFees = () => {
                                             <td className="py-4 px-6">
                                                 <div className="flex gap-2 justify-center">
                                                     <button
-                                                        onClick={() => handleEdit(payment)}
+                                                        // onClick={() => handleEdit(payment)}
                                                         className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
                                                         title="Edit"
                                                     >
                                                         <FaEdit />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(payment.id)}
+                                                        onClick={() => handleDelete(p._id)}
                                                         className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                                                         title="Delete"
                                                     >

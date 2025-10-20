@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState, useContext } from 'react';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { IoMdEye, IoMdEyeOff, IoMdMail } from "react-icons/io";
 import { Link, useNavigate } from 'react-router-dom';
-import { MdVerified } from "react-icons/md";
+import { MdLock, MdVerified } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AllCourseDetail } from '../AllCourseContext/Context';
@@ -99,7 +99,7 @@ const Login = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <IoMdMail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
                                         type="text"
                                         name="emailOrPhone"
@@ -115,7 +115,7 @@ const Login = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <MdLock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         name="password"
@@ -129,7 +129,7 @@ const Login = () => {
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                                     >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        {showPassword ? <IoMdEyeOffff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
                                     </button>
                                 </div>
                             </div>
