@@ -38,7 +38,6 @@ const AddCourse = () => {
   }
 
   useEffect(() => {
-<<<<<<< HEAD
     const fetchData = async () => {
       try {
         const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
@@ -50,10 +49,6 @@ const AddCourse = () => {
       }
     };
     fetchData();
-=======
-
-    getAllDetails();
->>>>>>> newly-branch
   }, []);
   //console.log(categories);
   

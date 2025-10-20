@@ -13,16 +13,37 @@ const FeeCollection = () => {
     const [id, setId] = useState("")
     const deleteCont = "Are you sure that you want to delete ?"
     let [deleteClick, setDeleteClick] = useState(false)
+    let [loading, setLoading] = useState(false)
 
 
     const getAllFeecollection = async () => {
-        let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
-        setCollections(res.data.paymentDetails)
+        try {
+            setLoading(true)
+            let resOne = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            let resTwo = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            console.log("resOne", resOne)
+            console.log("resTwo", resTwo)
+            const one = resOne.data.paymentDetails || []
+            const two = resTwo.data.feeStructore || []
+            const twoInOne = [...one, ...two]
+
+            const avoidDuplicatePayment = [
+                ...new Map(twoInOne.map((data) => [data.receiptNo, data])).values()
+            ]
+            console.log(avoidDuplicatePayment);
+
+            setCollections(avoidDuplicatePayment)
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+
+        }
     }
 
     useEffect(() => {
         getAllFeecollection()
-    }, [search])
+    }, [])
 
     const handleDelete = (id) => {
         setDeleteClick(true)
@@ -116,7 +137,6 @@ const FeeCollection = () => {
                                     <th className="text-left py-4 px-6 font-semibold">Mode of Payment</th>
                                     <th className="text-left py-4 px-6 font-semibold">Payment Date</th>
                                     <th className="text-left py-4 px-6 font-semibold">Collected By</th>
-                                    <th className="text-left py-4 px-6 font-semibold">Remarks</th>
                                     <th className="text-center py-4 px-6 font-semibold">Actions</th>
                                     <th className="text-center py-4 px-6 font-semibold">Download receipt</th>
 
@@ -157,9 +177,6 @@ const FeeCollection = () => {
                                             </td>
                                             <td className="py-4 px-6 text-slate-700">
                                                 {c.hasMonthlyPayment === true ? c.monthlyAmount : "payment complete"}
-                                            </td>
-                                            <td className="py-4 px-6 text-slate-600 text-sm">
-                                                {c.remarks || '-'}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <div className="flex gap-2 justify-center">

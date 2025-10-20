@@ -45,14 +45,7 @@ const DueManagement = () => {
         getAllData()
     }, [])
 
-    const getStatusColor = (pendingAmount, dueDate) => {
-        if (pendingAmount === 0) return 'success';
-        const today = new Date();
-        const due = new Date(dueDate);
-        if (due < today) return 'overdue';
-        if (due - today < 7 * 24 * 60 * 60 * 1000) return 'warning';
-        return 'pending';
-    };
+    
 
     const getDueDate = (date) => {
         const [month, day, year] = date.split("/").map(Number);
