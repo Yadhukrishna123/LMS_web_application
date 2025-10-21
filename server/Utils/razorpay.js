@@ -1,8 +1,8 @@
-const rozorpay = require("razorpay")
+const Razorpay = require("razorpay");
 
-const instance = new rozorpay({
-    key_id: process.env.RazireKeyId,
-    key_secret: process.env.RazoreKeySecret
-})
+const instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
 
-module.exports = instance
+module.exports = instance;

@@ -50,11 +50,16 @@ const CheckoutPage = () => {
   };
   console.log(formData);
 
+  const student = studentDetails.find(
+    (n) => n.accountRegisteredEmail?.toLowerCase() === user.email?.toLowerCase()
+  );
 
-  const studentName = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.name;
-  const studentId = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.studentId;
+  const studentName = student?.name || `${user.firstname} ${user.lastname}`;
+  const studentId = student?.studentId || user._id;
 
-
+  console.log("student:", student);
+  console.log("studentName:", studentName);
+  console.log("studentId:", studentId);
 
 
   console.log("name", studentName);
@@ -62,6 +67,7 @@ const CheckoutPage = () => {
   const handlePay = async () => {
     const { data: keyData } = await axios.get("http://localhost:8080/api/v1/get_key")
     const { key } = keyData
+    console.log("key:", key);
 
     const orderRes = await axios.post("http://localhost:8080/api/v1/create_payment", {
       amount: courseDetail.price,

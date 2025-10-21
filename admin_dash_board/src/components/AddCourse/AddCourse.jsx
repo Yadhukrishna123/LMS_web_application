@@ -38,7 +38,7 @@ const AddCourse = () => {
   }
 
   useEffect(() => {
-<<<<<<< HEAD
+
     const fetchData = async () => {
       try {
         const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
@@ -50,10 +50,9 @@ const AddCourse = () => {
       }
     };
     fetchData();
-=======
 
     getAllDetails();
->>>>>>> newly-branch
+
   }, []);
   //console.log(categories);
   
@@ -69,7 +68,6 @@ const AddCourse = () => {
       setInputes({ ...inputs, [name]: value });
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -276,6 +274,7 @@ const AddCourse = () => {
                   Instructor Name
                 </label>
                 <select
+                
                   onChange={handleChange}
                   name="instrectorName"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
