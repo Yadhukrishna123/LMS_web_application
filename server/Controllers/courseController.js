@@ -46,23 +46,39 @@ exports.createCourse = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 }
+
 exports.getAllCourse = async (req, res) => {
-    try {
+  try {
+    // Get query params
+    const { page = 1, limit = 5, title = "" } = req.query;
 
-        const data = await courseModal.find()
+    const query = title ? { title: { $regex: title, $options: "i" } } : {};
 
-        res.status(200).json({
-            success: true,
-            data,
+    // Count total documents matching the query
+    const totalCourses = await courseModal.countDocuments(query);
 
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    // Fetch paginated results
+    const courses = await courseModal
+      .find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 }); 
+
+    res.status(200).json({
+      success: true,
+      data: courses,
+      page: Number(page),
+      totalPages: Math.ceil(totalCourses / limit),
+      totalCourses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
+
 
 exports.getCourse = async (req, res) => {
     const { id } = req.params
