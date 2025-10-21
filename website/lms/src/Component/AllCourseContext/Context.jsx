@@ -1,25 +1,32 @@
 import React, { useState } from 'react'
+import { useEffect } from 'react'
+import axios from "axios";
+
 
 
 export const AllCourseDetail = React.createContext()
 
 export const Context = (props) => {
-    const [user, setUser] = useState([])
+    const [user, setUser] = useState(null)
     const [authentication, setAuthentication] = useState(false)
     const [courseDetail, seCourseDetail] = useState([])
 
 
-    const getUserData = (user, authentication) => {
-        setUser(user)
-        setAuthentication(authentication)
-        // console.log(user);
-        // console.log(authentication);
+    useEffect(() => {
+        const token = document.cookie.includes("token=")
+        if (!token) return;
+        const getMe = async () => {
+            let res = await axios.get("http://localhost:8080/api/v1/me", {
+                withCredentials: true
+            })
+            console.log(res);
+            if (res.data.success) {
+                setUser(res.data.user)
+            }
 
-    }
-    const userLogout = () => {
-        setUser([])
-        setAuthentication(false)
-    }
+        }
+        getMe()
+    }, [])
 
     const sentDataToCheckoutPage = (course) => {
         seCourseDetail(course)
@@ -29,7 +36,7 @@ export const Context = (props) => {
 
 
     return (
-        <AllCourseDetail.Provider value={{ getUserData, authentication, userLogout, user, sentDataToCheckoutPage , courseDetail}}>
+        <AllCourseDetail.Provider value={{authentication, user, sentDataToCheckoutPage, setUser, courseDetail }}>
             {props.children}
         </AllCourseDetail.Provider>
     )

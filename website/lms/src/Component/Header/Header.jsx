@@ -4,26 +4,27 @@ import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import Logout from '../LogoutModal/Logout';
 import { AllCourseDetail } from '../AllCourseContext/Context';
+import { FaBell } from "react-icons/fa";
 
 const Header = () => {
-    const { authentication } = useContext(AllCourseDetail)
+    const { user } = useContext(AllCourseDetail)
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [isLogout, setLogout] = useState(false)
-  
 
 
+    console.log(user)
 
     const handlePage = () => {
         setIsDropdownOpen((prev) => !prev)
     }
     return (
         <header className="bg-white shadow-md">
-            {isLogout && <Logout setLogout={setLogout}/>}
+            {isLogout && <Logout setLogout={setLogout} />}
 
             <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-               
+
                 <div className="text-2xl font-bold text-blue-600">
                     <img className='sm:w-24 ' src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/logo_Asset-7.png" alt="" />
                 </div>
@@ -45,7 +46,7 @@ const Header = () => {
                             Look Up ▼
                         </button>
 
-                    
+
                         {isDropdownOpen && (
                             <div className="absolute flex flex-col top-full left-0 bg-white shadow-lg rounded-md mt-2 w-40 z-50">
                                 <Link to="/cateogeries" className="ml-3 text-gray-700 hover:text-blue-600">Cateogeries</Link>
@@ -69,7 +70,7 @@ const Header = () => {
                         {open && (
                             <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50">
                                 <ul className="py-2">
-                                    {authentication ? (
+                                    {user ? (
                                         <>
                                             <li>
                                                 <Link
@@ -79,6 +80,7 @@ const Header = () => {
                                                     Profile
                                                 </Link>
                                             </li>
+
                                             <li onClick={() => setLogout(true)} className='text-red-500'>
                                                 Logout
                                             </li>
@@ -114,9 +116,12 @@ const Header = () => {
                         )}
                     </button>
 
-
-
-
+                    <Link to="/notification" className="relative mt-2">
+                        <FaBell size={30} />
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            1
+                        </span>
+                    </Link>
 
 
                 </div>

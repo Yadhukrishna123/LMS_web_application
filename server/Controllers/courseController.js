@@ -47,8 +47,9 @@ exports.createCourse = async (req, res) => {
     }
 }
 exports.getAllCourse = async (req, res) => {
-    try {
 
+    try {
+        console.log(req.cookies)
         const data = await courseModal.find()
 
         res.status(200).json({

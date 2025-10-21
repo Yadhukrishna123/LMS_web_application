@@ -31,9 +31,9 @@ const DueManagement = () => {
 
 
         } catch (error) {
-
+            console.error("Error fetching data:", error)
         } finally {
-            setLoading(true)
+            setLoading(false)
         }
 
 
@@ -45,7 +45,7 @@ const DueManagement = () => {
         getAllData()
     }, [])
 
-    
+
 
     const getDueDate = (date) => {
         const [month, day, year] = date.split("/").map(Number);
@@ -154,11 +154,80 @@ const DueManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {feedetail.length === 0 ? (<tr>
-                                    <td colSpan="10" className="text-center py-12 text-slate-500">
-                                        No payment records found.
-                                    </td>
-                                </tr>) : (
+                                {loading ? (
+                                    Array.from({ length: 5 }).map((_, index) => (
+                                        <tr key={index} className="bg-gray-50 animate-pulse">
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="p-2 bg-gray-200 rounded-lg w-10 h-10"></div>
+                                                    <div className="space-y-2">
+                                                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                                                        <div className="h-3 bg-gray-200 rounded w-20"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                          
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                                                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                                                </div>
+                                            </td>
+
+                                           
+                                            <td className="px-4 py-4 text-right">
+                                                <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
+                                            </td>
+
+                                           
+                                            <td className="px-4 py-4 text-right">
+                                                <div className="h-4 bg-gray-200 rounded w-24 ml-auto"></div>
+                                            </td>
+
+                                            
+                                            <td className="px-4 py-4 text-right">
+                                                <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
+                                            </td>
+
+                                           
+                                            <td className="px-4 py-4 text-right">
+                                                <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
+                                            </td>
+
+                                          
+                                            <td className="px-4 py-4 text-center">
+                                                <div className="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 rounded-lg h-7 w-28"></div>
+                                            </td>
+
+                                            
+                                            <td className="px-4 py-4">
+                                                <div className="space-y-2">
+                                                    <div className="h-3 bg-gray-200 rounded w-28"></div>
+                                                    <div className="h-3 bg-gray-200 rounded w-32"></div>
+                                                </div>
+                                            </td>
+
+                                            
+                                            <td className="px-4 py-4 text-center">
+                                                <div className="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 rounded-full h-6 w-20 mx-auto"></div>
+                                            </td>
+
+                                           
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <div className="p-2 bg-gray-200 rounded-lg w-8 h-8"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : feedetail.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="10" className="text-center py-12 text-slate-500">
+                                            No payment records found.
+                                        </td>
+                                    </tr>
+                                ) : (
                                     feedetail.map((f, i) => {
                                         return (
                                             <tr

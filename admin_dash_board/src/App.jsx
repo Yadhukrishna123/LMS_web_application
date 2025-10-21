@@ -80,7 +80,7 @@ function App() {
           <Route path="/upload_recorded_video" element={<ProtectedRoutes isAuthentication={auth}><UploadVideos /></ProtectedRoutes>} />
           <Route path="/recorded_sessions" element={<ProtectedRoutes isAuthentication={auth}><UploadedVideos /></ProtectedRoutes>} />
           <Route path="/user_enquiries" element={<ProtectedRoutes isAuthentication={auth}><UserEnquiries /></ProtectedRoutes>} />
-          <Route path="/add_course" element={<AddCourse />}/>
+          <Route path="/add_course" element={<AddCourse />} />
           <Route path="/add_institution" element={<AddInstitution />} />
           <Route path="/institutes_listing" element={<AllInstitute />} />
           <Route path="/registration_request" element={<RegistrationRequest />} />
@@ -89,7 +89,7 @@ function App() {
           <Route path="/view_course" element={<ViewCourses />} />
           <Route path="/view_Instuctors" element={<ViewInstuctors />} />
           <Route path="/add_Instuctors" element={<AddInstructors />} />
-          <Route path="/users" element={<ProtectedRoutes isAuthentication={auth}><Users /></ProtectedRoutes>} />
+          <Route path="/users" element={<Users />} />
           <Route path="/login" element={<LoginInstitution />} />
           <Route path="/my_profile" element={<ProtectedRoutes isAuthentication={auth}><MyProfile /></ProtectedRoutes>} />
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />

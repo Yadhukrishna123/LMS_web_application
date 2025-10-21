@@ -25,6 +25,7 @@ import TakeQuiz from './Component/Quiz/UserQuiz'
 import CheckoutPage from './Component/Purchase/CheckoutPage'
 import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
+import Notification from './Component/NotificationPage/Notification'
 
 
 
@@ -62,6 +63,8 @@ function App() {
         <Route path="/add_student_details" element={<AddStudent />} />
         <Route path="/checkout/:courseId" element={<CheckoutPage />} />
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
+
+         <Route path="/notification" element={<Notification />} />
 
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={authentication}><QuizList /> </ProtectedRoutes>} />

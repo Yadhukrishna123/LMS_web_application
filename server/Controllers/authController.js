@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const userModal = require("../modals/users")
 const sendPasswordResetEmail = require("../Utils/sendPasswordResetEmail");
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { getToken } = require("../Utils/jwtToken");
+const jwt = require("jsonwebtoken")
 
 
 exports.signup = async (req, res) => {
@@ -68,16 +70,19 @@ exports.login = async (req, res) => {
             })
         }
 
-        // const generateToken = token(user)
-        // console.log(generateToken);
+        await userModal.findByIdAndUpdate(user._id, { isLogin: true })
+        const updatedUser = await userModal.findById(user._id);
 
-        res.status(200).json({
-            success: true,
-            message: "You are successfully sign in",
-            isAuthentication: true,
-            user,
+        // res.status(200).json({
+        //     success: true,
+        //     message: "You are successfully sign in",
+        //     isAuthentication: true,
+        //     user:updatedUser
 
-        })
+        // })
+
+        req.user = user
+        getToken(req, res)
 
     } catch (error) {
         res.status(500).json({
@@ -88,16 +93,17 @@ exports.login = async (req, res) => {
 }
 
 exports.getAllUsers = async (req, res) => {
+    console.log(req.cookies)
     try {
 
 
         const users = await userModal.find()
-        if(!users){
-            return  res.status(400).json({
-            success: false,
-            messsage:"Users noy found",
+        if (!users) {
+            return res.status(400).json({
+                success: false,
+                messsage: "Users noy found",
 
-        });
+            });
         }
 
         res.status(200).json({
@@ -187,7 +193,7 @@ exports.resetPAssword = async (req, res) => {
         const { token } = req.params;
         const { password } = req.body;
 
-        // Password validation rules
+
         if (password.length < 8)
             return res.status(400).json({ success: false, message: "Password must be at least 8 characters." });
         if (!/[A-Z]/.test(password))
@@ -199,14 +205,14 @@ exports.resetPAssword = async (req, res) => {
         if (!/[@$!%*?&]/.test(password))
             return res.status(400).json({ success: false, message: "Password must include at least one special character (@$!%*?&)." });
 
-        // Find user by token and check expiry
+
         const user = await userModal.findOne({
             resetToken: token,
             resetTokenExpiry: { $gt: Date.now() },
         });
         if (!user) return res.status(400).json({ success: false, message: "Invalid or expired token" });
 
-        // Update password
+
         const hashedPassword = await bcrypt.hash(password, 10);
         user.password = hashedPassword;
         user.resetToken = undefined;
@@ -219,3 +225,72 @@ exports.resetPAssword = async (req, res) => {
         res.status(500).json({ success: false, message: "Server error" });
     }
 };
+
+
+exports.getMe = async (req, res) => {
+    try {
+
+        const token = req.cookies?.token;
+        console.log(token)
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Not logged in",
+                user: null
+            });
+        }
+
+
+        let decoded;
+
+        decoded = jwt.verify(token, process.env.JWT_secret_key);
+        if (!decoded) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token",
+                user: null
+            });
+        }
+        const user = await userModal.findById(decoded.id).select("-password");
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+                user: null
+            });
+        }
+
+
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+            user: null
+        });
+    }
+};
+
+exports.logout = async (req, res) => {
+    try {
+        res.cookie("token", "", {
+            httpOnly: true,
+            expires: new Date(0),
+            sameSite: "lax",
+            secure: false,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Logout failed",
+        });
+    }
+}

@@ -3,10 +3,25 @@ import { IoMdClose } from "react-icons/io";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AllCourseDetail } from '../AllCourseContext/Context';
+import axios from 'axios';
 
 const Logout = ({ setLogout }) => {
     const navigate = useNavigate()
-    const { userLogout, authentication } = useContext(AllCourseDetail)
+    const { setUser } = useContext(AllCourseDetail)
+
+    const handleLogout = async () => {
+        let res = await axios.post("http://localhost:8080/api/v1/logout", {}, {
+            withCredentials: true
+        })
+        console.log(res);
+        if (res.data.success) {
+            setUser(null)
+            setLogout(false),
+                toast.success("successfully logged out")
+            navigate("/login")
+        }
+
+    }
 
 
     return (
@@ -46,13 +61,8 @@ const Logout = ({ setLogout }) => {
                         <button
 
                             className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-                            onClick={() => {
-                                userLogout(),
-                                    setLogout(false),
-                                    toast.success("successfully logged out")
-                                navigate("/login")
+                            onClick={() => handleLogout()}
 
-                            }}
                         >
                             Logout
                         </button>

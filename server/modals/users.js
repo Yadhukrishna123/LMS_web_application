@@ -7,9 +7,10 @@ const userScheme = new mongoose.Schema({
     phone: String,
     password: String,
     role: String,
-    googleId: String,
-    resetToken: String,
-    resetTokenExpiry: Date,
+    isLogin: {
+        type: Boolean,
+        default: false,
+    },
 
 
 });

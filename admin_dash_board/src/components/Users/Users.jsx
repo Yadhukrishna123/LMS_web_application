@@ -16,10 +16,12 @@ const Users = () => {
     const deleteCont = "Are you sure that you want to delete user?";
 
     // Fetch all users
-    const getAllUsers = async (page = 1) => {
+    const getAllUsers = async () => {
         try {
             const res = await axios.get(
-                `http://localhost:8080/api/v1/get_all_user?page=${page}&limit=${itemsPerPage}&firstname=${search}`
+                `http://localhost:8080/api/v1/get_all_user?firstname=${search}`,{
+                    withCredentials:true
+                }
             );
 
             setUsers(res.data.users || []);

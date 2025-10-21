@@ -29,15 +29,17 @@ const Login = () => {
             let res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
                 email: inputs.emailOrPhone,
                 password: inputs.password
+            }, {
+                withCredentials: true
             });
 
             if (res.data.success && res.data.isAuthentication) {
-                getUserData(res.data.user, res.data.isAuthentication);
-                localStorage.setItem("userId", res.data.user._id);
                 toast.success(res.data.message);
                 setMessage(res.data.message);
                 await new Promise((r) => setTimeout(r, 2000));
                 navigate("/");
+                
+
             } else {
                 toast.error(res.data.message || "Login failed");
             }
@@ -58,13 +60,13 @@ const Login = () => {
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-12 h-12 rounded-lg flex items-center justify-center">
                                     <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
-                                        <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                                        <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
                                     </svg>
                                 </div>
                                 <h1 className="text-3xl font-bold text-white">EduLearn</h1>
                             </div>
-                            
+
                             <h2 className="text-4xl font-bold text-white mb-4">Start Your Learning Journey</h2>
                             <p className="text-white text-opacity-90 text-lg">
                                 Access thousands of courses, connect with expert instructors, and achieve your educational goals.
@@ -73,7 +75,7 @@ const Login = () => {
 
                         {/* Features List */}
                         <div className="space-y-4 mt-12">
-                            {["10,000+ Premium Courses","Expert Instructors Worldwide","Lifetime Access to Content","Certificates of Completion"].map((text, i) => (
+                            {["10,000+ Premium Courses", "Expert Instructors Worldwide", "Lifetime Access to Content", "Certificates of Completion"].map((text, i) => (
                                 <div key={i} className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
                                         <MdVerified className='w-10 h-15 text-yellow-500' />
@@ -129,7 +131,7 @@ const Login = () => {
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                                     >
-                                        {showPassword ? <IoMdEyeOffff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
+                                        {showPassword ? <IoMdEyeOff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
                                     </button>
                                 </div>
                             </div>
@@ -147,8 +149,8 @@ const Login = () => {
                                     <span className="text-sm text-gray-600">Remember me</span>
                                 </label>
                                 <Link to="/enter_email" className="text-sm text-blue-600 hover:text-blue-700 font-medium transition">
-                                        Forgot password?
-                                    </Link>
+                                    Forgot password?
+                                </Link>
                             </div>
 
                             {/* Success Message */}
@@ -173,7 +175,7 @@ const Login = () => {
                             <div className="mt-6 text-center">
                                 <p className="text-gray-600 text-sm">
                                     Don't have an account?{' '}
-                                    <Link 
+                                    <Link
                                         to="/sign_up"
                                         className="text-blue-600 hover:text-blue-700 font-semibold transition">
                                         Sign up

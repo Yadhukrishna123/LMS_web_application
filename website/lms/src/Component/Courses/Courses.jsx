@@ -23,15 +23,10 @@ const CoursesPage = () => {
   const getAllCourses = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`, {
-        params: {
-          title: search,
-          category: category ? categoryMap[category] : "",
-          price,
-          duration,
-          page: currentPage,
-          limit: itemsPerPage,
-        },
+        withCredentials: true
       });
+
+
 
       setCourses(res.data.data);
       setTotalPages(res.data.totalPages || 1);
@@ -172,10 +167,9 @@ const CoursesPage = () => {
               key={i + 1}
               onClick={() => setCurrentPage(i + 1)}
               className={`min-w-9 rounded-md py-2 px-3 text-sm text-center transition-all ml-2
-                ${
-                  currentPage === i + 1
-                    ? "bg-slate-800 text-white border border-transparent shadow-md hover:shadow-lg"
-                    : "border border-slate-300 text-slate-600 shadow-sm hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800"
+                ${currentPage === i + 1
+                  ? "bg-slate-800 text-white border border-transparent shadow-md hover:shadow-lg"
+                  : "border border-slate-300 text-slate-600 shadow-sm hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800"
                 }`}
             >
               {i + 1}
