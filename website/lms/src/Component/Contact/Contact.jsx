@@ -3,11 +3,9 @@ import { MdEmail } from "react-icons/md";
 import axios from "axios";
 
 const Contact = () => {
-  const [inputs, setInputs] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [inputs, setInputs] = useState({ name: "", email: "", message: "" });
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getInput = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -15,24 +13,34 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return; 
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/user_enquiries`,
-        {
-          name: inputs.name,
-          email: inputs.email,
-          message: inputs.message,
-        }
+        inputs
       );
       console.log(res.data);
+
+      setSuccess("We will Get In touch with you soon!");
+
+      setInputs({ name: "", email: "", message: "" });
+
+      setTimeout(() => setSuccess(""), 3000);
     } catch (error) {
       console.error(error);
+      setSuccess(
+        error.response?.data?.message || "Something went wrong! Try again."
+      );
+      setTimeout(() => setSuccess(""), 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative flex items-center justify-center bg-[#f2f0fd] min-h-screen overflow-hidden">
-      {/* LEFT SECTION */}
       <div className="relative z-10 w-full lg:w-[55%] bg-[#f2f0fd] flex flex-col justify-center px-10 py-16">
         <h4 className="text-sm font-semibold text-[#7a6fee] mb-2 uppercase tracking-wider">
           Contact Us
@@ -42,38 +50,18 @@ const Contact = () => {
         </h2>
         <p className="text-gray-600 text-sm leading-relaxed mb-8 max-w-lg">
           Thank you for choosing our templates. We provide you best CSS
-          templates absolutely free of charge. You may support us by sharing our
-          website with your friends.
+          templates absolutely free of charge.
         </p>
-
-        {/* OFFER BOX */}
-        <div className="bg-white rounded-2xl shadow-md flex items-center p-5 w-full max-w-md">
-          <div className="bg-[#7a6fee] w-20 h-20 rounded-full flex flex-col items-center justify-center text-white mr-4">
-            <span className="text-xs font-semibold">OFF</span>
-            <span className="text-2xl font-bold mt-1">50%</span>
-          </div>
-          <div className="flex-1">
-            <p className="text-[10px] uppercase font-semibold text-[#666]">
-              Valid: <span className="text-[#7a6fee] font-bold">24 April 2036</span>
-            </p>
-            <p className="text-sm font-semibold text-[#232129] mt-1">
-              Special Offer <span className="text-[#7a6fee]">50% OFF!</span>
-            </p>
-          </div>
-          <button className="bg-[#7a6fee] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all hover:bg-[#6a5be0]">
-            &rarr;
-          </button>
-        </div>
       </div>
 
-      {/* RIGHT FORM SECTION */}
       <div className="relative w-full lg:w-[45%] h-[90vh] bg-gradient-to-tr from-[#8168e5] to-[#a38bf3] flex items-center justify-center overflow-hidden rounded-l-[200px] shadow-2xl">
+        
+        {success && (
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 bg-white text-purple-600 font-semibold px-6 py-3 rounded-2xl shadow-lg z-20">
+            {success}
+          </div>
+        )}
 
-        {/* Decorative Background Circles 
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-white bg-opacity-10 top-[-100px] right-[-100px] blur-2xl"></div>
-        <div className="absolute w-[250px] h-[250px] rounded-full bg-white bg-opacity-10 bottom-[-100px] right-[50px] blur-2xl"></div>*/}
-
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="relative z-10 w-full max-w-md flex flex-col space-y-5 px-8"
@@ -82,16 +70,20 @@ const Contact = () => {
             type="text"
             name="name"
             placeholder="Your Name..."
+            value={inputs.name}
             onChange={getInput}
             className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+            required
           />
           <div className="relative">
             <input
               type="email"
               name="email"
               placeholder="Your E-mail..."
+              value={inputs.email}
               onChange={getInput}
               className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 pr-10 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+              required
             />
             <MdEmail
               size={18}
@@ -102,14 +94,19 @@ const Contact = () => {
             name="message"
             placeholder="Your Message"
             rows="4"
+            value={inputs.message}
             onChange={getInput}
             className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm resize-none"
+            required
           />
           <button
             type="submit"
-            className="bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm hover:bg-[#edeafc] transition-all shadow-sm"
+            disabled={loading}
+            className={`bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm shadow-sm transition-all ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#edeafc]"
+            }`}
           >
-            Send Message Now
+            {loading ? "Sending..." : "Send Message Now"}
           </button>
         </form>
       </div>
