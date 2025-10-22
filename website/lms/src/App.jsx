@@ -25,6 +25,7 @@ import TakeQuiz from './Component/Quiz/UserQuiz'
 import CheckoutPage from './Component/Purchase/CheckoutPage'
 import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
+import Mentors from './Component/Mentors/Mentors'
 
 
 
@@ -50,6 +51,7 @@ function App() {
         <Route path="/detailpage/:id" element={<Detailpage />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/cateogeries" element={<CategoryBrowser />} />
+        <Route path="/mentors" element={<Mentors />} />
 
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />

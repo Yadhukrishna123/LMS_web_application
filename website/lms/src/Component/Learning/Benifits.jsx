@@ -1,87 +1,165 @@
-import React, { useState } from 'react';
-import { FaPlay, FaUserGraduate, FaHome, FaCog, FaFlag } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
 
-const Benefits = () => {
-  const features = [
-    { icon: <FaUserGraduate />, title: "Expert Tutor", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In interdum tortor aliquam nisl." },
-    { icon: <FaHome />, title: "Lifetime Access", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In interdum tortor aliquam nisl." },
-    { icon: <FaCog />, title: "Updated Material", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In interdum tortor aliquam nisl." },
-    { icon: <FaFlag />, title: "Weekly Event", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In interdum tortor aliquam nisl." },
+const UpcomingEvents = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRandomCourses = async () => {
+      try {
+        // Fetch courses from your API
+        const response = await fetch("http://localhost:8080/api/v1/courses?page=1&limit=100");
+        const data = await response.json();
+        
+        if (data.data && data.data.length > 0) {
+          // Get 4 random courses
+          const shuffled = [...data.data].sort(() => 0.5 - Math.random());
+          const randomCourses = shuffled.slice(0, 4);
+          
+          // Transform courses into events format
+          const eventsData = randomCourses.map(course => ({
+            id: course._id,
+            title: course.title || 'Web Development Event',
+            description: course.description || 'Discover the latest trends and innovations shaping the future of web development.',
+            image: course.thumbnail || `https://images.unsplash.com/photo-${getRandomImage()}?w=800&q=80`,
+            buttonText: course.price === 0 ? 'REGISTER FOR FREE' : 'GET TICKET',
+            isFree: course.price === 0
+          }));
+          
+          setEvents(eventsData);
+        } else {
+          // Fallback demo data
+          setEvents(getDemoEvents());
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        setEvents(getDemoEvents());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRandomCourses();
+  }, []);
+
+  const getRandomImage = () => {
+    const images = [
+      '1498050108023-c5249f4df085',
+      '1487058792252-fa8eac87a087',
+      '1526374965328-7f61d4dc18c5',
+      '1555066931-4365d14bab8c'
+    ];
+    return images[Math.floor(Math.random() * images.length)];
+  };
+
+  const getDemoEvents = () => [
+    {
+      id: 1,
+      title: 'Future of Web Development: Trends and Innovations',
+      description: 'Discover the latest trends and innovations shaping the future of web development.',
+      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80',
+      buttonText: 'REGISTER FOR FREE',
+      isFree: true
+    },
+    {
+      id: 2,
+      title: 'WebDev Pro Code-a-Thon: Build a Responsive Website',
+      description: 'Participants will have 48 hours to create a responsive website from scratch using HTML, CSS, and JavaScript.',
+      image: 'https://images.unsplash.com/photo-1487058792252-fa8eac87a087?w=800&q=80',
+      buttonText: 'REGISTER FOR FREE',
+      isFree: true
+    },
+    {
+      id: 3,
+      title: 'Ask the Experts: Frontend Web Development',
+      description: 'Join our live Q&A session with our experienced instructors. Get answers to your queries, insights into best practices.',
+      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80',
+      buttonText: 'GET TICKET',
+      isFree: false
+    },
+    {
+      id: 4,
+      title: 'Web Accessibility: Building Inclusive Websites',
+      description: 'Industry experts will discuss the importance of inclusive design and share strategies for creating websites.',
+      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
+      buttonText: 'GET TICKET',
+      isFree: false
+    }
   ];
 
-  const [isOpen, setIsOpen] = useState(false);
+  if (loading) {
+    return (
+      <div className="bg-white py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+            <div className="h-6 bg-gray-200 rounded w-96 mx-auto mb-12"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="space-y-4">
+                  <div className="h-48 bg-gray-200 rounded-2xl"></div>
+                  <div className="h-6 bg-gray-200 rounded"></div>
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section className="py-16 px-6 md:px-12 lg:px-24 bg-gradient-to-r from-blue-50 via-white to-purple-50">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        {/* Left: Features */}
-        <div>
-          {features.map((feature) => (
-            <div key={feature.title} className="flex items-center space-x-4 mb-6">
-              <div className="bg-purple-500 text-white p-3 rounded-md text-lg">
-                {feature.icon}
+    <div className="bg-white py-20 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Upcoming Events
+          </h2>
+          <p className="text-gray-500 text-lg max-w-3xl mx-auto">
+            Join our web development events designed to share insights, trends,
+            and real-world experiences.
+          </p>
+        </div>
+
+        {/* Events Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
+            >
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
-              <div>
-                <h4 className="font-semibold text-gray-900">{feature.title}</h4>
-                <p className="text-gray-600 text-sm mt-1">{feature.desc}</p>
+
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem]">
+                  {event.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-6 line-clamp-3 min-h-[4rem]">
+                  {event.description}
+                </p>
+
+                {/* Button */}
+                <button className="w-full bg-gray-900 text-white font-bold text-xs py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-300 uppercase tracking-wider">
+                  {event.buttonText}
+                </button>
               </div>
             </div>
           ))}
-          <button className="mt-6 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition">
-            Get Started
-          </button>
-        </div>
-
-        {/* Right: Text and Image */}
-        <div>
-          <h2 className="text-4xl font-semibold text-gray-900 mb-4">
-            Making Your Learning More Enjoyable
-          </h2>
-          <p className="text-gray-600 mb-8">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit. Donec bibendum turpis vitae maximus bibendum. Mauris aliquam sapien eget ipsum dictum, eget euismod nisl consequat. Maecenas mattis, dui condimentum aliquet eleifend, enim nulla pharetra nunc.
-          </p>
-
-          <div className="relative rounded-xl shadow-lg overflow-hidden">
-            <img
-              src="https://img.freepik.com/free-photo/smiling-student-holding-folders_171337-271.jpg?semt=ais_hybrid&w=740&q=80"
-              alt="Student holding folders"
-              className="rounded-xl w-full"
-            />
-            <button
-              onClick={() => setIsOpen(true)}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-80 backdrop-blur-md p-5 rounded-full shadow-lg hover:scale-110 transition"
-            >
-              <FaPlay className="text-purple-600 text-xl" />
-            </button>
-          </div>
-
-          {/* Modal */}
-          {isOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-3xl w-full relative">
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-xl font-bold"
-                >
-                  &times;
-                </button>
-                <div className="aspect-video">
-                  <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                    title="Learning Preview"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
-export default Benefits;
+export default UpcomingEvents;

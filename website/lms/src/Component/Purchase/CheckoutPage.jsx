@@ -57,7 +57,7 @@ const CheckoutPage = () => {
   const studentName = student?.name || `${user.firstname} ${user.lastname}`;
   const studentId = student?.studentId || user._id;
 
-  console.log("student:", student);
+  //console.log("student:", student);
   console.log("studentName:", studentName);
   console.log("studentId:", studentId);
 

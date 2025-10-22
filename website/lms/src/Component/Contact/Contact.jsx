@@ -1,134 +1,120 @@
-import React, { useState } from 'react'
-import { FaLocationDot } from "react-icons/fa6";
+import React, { useState } from "react";
 import { MdEmail } from "react-icons/md";
-import { FaPhoneAlt } from "react-icons/fa";
-import axios from "axios"
-
+import axios from "axios";
 
 const Contact = () => {
-  console.log(import.meta.env.VITE_API_URL);
-  let [inputs, setInputs] = useState({
+  const [inputs, setInputs] = useState({
     name: "",
     email: "",
-    message: ""
-  })
+    message: "",
+  });
 
   const getInput = (e) => {
-    setInputs({ ...inputs, [e.target.name]: e.target.value })
-  }
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      let res = await axios.post(`${import.meta.env.VITE_API_URL}/user_enquiries`, {
-        name: inputs.name,
-        email: inputs.email,
-        message: inputs.message
-      })
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/user_enquiries`,
+        {
+          name: inputs.name,
+          email: inputs.email,
+          message: inputs.message,
+        }
+      );
       console.log(res.data);
-
     } catch (error) {
-
+      console.error(error);
     }
-  }
-  console.log(inputs);
-
-
+  };
 
   return (
-    <div className="bg-blue-50 py-12 px-4 sm:px-6 lg:px-16">
-
-      <div className="mb-10">
-        <h2 className="text-center text-3xl sm:text-4xl lg:text-5xl  underline decoration-2 underline-offset-4">
+    <div className="relative flex items-center justify-center bg-[#f2f0fd] min-h-screen overflow-hidden">
+      {/* LEFT SECTION */}
+      <div className="relative z-10 w-full lg:w-[55%] bg-[#f2f0fd] flex flex-col justify-center px-10 py-16">
+        <h4 className="text-sm font-semibold text-[#7a6fee] mb-2 uppercase tracking-wider">
           Contact Us
+        </h4>
+        <h2 className="text-4xl font-bold text-[#232129] leading-snug mb-4">
+          Feel Free To Contact Us Anytime
         </h2>
+        <p className="text-gray-600 text-sm leading-relaxed mb-8 max-w-lg">
+          Thank you for choosing our templates. We provide you best CSS
+          templates absolutely free of charge. You may support us by sharing our
+          website with your friends.
+        </p>
+
+        {/* OFFER BOX */}
+        <div className="bg-white rounded-2xl shadow-md flex items-center p-5 w-full max-w-md">
+          <div className="bg-[#7a6fee] w-20 h-20 rounded-full flex flex-col items-center justify-center text-white mr-4">
+            <span className="text-xs font-semibold">OFF</span>
+            <span className="text-2xl font-bold mt-1">50%</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-[10px] uppercase font-semibold text-[#666]">
+              Valid: <span className="text-[#7a6fee] font-bold">24 April 2036</span>
+            </p>
+            <p className="text-sm font-semibold text-[#232129] mt-1">
+              Special Offer <span className="text-[#7a6fee]">50% OFF!</span>
+            </p>
+          </div>
+          <button className="bg-[#7a6fee] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg transition-all hover:bg-[#6a5be0]">
+            &rarr;
+          </button>
+        </div>
       </div>
 
+      {/* RIGHT FORM SECTION */}
+      <div className="relative w-full lg:w-[45%] h-[90vh] bg-gradient-to-tr from-[#8168e5] to-[#a38bf3] flex items-center justify-center overflow-hidden rounded-l-[200px] shadow-2xl">
 
-      <div className="flex flex-col lg:flex-row gap-12">
+        {/* Decorative Background Circles 
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-white bg-opacity-10 top-[-100px] right-[-100px] blur-2xl"></div>
+        <div className="absolute w-[250px] h-[250px] rounded-full bg-white bg-opacity-10 bottom-[-100px] right-[50px] blur-2xl"></div>*/}
 
-        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start justify-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold mb-6">
-            Get In Touch
-          </h2>
-
-          <p className="w-full sm:w-[80%] text-gray-500 text-base sm:text-lg">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestiae
-            minus, soluta vero dolores cumque molestias!
-          </p>
-
-
-          <div className="w-full mt-7 space-y-6">
-
-            <div className="flex items-start">
-              <FaLocationDot size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Address</h4>
-                <p className="text-gray-600 mt-2">
-                  732 Despared, Atlanta, Georgia 30060
-                </p>
-              </div>
-            </div>
-
-
-            <div className="flex items-start">
-              <MdEmail size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Email</h4>
-                <p className="text-gray-600 mt-2">abc@123.com</p>
-              </div>
-            </div>
-
-
-            <div className="flex items-start">
-              <FaPhoneAlt size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Phone</h4>
-                <p className="text-gray-600 mt-2">+91 1234567890</p>
-              </div>
-            </div>
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-10 w-full max-w-md flex flex-col space-y-5 px-8"
+        >
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name..."
+            onChange={getInput}
+            className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+          />
+          <div className="relative">
+            <input
+              type="email"
+              name="email"
+              placeholder="Your E-mail..."
+              onChange={getInput}
+              className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 pr-10 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+            />
+            <MdEmail
+              size={18}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white opacity-90"
+            />
           </div>
-        </div>
-
-        {/* form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center">
-          <div className="w-full sm:w-[90%] lg:w-[80%] border border-gray-300 p-6 rounded-md bg-white shadow-md">
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onChange={getInput}
-              />
-
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onChange={getInput}
-              />
-
-              <textarea
-                name="message"
-                placeholder="Your Message"
-                rows="5"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-                onChange={getInput}
-              />
-
-              <button
-                className="mx-auto bg-blue-500 text-white px-6 py-2 rounded-3xl hover:bg-blue-700 transition-colors duration-200"
-              >
-                SUBMIT
-              </button>
-            </form>
-          </div>
-        </div>
+          <textarea
+            name="message"
+            placeholder="Your Message"
+            rows="4"
+            onChange={getInput}
+            className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm resize-none"
+          />
+          <button
+            type="submit"
+            className="bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm hover:bg-[#edeafc] transition-all shadow-sm"
+          >
+            Send Message Now
+          </button>
+        </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;
