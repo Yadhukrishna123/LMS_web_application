@@ -34,6 +34,7 @@ import Notification from './Component/NotificationPage/Notification'
 
 
 
+
 function App() {
   const { authentication } = useContext(AllCourseDetail)
 
@@ -51,6 +52,7 @@ function App() {
         <Route path="/detailpage/:id" element={<Detailpage />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/cateogeries" element={<CategoryBrowser />} />
+        <Route path="/mentors" element={<Mentors />} />
 
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />

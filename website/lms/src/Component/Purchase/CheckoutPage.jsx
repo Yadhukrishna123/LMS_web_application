@@ -67,6 +67,9 @@ const CheckoutPage = () => {
     : "";
 
 
+  //console.log("student:", student);
+  console.log("studentName:", studentName);
+  console.log("studentId:", studentId);
 
 
   console.log("name", studentName);
@@ -74,6 +77,7 @@ const CheckoutPage = () => {
   const handlePay = async () => {
     const { data: keyData } = await axios.get("http://localhost:8080/api/v1/get_key")
     const { key } = keyData
+    console.log("key:", key);
 
     const orderRes = await axios.post("http://localhost:8080/api/v1/create_payment", {
       amount: courseDetail.price,

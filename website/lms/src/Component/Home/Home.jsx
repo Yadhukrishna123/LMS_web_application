@@ -1,14 +1,13 @@
 import React from "react";
 import Home1 from "../Home1/Home1";
 import Home2 from "../Home2/Home2";
-import Footer from "../Footer/Footer";
 import Mentors from "../Mentors/Mentors";
 import Testimonials from "../Testimonials/Testimonials";
 import LearningExp from "../LearningExp/LearningExp";
-import Benefits from "../Learning/Benifits";
-import CoursesSection from "../Courses/Courses";
 import CategoryBrowser from "../Categories/Coursecards";
-import Contact from "../Contact/Contact";
+import UpcomingEvents from "../Learning/Benifits";
+import InfiniteLogoScroll from "../Trusted By/CompiniesTrusted";
+import FaqPage from "../FAQ/FaqPage";
 
 const Home = () => {
   return (
@@ -17,10 +16,12 @@ const Home = () => {
       <Home2 />
       <LearningExp />
       <CategoryBrowser />
-      <Benefits />
+      <InfiniteLogoScroll />
+      <UpcomingEvents />
       {/* <CoursesSection /> */}
       <Testimonials />
       <Mentors />
+      <FaqPage />
       
      
     </div>
