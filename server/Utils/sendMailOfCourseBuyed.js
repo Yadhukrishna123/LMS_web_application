@@ -18,7 +18,7 @@ exports.sendMailToStudentEmail = async (email, courseName, studentName) => {
             subject: `🎉 Course Purchase Successful - ${courseName}`,
             html: `
         <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
-          <h2>Hi ${studentName || "Student"},</h2>
+          <h2>Hi ${studentName || "student"},</h2>
           <p>Congratulations! 🎉 You’ve successfully purchased the course:</p>
           <h3 style="color:#6d28d9;">${courseName}</h3>
           <p>You can now log in to your dashboard and start learning right away.</p>
