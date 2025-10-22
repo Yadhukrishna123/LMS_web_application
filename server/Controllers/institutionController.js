@@ -1,6 +1,9 @@
 const institutionModal = require("../modals/Institution")
 const institutionProfile = require("../modals/institutionProfile")
 const bcrypt = require("bcrypt")
+const { getnstitutionToken } = require("../Utils/jwtInstitutionToken")
+const jwt = require("jsonwebtoken")
+
 
 
 
@@ -111,9 +114,10 @@ exports.updateStatus = async (req, res) => {
 }
 
 exports.loginInstitute = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, adminPassword } = req.body;
+
     try {
-        const institute = await institutionModal.findOne({ adminEmail: email }); // fix here
+        const institute = await institutionModal.findOne({ adminEmail: email });
         if (!institute) {
             return res.status(401).json({
                 success: false,
@@ -121,7 +125,7 @@ exports.loginInstitute = async (req, res) => {
             });
         }
 
-        const isPassword = await bcrypt.compare(password, institute.adminPassword);
+        const isPassword = await bcrypt.compare(adminPassword, institute.adminPassword);
         if (!isPassword) {
             return res.status(401).json({
                 success: false,
@@ -129,12 +133,15 @@ exports.loginInstitute = async (req, res) => {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            message: "You have successfully signed in",
-            isAuthentication: true,
-            institute,
-        });
+        // res.status(200).json({
+        //     success: true,
+        //     message: "You have successfully signed in",
+        //     isAuthentication: true,
+        //     institute,
+        // });
+
+        req.institute = institute
+        getnstitutionToken(req, res)
 
     } catch (error) {
         res.status(500).json({
@@ -146,6 +153,7 @@ exports.loginInstitute = async (req, res) => {
 
 
 exports.institutionProfile = async (req, res) => {
+
     const { image,
         instituteName,
         address,
@@ -205,6 +213,7 @@ exports.institutionProfile = async (req, res) => {
 }
 
 exports.getAllInstitutionProfile = async (req, res) => {
+    console.log(req.cookies)
     try {
         const profile = await institutionProfile.find()
 
@@ -292,6 +301,53 @@ exports.updataeInstitutionDetails = async (req, res) => {
             message: "Institution  updated succesfully"
         })
 
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
+exports.getInstituteAdmin = async (req, res) => {
+    try {
+        const token = req.cookies?.token;
+        console.log(token)
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Not logged in",
+                instituteAdmin: null
+            });
+        }
+
+        let decoded;
+
+        decoded = jwt.verify(token, process.env.JWT_secret_key);
+        if (!decoded) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token",
+                instituteAdmin: null
+            });
+        }
+
+        const instituteAdmin = await institutionModal.findById(decoded.id).select("-password");
+        if (!instituteAdmin) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+                instituteAdmin: null
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            instituteAdmin
+        });
 
     } catch (error) {
         res.status(500).json({

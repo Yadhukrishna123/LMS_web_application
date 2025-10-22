@@ -38,6 +38,7 @@ const Login = () => {
                 setMessage(res.data.message);
                 await new Promise((r) => setTimeout(r, 2000));
                 navigate("/");
+                window.location.reload()
                 
 
             } else {

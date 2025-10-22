@@ -11,6 +11,7 @@ const UserPage = () => {
     const [usercourse, setUserCourse] = useState([])
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState(null)
+    const [userBuyedCourse, setUserBuyedCourse] = useState([])
     const studentEnrolledCourse = async () => {
         try {
             setLoading(true)
@@ -31,7 +32,27 @@ const UserPage = () => {
             setEmail(user.email);
         }
     }, [user])
+    const userCourses = usercourse.filter((c) => c.userEmail === email)
+    const courses = userCourses.map((c, i)=>{
+        return(
+            <div className="bg-white rounded-xl shadow p-4" key={i}>
+                        <img
+                            src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/college-student-YCNL3GU-1.png"
+                            alt="Course Thumbnail"
+                            className="rounded-lg w-full h-40 object-cover"
+                        />
+                        <h4 className="mt-3 text-lg font-semibold">{c.courseName}</h4>
+                        <p className="text-gray-500 text-sm">Progress: 65%</p>
+                        <button className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Continue Learning
+                        </button>
+                    </div>
+        )
+    })
+    console.log("userCourses", userCourses)
+    
     console.log(email)
+    console.log(usercourse)
     return (
         <div className="px-4 sm:px-6 lg:px-20 py-10 bg-gray-50 min-h-screen">
             {showForm && <AddStudent setShowForm={setShowForm} emailll={email} />}
@@ -46,7 +67,7 @@ const UserPage = () => {
                 <div className="flex-1 flex flex-col text-center sm:text-left sm:ml-6">
                     <div className='flex items-center justify-center sm:justify-start gap-3 mb-2'>
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                            name
+                          {`${user?.firstname} ${user?.lastname}`}
                         </h2>
                         <button
                             className="p-2 hover:bg-green-50 rounded-full transition-colors duration-200 group"
@@ -83,20 +104,9 @@ const UserPage = () => {
                 <h3 className="text-xl font-semibold mb-4">My Courses</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Example Course Card */}
-                    <div className="bg-white rounded-xl shadow p-4">
-                        <img
-                            src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/college-student-YCNL3GU-1.png"
-                            alt="Course Thumbnail"
-                            className="rounded-lg w-full h-40 object-cover"
-                        />
-                        <h4 className="mt-3 text-lg font-semibold">React for Beginners</h4>
-                        <p className="text-gray-500 text-sm">Progress: 65%</p>
-                        <button className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            Continue Learning
-                        </button>
-                    </div>
-
-                    <div className="bg-white rounded-xl shadow p-4">
+                    
+                        {courses}
+                    {/* <div className="bg-white rounded-xl shadow p-4">
                         <img
                             src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/students-and-teacher-RVRHBBJ-1.png"
                             alt="Course Thumbnail"
@@ -120,7 +130,7 @@ const UserPage = () => {
                         <button className="mt-3 w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                             Review Course
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
