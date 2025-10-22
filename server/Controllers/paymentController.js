@@ -1,7 +1,6 @@
 const Payment = require("../modals/paymentModel");
 const User = require("../modals/users");
 const Course = require("../modals/courses");
-const sendPaymentConfirmationEmail = require("../Utils/sendEmail");
 const razorpay = require("../Utils/razorpay")
 const crypto = require("crypto");
 const { sendMailToStudentEmail } = require("../Utils/sendMailOfCourseBuyed");

@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((err, success) => {
   if (err) console.error("Mailer setup error:", err);
-  else console.log("✅ Mailer ready to send emails");
+
 });
 
 // Generate professional PDF invoice

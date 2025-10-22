@@ -3,11 +3,11 @@ const nodMailer = require("nodemailer")
 exports.sendMailToStudentEmail = async (email, courseName, studentName) => {
     try {
         const transporter = nodMailer.createTransport({
-            host: process.env.LMS_EMAIL,
+            host:"smtp.gmail.com",
             port: 587,
             secure: false,
             auth: {
-                user: process.env.RazireKeyId,
+                user: process.env.LMS_EMAIL,
                 pass: process.env.LMS_PASSWORD
             },
         });

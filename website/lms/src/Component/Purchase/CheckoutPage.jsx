@@ -50,9 +50,21 @@ const CheckoutPage = () => {
   };
   console.log(formData);
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-gray-600 text-lg font-medium">Loading user details...</p>
+      </div>
+    );
+  }
 
-  const studentName = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.name;
-  const studentId = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.studentId;
+  const studentName = user
+    ? studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.name
+    : "";
+
+  const studentId = user
+    ? studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.studentId
+    : "";
 
 
 
@@ -204,7 +216,7 @@ const CheckoutPage = () => {
                     <input
                       type="email"
                       name="email"
-                      value={user.email}
+                      value={user?.email || ""}
                       onChange={handleChange}
                       className={`w-full border-2 ${errors.email ? 'border-red-300' : 'border-gray-200'} rounded-xl px-4 py-3 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition`}
                       placeholder="your.email@example.com"
@@ -219,7 +231,7 @@ const CheckoutPage = () => {
                     <input
                       type="tel"
                       name="phone"
-                      value={user.phone}
+                      value={user?.phone}
                       className={`w-full border-2 ${errors.phone ? 'border-red-300' : 'border-gray-200'} rounded-xl px-4 py-3 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition`}
                       placeholder="+91 98765 43210"
                     />
@@ -250,7 +262,7 @@ const CheckoutPage = () => {
                       </label>
                       <input
                         name="firstName"
-                        value={user.firstname}
+                        value={user?.firstname}
                         onChange={handleChange}
                         className={`w-full border-2 ${errors.firstName ? 'border-red-300' : 'border-gray-200'} rounded-xl px-4 py-3 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition`}
                         placeholder="John"
@@ -263,7 +275,7 @@ const CheckoutPage = () => {
                       </label>
                       <input
                         name="lastName"
-                        value={user.lastname}
+                        value={user?.lastname}
                         onChange={handleChange}
                         className={`w-full border-2 ${errors.lastName ? 'border-red-300' : 'border-gray-200'} rounded-xl px-4 py-3 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition`}
                         placeholder="Doe"
