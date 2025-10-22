@@ -3,7 +3,8 @@ const User = require("../modals/users");
 const Course = require("../modals/courses");
 const sendPaymentConfirmationEmail = require("../Utils/sendEmail");
 const razorpay = require("../Utils/razorpay")
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { sendMailToStudentEmail } = require("../Utils/sendMailOfCourseBuyed");
 
 
 exports.createPayment = async (req, res) => {
@@ -35,16 +36,28 @@ exports.savePayment = async (req, res) => {
     if (razorpay_payment_id) {
       const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
 
-      
+
       paymentData.paymentMethod = paymentDetails.method || req.body.paymentMethod || null;
       paymentData.bank = paymentDetails.bank || req.body.bank || null;
       paymentData.wallet = paymentDetails.wallet || req.body.wallet || null;
       paymentData.vpa = paymentDetails.vpa || req.body.vpa || null;
     }
 
-    
+
     const payment = new Payment(paymentData);
     await payment.save();
+
+
+    try {
+      await sendMailToStudentEmail(
+        paymentData.userEmail,
+        paymentData.courseName,
+        paymentData.studentName
+      )
+      console.log("Payment confirmation email sent");
+    } catch (error) {
+      console.error("Failed to send payment email:", err);
+    }
 
     res.status(200).json({
       success: true,

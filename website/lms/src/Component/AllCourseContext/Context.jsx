@@ -8,7 +8,6 @@ export const AllCourseDetail = React.createContext()
 
 export const Context = (props) => {
     const [user, setUser] = useState(null)
-    const [authentication, setAuthentication] = useState(false)
     const [courseDetail, seCourseDetail] = useState([])
 
 
@@ -36,7 +35,7 @@ export const Context = (props) => {
 
 
     return (
-        <AllCourseDetail.Provider value={{authentication, user, sentDataToCheckoutPage, setUser, courseDetail }}>
+        <AllCourseDetail.Provider value={{ user, sentDataToCheckoutPage, setUser, courseDetail }}>
             {props.children}
         </AllCourseDetail.Provider>
     )
