@@ -1,36 +1,80 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaPen, FaUserCircle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { AllCourseDetail } from '../AllCourseContext/Context'
+import AddStudent from '../AddStudentDetails/AddStudent'
 
 const UserPage = () => {
+    const { user } = useContext(AllCourseDetail)
+    const [showForm, setShowForm] = useState(false)
+    const [usercourse, setUserCourse] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [email, setEmail] = useState(null)
+    const studentEnrolledCourse = async () => {
+        try {
+            setLoading(true)
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            console.log(res)
+            setUserCourse(res.data.paymentDetails)
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+
+        }
+    }
+
+    useEffect(() => {
+        studentEnrolledCourse()
+        if (user?.email) {
+            setEmail(user.email);
+        }
+    }, [user])
+    console.log(email)
     return (
         <div className="px-4 sm:px-6 lg:px-20 py-10 bg-gray-50 min-h-screen">
+            {showForm && <AddStudent setShowForm={setShowForm} emailll={email} />}
 
-            <div className="w-[85%] mx-auto bg-white rounded-2xl shadow-md p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <div className="w-[85%] mx-auto bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border border-gray-100">
                 {/* photo */}
-                <div className="flex-shrink-0">
-                    <FaUserCircle className="text-gray-400" size={120} />
+                <div className="flex-shrink-0 relative group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                    <FaUserCircle className="text-gray-300 relative z-10" size={120} />
                 </div>
 
-
-                <div className="flex-1 flex flex-col  text-center sm:text-left mt-4 ml-10">
-
-                    <div className='flex'>
-                        <div>
-                            <h2 className="text-2xl font-bold">John Doe</h2>
-                        </div>
-                        <div className='ml-5 mt-2'>
-                            <FaPen style={{ cursor: "pointer" }} color='green' />
-                        </div>
+                <div className="flex-1 flex flex-col text-center sm:text-left sm:ml-6">
+                    <div className='flex items-center justify-center sm:justify-start gap-3 mb-2'>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                            name
+                        </h2>
+                        <button
+                            className="p-2 hover:bg-green-50 rounded-full transition-colors duration-200 group"
+                            aria-label="Edit profile"
+                        >
+                            <FaPen className="text-green-600 group-hover:scale-110 transition-transform" size={16} />
+                        </button>
                     </div>
-                    <p className="text-gray-500">johndoe@example.com</p>
-                    <p className="text-gray-500 mt-1">Member since: Jan 2023</p>
 
-                    <Link to="/add_student_details">
-                        <button>Add student details</button>
+                    <div className="space-y-2 mb-6">
+                        <p className="text-gray-600 flex items-center justify-center sm:justify-start gap-2">
+                            <span className="text-blue-500">✉</span>
+                            {user?.email}
 
-                    </Link>
-                   
+                        </p>
+                        <p className="text-gray-500 text-sm flex items-center justify-center sm:justify-start gap-2">
+                            <span>📅</span>
+                            Member since Jan 2023
+                        </p>
+                    </div>
+
+
+                    <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                        onClick={() => setShowForm(true)}
+                    >
+                        Add Student Details
+                    </button>
+
                 </div>
             </div>
 
