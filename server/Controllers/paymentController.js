@@ -79,7 +79,7 @@ exports.savePayment = async (req, res) => {
 
 exports.getKey = async (req, res) => {
   res.status(200).json({
-    key: process.env.RazireKeyId
+    key: process.env.RAZORPAY_KEY_ID
   })
 }
 
@@ -140,3 +140,4 @@ exports.getAllPaymentDetails = async (req, res) => {
     });
   }
 }
+

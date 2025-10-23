@@ -1,134 +1,117 @@
-import React, { useState } from 'react'
-import { FaLocationDot } from "react-icons/fa6";
+import React, { useState } from "react";
 import { MdEmail } from "react-icons/md";
-import { FaPhoneAlt } from "react-icons/fa";
-import axios from "axios"
-
+import axios from "axios";
 
 const Contact = () => {
-  console.log(import.meta.env.VITE_API_URL);
-  let [inputs, setInputs] = useState({
-    name: "",
-    email: "",
-    message: ""
-  })
+  const [inputs, setInputs] = useState({ name: "", email: "", message: "" });
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getInput = (e) => {
-    setInputs({ ...inputs, [e.target.name]: e.target.value })
-  }
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    if (loading) return; 
+    setLoading(true);
+
     try {
-      let res = await axios.post(`${import.meta.env.VITE_API_URL}/user_enquiries`, {
-        name: inputs.name,
-        email: inputs.email,
-        message: inputs.message
-      })
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/user_enquiries`,
+        inputs
+      );
       console.log(res.data);
 
+      setSuccess("We will Get In touch with you soon!");
+
+      setInputs({ name: "", email: "", message: "" });
+
+      setTimeout(() => setSuccess(""), 3000);
     } catch (error) {
-
+      console.error(error);
+      setSuccess(
+        error.response?.data?.message || "Something went wrong! Try again."
+      );
+      setTimeout(() => setSuccess(""), 3000);
+    } finally {
+      setLoading(false);
     }
-  }
-  console.log(inputs);
-
-
+  };
 
   return (
-    <div className="bg-blue-50 py-12 px-4 sm:px-6 lg:px-16">
-
-      <div className="mb-10">
-        <h2 className="text-center text-3xl sm:text-4xl lg:text-5xl  underline decoration-2 underline-offset-4">
+    <div className="relative flex items-center justify-center bg-[#f2f0fd] min-h-screen overflow-hidden">
+      <div className="relative z-10 w-full lg:w-[55%] bg-[#f2f0fd] flex flex-col justify-center px-10 py-16">
+        <h4 className="text-sm font-semibold text-[#7a6fee] mb-2 uppercase tracking-wider">
           Contact Us
+        </h4>
+        <h2 className="text-4xl font-bold text-[#232129] leading-snug mb-4">
+          Feel Free To Contact Us Anytime
         </h2>
+        <p className="text-gray-600 text-sm leading-relaxed mb-8 max-w-lg">
+          Thank you for choosing our templates. We provide you best CSS
+          templates absolutely free of charge.
+        </p>
       </div>
 
-
-      <div className="flex flex-col lg:flex-row gap-12">
-
-        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start justify-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold mb-6">
-            Get In Touch
-          </h2>
-
-          <p className="w-full sm:w-[80%] text-gray-500 text-base sm:text-lg">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestiae
-            minus, soluta vero dolores cumque molestias!
-          </p>
-
-
-          <div className="w-full mt-7 space-y-6">
-
-            <div className="flex items-start">
-              <FaLocationDot size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Address</h4>
-                <p className="text-gray-600 mt-2">
-                  732 Despared, Atlanta, Georgia 30060
-                </p>
-              </div>
-            </div>
-
-
-            <div className="flex items-start">
-              <MdEmail size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Email</h4>
-                <p className="text-gray-600 mt-2">abc@123.com</p>
-              </div>
-            </div>
-
-
-            <div className="flex items-start">
-              <FaPhoneAlt size={28} className="text-blue-500 flex-shrink-0" />
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold">Phone</h4>
-                <p className="text-gray-600 mt-2">+91 1234567890</p>
-              </div>
-            </div>
+      <div className="relative w-full lg:w-[45%] h-[90vh] bg-gradient-to-tr from-[#8168e5] to-[#a38bf3] flex items-center justify-center overflow-hidden rounded-l-[200px] shadow-2xl">
+        
+        {success && (
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 bg-white text-purple-600 font-semibold px-6 py-3 rounded-2xl shadow-lg z-20">
+            {success}
           </div>
-        </div>
+        )}
 
-        {/* form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center">
-          <div className="w-full sm:w-[90%] lg:w-[80%] border border-gray-300 p-6 rounded-md bg-white shadow-md">
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onChange={getInput}
-              />
-
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                onChange={getInput}
-              />
-
-              <textarea
-                name="message"
-                placeholder="Your Message"
-                rows="5"
-                className="border border-gray-400 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-                onChange={getInput}
-              />
-
-              <button
-                className="mx-auto bg-blue-500 text-white px-6 py-2 rounded-3xl hover:bg-blue-700 transition-colors duration-200"
-              >
-                SUBMIT
-              </button>
-            </form>
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-10 w-full max-w-md flex flex-col space-y-5 px-8"
+        >
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name..."
+            value={inputs.name}
+            onChange={getInput}
+            className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+            required
+          />
+          <div className="relative">
+            <input
+              type="email"
+              name="email"
+              placeholder="Your E-mail..."
+              value={inputs.email}
+              onChange={getInput}
+              className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 pr-10 outline-none focus:bg-[#8a78ef] transition-all text-sm"
+              required
+            />
+            <MdEmail
+              size={18}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white opacity-90"
+            />
           </div>
-        </div>
+          <textarea
+            name="message"
+            placeholder="Your Message"
+            rows="4"
+            value={inputs.message}
+            onChange={getInput}
+            className="w-full bg-[#9c89f8] bg-opacity-80 text-white placeholder-white rounded-2xl px-6 py-3 outline-none focus:bg-[#8a78ef] transition-all text-sm resize-none"
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={`bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm shadow-sm transition-all ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#edeafc]"
+            }`}
+          >
+            {loading ? "Sending..." : "Send Message Now"}
+          </button>
+        </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;

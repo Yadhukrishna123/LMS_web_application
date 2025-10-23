@@ -1,70 +1,127 @@
-import React from 'react';
-import { FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 
-const mentors = [
-  {
-    name: 'Stan McGyver',
-    title: 'Mentor',
-    image: 'https://randomuser.me/api/portraits/men/41.jpg',
-  },
-  {
-    name: 'Gordon Stone',
-    title: 'Mentor',
-    image: 'https://randomuser.me/api/portraits/men/42.jpg',
-  },
-  {
-    name: 'Lisa Rosse',
-    title: 'Mentor',
-    image: 'https://randomuser.me/api/portraits/women/43.jpg',
-  },
-  {
-    name: 'Mulan Park',
-    title: 'Mentor',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
-  },
-];
 
 const Mentors = () => {
-  return (
-    <section className="py-16 px-6 md:px-12 lg:px-24 bg-white text-center">
-      <h2 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
-        Meet Our Mentors
-      </h2>
-      <p className="text-gray-600 max-w-3xl mx-auto mb-10">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed tincidunt velit. Donec bibendum turpis vitae maximus bibendum.
+  const MentorCard = ({ instructor }) => (
+    <div className="min-w-[300px] bg-white rounded-2xl p-6 shadow-lg border border-purple-100 text-center flex-shrink-0 hover:shadow-xl transition-all duration-300">
+      <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-purple-100 shadow mx-auto mb-4">
+        <img
+          src={
+            instructor.image ||
+            instructor.avatar ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(instructor.name)}&size=256&background=7c3aed&color=fff`
+          }
+          alt={instructor.name}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(instructor.name)}&size=256&background=7c3aed&color=fff`;
+          }}
+        />
+      </div>
+      <p className="text-purple-600 font-semibold uppercase tracking-wider text-sm mb-1">
+        {instructor.title || instructor.role || 'Instructor'}
       </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-        {mentors.map((mentor) => (
-          <div key={mentor.name} className="bg-gray-50 shadow-md rounded-lg p-6">
-            <img
-              src={mentor.image}
-              alt={mentor.name}
-              className="h-24 w-24 rounded-full mx-auto mb-4 object-cover"
-            />
-            <p className="font-bold text-purple-700">{mentor.name}</p>
-            <p className="text-sm text-gray-500 mb-4">{mentor.title}</p>
-            <div className="flex justify-center gap-4 text-purple-600 text-lg">
-              <a href="#" aria-label="Facebook">
-                <FaFacebookF />
-              </a>
-              <a href="#" aria-label="Twitter">
-                <FaTwitter />
-              </a>
-              <a href="#" aria-label="LinkedIn">
-                <FaLinkedinIn />
-              </a>
-            </div>
-          </div>
-        ))}
+      <h3 className="text-lg font-bold text-gray-900 mb-4">{instructor.name}</h3>
+      <div className="flex justify-center gap-3">
+        <a
+          href={instructor.social?.facebook || '#'}
+          className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 hover:bg-purple-600 hover:text-white transition"
+          aria-label="Facebook"
+        >
+          <FaFacebook className="w-4 h-4" />
+        </a>
+        <a
+          href={instructor.social?.twitter || '#'}
+          className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 hover:bg-purple-600 hover:text-white transition"
+          aria-label="Twitter"
+        >
+          <FaTwitter className="w-4 h-4" />
+        </a>
+        <a
+          href={instructor.social?.linkedin || '#'}
+          className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 hover:bg-purple-600 hover:text-white transition"
+          aria-label="LinkedIn"
+        >
+          <FaLinkedin className="w-4 h-4" />
+        </a>
       </div>
+    </div>
+  );
 
-      <div className="mt-10">
-        <button className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
-          View More
-        </button>
+  const styleSheet = `
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+`;
+
+  const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/v1/view_instructor', {
+          params: { page: 1, limit: 1000 },
+        });
+        setInstructors(res.data.data || []);
+      } catch {
+        setInstructors([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInstructors();
+  }, []);
+
+  if (loading) return <div className="py-20 px-6 text-center">Loading...</div>;
+  if (!instructors.length) return <div className="py-20 px-6 text-center">No instructors found.</div>;
+
+  const instructorsForScroll = [...instructors, ...instructors];
+
+  const scrollAnimationStyle = {
+    animationPlayState: isPaused ? 'paused' : 'running',
+    animation: 'scrollLeft 30s linear infinite',
+  };
+
+  return (
+    <>
+      <style>{styleSheet}</style>
+      <div className="bg-gradient-to-br from-slate-50 to-purple-50 py-20 px-6 overflow-hidden">
+        <div className="text-center mb-16">
+          <h2 className="text-1xl md:text-5xl font-bold text-gray-900 mb-4">
+            Meet Our Expert Instructors
+          </h2>
+          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+            Learn from industry professionals with years of experience in their respective fields.
+          </p>
+        </div>
+        <div
+          className="flex gap-6 w-max"
+          style={scrollAnimationStyle}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+        >
+          {instructorsForScroll.map((instructor, index) => (
+            <MentorCard key={index + (instructor.id || instructor.name)} instructor={instructor} />
+          ))}
+        </div>
+        <div className="text-center mt-12">
+          <button className="bg-gradient-to-r from-blue-600 to-pink-600 text-white font-bold px-8 py-4 rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300">
+            View All Instructors
+          </button>
+        </div>
       </div>
-    </section>
+    </>
   );
 };
 

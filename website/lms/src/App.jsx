@@ -26,6 +26,8 @@ import CheckoutPage from './Component/Purchase/CheckoutPage'
 import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
 import Notification from './Component/NotificationPage/Notification'
+import Mentors from './Component/Mentors/Mentors'
+
 
 
 
@@ -35,7 +37,7 @@ import Notification from './Component/NotificationPage/Notification'
 
 
 function App() {
-  const { authentication } = useContext(AllCourseDetail)
+  const { user } = useContext(AllCourseDetail)
 
   return (
 
@@ -51,6 +53,7 @@ function App() {
         <Route path="/detailpage/:id" element={<Detailpage />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/cateogeries" element={<CategoryBrowser />} />
+        <Route path="/mentors" element={<Mentors />} />
 
         <Route path="/allcourses" element={<CoursesSection />} />
         <Route path="/contact" element={<Contact />} />
@@ -67,7 +70,7 @@ function App() {
          <Route path="/notification" element={<Notification />} />
 
 
-        <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={authentication}><QuizList /> </ProtectedRoutes>} />
+        <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />
         {/* <Route path="/take_quiz/:quizId" element={<UserQuiz userId={user?._id} />} /> */}
 
 

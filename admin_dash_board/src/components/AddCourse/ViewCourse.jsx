@@ -12,6 +12,8 @@ const ViewCourses = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [deleteClick, setDeleteClick] = useState(false);
   const [id, setId] = useState("");
+  const [totalCourses, setTotalCourses] = useState(0);
+
 
   const itemsPerPage = 5;
   const deleteCont = "Are you sure you want to delete this course?";
@@ -25,6 +27,7 @@ const ViewCourses = () => {
       setCourses(res.data.data || []);
       setCurrentPage(res.data.page || 1);
       setTotalPages(res.data.totalPages || 1);
+      setTotalCourses(res.data.totalCourses || 0);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -194,7 +197,7 @@ const ViewCourses = () => {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Courses</p>
-              <p className="text-2xl font-bold text-blue-600">{courses?.length || 0}</p>
+              <p className="text-2xl font-bold text-blue-600 text-center p-2">{totalCourses}</p>
             </div>
             <button
               onClick={handleExportPDF}

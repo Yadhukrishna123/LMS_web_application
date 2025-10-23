@@ -1,4 +1,6 @@
 const feeStructoreModal = require("../modals/feeStructore")
+const User = require("../modals/users");
+const Course = require("../modals/courses");
 
 
 exports.createFeeSteuctore = async (req, res) => {
@@ -117,3 +119,25 @@ exports.deleteFeestructore = async (req, res) => {
         });
     }
 }
+
+exports.getEnrollments = async (req, res) => {
+  try {
+    const payments = await FeeStructure.find()
+      .populate("userId", "firstname lastname email") // if user is referenced
+      .populate("courseId", "title category price"); // if course is referenced
+
+    const enrollments = payments.map(payment => ({
+      enrollmentId: payment._id,
+      course: payment.courseId?.title || "N/A",
+      student: payment.userId ? `${payment.userId.firstname} ${payment.userId.lastname}` : "N/A",
+      email: payment.userId?.email || "N/A",
+      date: payment.createdAt.toLocaleDateString("en-US"),
+      status: payment.status || "success",
+    }));
+
+    res.json({ success: true, data: enrollments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
