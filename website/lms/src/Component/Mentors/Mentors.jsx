@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Facebook, Twitter, Linkedin } from 'lucide-react';
 
+
+
+const Mentors = () => {
 const MentorCard = ({ instructor }) => (
   <div className="min-w-[300px] bg-white rounded-2xl p-6 shadow-lg border border-purple-100 text-center flex-shrink-0 hover:shadow-xl transition-all duration-300">
     <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-purple-100 shadow mx-auto mb-4">
@@ -59,7 +62,6 @@ const styleSheet = `
 }
 `;
 
-const Mentors = () => {
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
