@@ -30,7 +30,7 @@ const MyProfile = () => {
           </Link>
         ) : null}
       </div>
-
+        {/* $$$% */}
       {/* Profile Card */}
       {profile &&
         profile.map((p, i) => {
