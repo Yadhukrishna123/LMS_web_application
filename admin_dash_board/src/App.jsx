@@ -92,7 +92,7 @@ function App() {
           <Route path="/add_Instuctors" element={<AddInstructors />} />
           <Route path="/users" element={<Users />} />
           <Route path="/login" element={<LoginInstitution />} />
-          <Route path="/my_profile" element={<ProtectedRoutes isAuthentication={auth}><MyProfile /></ProtectedRoutes>} />
+          <Route path="/my_profile" element={<MyProfile />}/>
           <Route path="/create_profile" element={<ProtectedRoutes isAuthentication={auth}><CreateProfile /></ProtectedRoutes>} />
           <Route path="/Edit_profile/:id" element={<EditProfile />} />
           <Route path="/active_batches" element={<ActiveBatches />} />

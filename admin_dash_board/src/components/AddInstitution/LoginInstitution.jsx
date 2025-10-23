@@ -3,11 +3,12 @@ import axios from "axios"
 import { AdminContext } from '../AdminContext/Context'
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+
 
 
 
 const LoginInstitution = () => {
-    const { isAdminLogedIn } = useContext(AdminContext)
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
     const [inputs, setInputs] = useState({
@@ -23,21 +24,35 @@ const LoginInstitution = () => {
 
         try {
             let res = await axios.post("http://localhost:8080/api/v1/login_institute", {
-                email: inputs.email,         // backend expects adminEmail
-                password: inputs.password    // backend expects adminPassword
+                email: inputs.email,
+                adminPassword: inputs.password
             })
             console.log(res);
             if (res.data.success) {
-                if (res.data.isAuthentication) {
-                    isAdminLogedIn(res.data.isAuthentication)
+                const institutionStatus = res.data.institute?.status
+                if (institutionStatus === "approved") {
+                    toast.success(res.data.message)
+                    await new Promise((b) => setTimeout(b, 2000))
                     navigate("/my_profile")
+                } else if (institutionStatus === "pending") {
+                    toast.warn("Institution verification is pending. Please wait for admin verification.");
+                } else if (institutionStatus === "pending") {
+                    toast.error("Your institution account has been rejected.");
+                } else {
+                    toast.error("Invalid institution status.");
                 }
+
+
+
+            } else {
+                toast.error(res.data.message || "Login failed");
             }
 
+
         } catch (error) {
-    console.error(error.response?.data)
-    toast.error(error.response?.data?.message || "Login failed")
-}
+            console.error(error.response?.data)
+            toast.error(error.response?.data?.message || "Login failed")
+        }
 
     }
 
@@ -45,13 +60,14 @@ const LoginInstitution = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+            <ToastContainer />
             <div className="w-full max-w-6xl flex bg-white rounded-3xl shadow-2xl overflow-hidden">
                 {/* Left Side - Admin Branding */}
                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-800 via-blue-900 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
                     {/* Decorative elements */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 opacity-10 rounded-full -mr-32 -mt-32"></div>
                     <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500 opacity-10 rounded-full -ml-48 -mb-48"></div>
-                    
+
                     <div className="relative z-10">
                         {/* Logo */}
                         <div className="mb-8">
@@ -64,7 +80,7 @@ const LoginInstitution = () => {
                         <h1 className="text-5xl font-bold text-white mb-4 leading-tight">Admin Dashboard</h1>
                         <p className="text-blue-200 text-lg">Manage your platform with powerful tools</p>
                     </div>
-                    
+
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-start space-x-4">
                             <div className="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
@@ -77,7 +93,7 @@ const LoginInstitution = () => {
                                 <p className="text-blue-200 text-sm">Track performance and insights</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-start space-x-4">
                             <div className="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +105,7 @@ const LoginInstitution = () => {
                                 <p className="text-blue-200 text-sm">Control and monitor all users</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-start space-x-4">
                             <div className="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
                                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +230,7 @@ const LoginInstitution = () => {
                             <div className="mt-6 text-center">
                                 <p className="text-gray-600 text-sm">
                                     Not an admin?{' '}
-                                    <a 
+                                    <a
                                         href="/register"
                                         className="text-slate-600 hover:text-slate-800 font-semibold transition"
                                     >
