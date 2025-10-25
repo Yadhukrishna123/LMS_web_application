@@ -7,23 +7,24 @@ const LowAttendance = () => {
   const [status, setStatus] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("Sending...");
-    try {
-      const res = await axios.post("http://localhost:8080/api/v1/notifications/send", {
-        type: "low_attendance",
-        message,
-        threshold,
-      });
-      if (res.data.success) {
-        setStatus("Low attendance notifications sent!");
-        setMessage("");
-      }
-    } catch (err) {
-      console.error(err);
-      setStatus("Failed to send notifications");
+  e.preventDefault();
+  setStatus("Sending...");
+  try {
+    const res = await axios.post("http://localhost:8080/api/v1/low-attendance", {
+      message,
+      threshold,
+    });
+    if (res.data.success) {
+      setStatus(`Notifications sent to ${res.data.recipients.length} students!`);
+      setMessage("");
+    } else {
+      setStatus(res.data.message);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setStatus("Failed to send notifications");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 via-purple-100 to-pink-50">

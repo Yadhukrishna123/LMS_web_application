@@ -11,7 +11,7 @@ const SendAnnouncement = () => {
     e.preventDefault();
     setStatus("Sending...");
     try {
-      const res = await axios.post("http://localhost:8080/api/v1/announcements/create", {
+      const res = await axios.post("http://localhost:8080/api/v1/announcementscreate", {
         title,
         message,
         recipients,

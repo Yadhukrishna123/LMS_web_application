@@ -2,62 +2,46 @@ import React, { useState } from 'react'
 import { BsBellFill, BsXCircleFill } from 'react-icons/bs';
 import { FaClock, FaDollarSign, FaExclamationCircle, FaCheckCircle } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
+import axios from 'axios';
+import { useEffect } from 'react';
+
 
 const Notification = () => {
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            type: 'urgent',
-            title: 'Payment Due Tomorrow',
-            message: 'Your monthly subscription payment of $99.99 is due tomorrow. Please ensure sufficient funds.',
-            amount: '$99.99',
-            dueDate: 'Oct 21, 2025',
-            read: false,
-            timestamp: '2 hours ago'
-        },
-        {
-            id: 2,
-            type: 'warning',
-            title: 'Payment Due in 3 Days',
-            message: 'Reminder: Your invoice #INV-2045 payment is due in 3 days.',
-            amount: '$249.50',
-            dueDate: 'Oct 23, 2025',
-            read: false,
-            timestamp: '5 hours ago'
-        },
-        {
-            id: 3,
-            type: 'info',
-            title: 'Payment Due in 7 Days',
-            message: 'Upcoming payment for Premium Plan renewal.',
-            amount: '$149.00',
-            dueDate: 'Oct 27, 2025',
-            read: true,
-            timestamp: '1 day ago'
-        },
-        {
-            id: 4,
-            type: 'success',
-            title: 'Payment Successful',
-            message: 'Your payment of $79.99 has been processed successfully.',
-            amount: '$79.99',
-            dueDate: 'Oct 19, 2025',
-            read: true,
-            timestamp: '2 days ago'
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (res.data.success) {
+          setNotifications(res.data.notifications);
         }
-    ]);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
     const unreadCount = notifications.filter(n => !n.read).length;
 
-    const markAsRead = (id) => {
-        setNotifications(notifications.map(n =>
-            n.id === id ? { ...n, read: true } : n
-        ));
-    };
+const markAsRead = async (id) => {
+  await axios.patch(`http://localhost:8080/api/v1/notifications/${id}/read`, null, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+};
 
-    const deleteNotification = (id) => {
-        setNotifications(notifications.filter(n => n.id !== id));
-    };
+const deleteNotification = async (id) => {
+  await axios.delete(`http://localhost:8080/api/v1/notifications/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  setNotifications(notifications.filter(n => n.id !== id));
+};
 
     const markAllAsRead = () => {
         setNotifications(notifications.map(n => ({ ...n, read: true })));

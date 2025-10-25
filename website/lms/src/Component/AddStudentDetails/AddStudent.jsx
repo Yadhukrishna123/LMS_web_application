@@ -23,12 +23,12 @@ const AddStudent = () => {
     const preset_key = "arsmfwi7";
     const cloud_name = "dnqlt6cit";
 
-    useEffect(() => {
-        axios
-            .get("http://localhost:8080/api/v1/view_all_batches")
-            .then((res) => setBatches(res.data.data || []))
-            .catch((err) => console.error(err));
-    }, []);
+    // useEffect(() => {
+    //     axios
+    //         .get("http://localhost:8080/api/v1/get_all_batches")
+    //         .then((res) => setBatches(res.data.data || []))
+    //         .catch((err) => console.error(err));
+    // }, []);
 
     const handleChange = (e) => {
         const { name, files, value } = e.target;
@@ -183,7 +183,7 @@ const AddStudent = () => {
                             rows="3"
                             className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 outline-none hover:border-purple-400 transition resize-none"
                         />
-                        <select
+                        {/* <select
                             name="batch"
                             value={inputs.batch}
                             onChange={handleChange}
@@ -195,7 +195,7 @@ const AddStudent = () => {
                                     {b.batchName}
                                 </option>
                             ))}
-                        </select>
+                        </select> */}
                     </div>
 
                     {/* Submit Button */}
