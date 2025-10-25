@@ -58,6 +58,10 @@ import AllInstitute from './components/AddInstitution/AllInstitute';
 import RegistrationRequest from './components/AddInstitution/RegistrationRequest';
 import DueManagement from './components/FeeManagement/DueManagement';
 import EnrollmentsPage from './components/Enrollments/Enrollments';
+import SendNotification from './components/Notifications/SendNotification';
+import SendAnnouncement from './components/Notifications/SendAnnouncement';
+import LowAttendance from './components/Notifications/LowAttendance';
+import ExamReminders from './components/Notifications/ExamReminders';
 
 
 
@@ -116,6 +120,14 @@ function App() {
           <Route path="/fee_collection" element={<FeeCollection />} />
           <Route path="/due_fees" element={<DueManagement />} />
           <Route path="/enrollments" element={<EnrollmentsPage />} />
+
+          <Route path="/sendnotification" element={<SendNotification />} />
+          <Route path="/sendannouncement" element={<SendAnnouncement />} />
+          <Route path="/lowattendance" element={<LowAttendance />} />
+          <Route path="/examreminders" element={<ExamReminders />} />
+
+          
+
 
         </Route>
       </Routes>
