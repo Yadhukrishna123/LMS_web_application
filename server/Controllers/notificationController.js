@@ -128,55 +128,22 @@ exports.sendLowAttendance = async (req, res) => {
 
 exports.getUserNotifications = async (req, res) => {
   try {
-    const userId = req.user._id; // from auth middleware
-    const userType = req.user.role; // e.g., 'student' or 'instructor'
+    const userId = req.user._id; // now defined
+    const userType = req.user.role;
 
     let notifications = [];
 
     if (userType === "student") {
-      // Example: fetch fee, attendance, and announcements
-      const fees = await Fee.find({ student: userId, dueDate: { $gte: new Date() } });
-      const attendanceAlerts = await Attendance.find({ student: userId, status: "absent" });
-      const announcements = await Notification.find({ recipients: userId });
-
-      notifications = [
-        ...fees.map(f => ({
-          id: f._id,
-          type: f.isOverdue ? "urgent" : "warning",
-          title: "Fee Due",
-          message: `Your fee of $${f.amount} is due on ${new Date(f.dueDate).toLocaleDateString()}`,
-          amount: `$${f.amount}`,
-          dueDate: new Date(f.dueDate).toLocaleDateString(),
-          read: f.read || false,
-          timestamp: "Today"
-        })),
-        ...attendanceAlerts.map(a => ({
-          id: a._id,
-          type: "info",
-          title: "Attendance Alert",
-          message: `You missed ${a.subject} class on ${new Date(a.date).toLocaleDateString()}`,
-          read: a.read || false,
-          timestamp: "Today"
-        })),
-        ...announcements.map(n => ({
-          id: n._id,
-          type: "success",
-          title: n.title,
-          message: n.message,
-          read: n.read || false,
-          timestamp: new Date(n.createdAt).toLocaleDateString()
-        }))
-      ];
-    } else if (userType === "instructor") {
-      // Example: fetch course updates, submissions, etc.
-      const announcements = await Notification.find({ recipients: userId });
+      const announcements = await Notification.find({
+  recipients: { $in: [req.user.email, req.user.role] }
+});
       notifications = announcements.map(n => ({
         id: n._id,
-        type: "info",
+        type: n.type === "low_attendance" ? "info" : "success",
         title: n.title,
         message: n.message,
-        read: n.read || false,
-        timestamp: new Date(n.createdAt).toLocaleDateString()
+        read: n.readBy.includes(userId),
+        timestamp: n.createdAt.toLocaleDateString(),
       }));
     }
 
