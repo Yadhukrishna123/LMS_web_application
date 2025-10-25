@@ -2,41 +2,88 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaSearch, FaVideo, FaPlus, FaPlay, FaEye } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
+import PaginationButton from '../PaginationButton/PaginationButton';
+import Edit from '../TableActions/Edit';
 
 const UploadedVideos = () => {
   const [videos, setVideos] = useState([]);
   const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const itemsPerPage = 5;
   const [deleteClick, setDeleteClick] = useState(false);
   const deleteCont = "Are you sure that you delete recorded video";
+  let [currentPage, setCurrentPage] = useState(1)
+  let [itemPerPage, setitemPerPage] = useState(6)
+  let indexOfLastProduct = currentPage * itemPerPage
+  let indexOfFirstnumber = indexOfLastProduct - itemPerPage
+  const [showEditPopop, setShowEditPopup] = useState(false)
+  const [id, setId] = useState("")
+  const videoFields = [
+    {
+      label: "Select video",
+      name: "video",
+      type: "file",
+      required: true,
+    },
+    {
+      label: "Title",
+      name: "title",
+      type: "text",
+      placeholder: "Enter video title",
+      required: true,
+    },
+    {
+      label: "Description",
+      name: "description",
+      type: "text",
+      placeholder: "Enter video description",
+      required: true,
+    },
+    {
+      label: "Thumbnail",
+      name: "image",
+      type: "file",
+      required: true,
+    },
+  ];
+  const updateInput = {
+    video: null,
+    title: "",
+    description: "",
+    image: null
+  }
+
 
   const getAllVideos = async (page = 1) => {
     try {
-      const res = await axios.get('http://localhost:8080/api/v1/get_all_records', {
-        params: { page, limit: itemsPerPage, title: search },
-      });
-      setVideos(res.data.data || []);
-      setCurrentPage(res.data.page);
-      setTotalPages(res.data.totalPages);
-      setTotalItems(res.data.totalItems);
+      const res = await axios.get('http://localhost:8080/api/v1/get_all_records');
+      setVideos(res.data.totalItems || []);
     } catch (error) {
       console.error('Error fetching videos:', error);
     }
   };
 
   useEffect(() => {
-    setCurrentPage(1);
+
     getAllVideos(1);
   }, [search]);
+
+  let showrecordedvideos = videos.slice(indexOfFirstnumber, indexOfLastProduct)
+  const handleEdit = (id) => {
+    setId(id)
+  }
 
   const handleDelete = () => setDeleteClick(true);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       {deleteClick && <Delete setDeleteClick={setDeleteClick} deleteCont={deleteCont} />}
+      {showEditPopop && <Edit
+        field={videoFields}
+        setShowEditPopup={setShowEditPopup}
+        api_end_point="http://localhost:8080/api/v1/get_recoeded_video"
+        id={id}
+        updateInput={updateInput}
+        reRender={getAllVideos}
+      />}
       <div className="w-full max-w-7xl mx-auto">
         <div className="mb-8 flex items-center gap-3">
           <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl">
@@ -62,7 +109,7 @@ const UploadedVideos = () => {
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Videos</p>
-              <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
+              <p className="text-2xl font-bold text-blue-600">{videos.length}</p>
             </div>
             <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
               <FaPlus /> Upload Video
@@ -81,18 +128,17 @@ const UploadedVideos = () => {
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">#</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Video Details</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Description</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase">Stats</th>
                   <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase">Video Link</th>
                   <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {videos.length > 0 ? (
-                  videos.map((v, i) => (
-                    <tr key={v._id || i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                {showrecordedvideos.length > 0 ? (
+                  showrecordedvideos.map((v, i) => (
+                    <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                          <span className="text-white font-bold text-sm">{(currentPage - 1) * itemsPerPage + i + 1}</span>
+                          <span className="text-white font-bold text-sm">{(currentPage - 1) * itemPerPage + (i + 1)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 flex items-center gap-3">
@@ -108,9 +154,7 @@ const UploadedVideos = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {v.description}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        status
-                      </td>
+
                       <td className="px-6 py-4 text-center">
                         {v.video ? (
                           <a href={v.video} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-lg shadow-md transition transform hover:scale-105">
@@ -123,7 +167,10 @@ const UploadedVideos = () => {
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
-                            <FaEdit className="group-hover:scale-110 transition" />
+                            <FaEdit className="group-hover:scale-110 transition" onClick={() => {
+                              setShowEditPopup(true);
+                              handleEdit(v._id)
+                            }} />
                           </button>
                           <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" onClick={handleDelete}>
                             <FaTrash className="group-hover:scale-110 transition" />
@@ -148,38 +195,9 @@ const UploadedVideos = () => {
               </tbody>
             </table>
           </div>
-
-          {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <div className="text-sm text-gray-600">
-                Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} videos
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => currentPage > 1 && getAllVideos(currentPage - 1)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                >
-                  Previous
-                </button>
-                {[...Array(totalPages)].map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => getAllVideos(idx + 1)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium ${currentPage === idx + 1 ? 'bg-blue-600 text-white' : 'border border-gray-300 text-gray-700 hover:bg-white'}`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={() => currentPage < totalPages && getAllVideos(currentPage + 1)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+        <PaginationButton items={videos} itemPerPage={itemPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+
       </div>
     </div>
   );

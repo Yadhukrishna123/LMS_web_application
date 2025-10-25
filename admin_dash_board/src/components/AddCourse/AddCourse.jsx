@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { FaPlus } from "react-icons/fa";
 
 const AddCourse = () => {
   const preset_key = "arsmfwi7"
@@ -8,6 +9,36 @@ const AddCourse = () => {
   const [instructors, setInstructors] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const coursesFields = [
+  
+  { label: "Course Title", name: "title", type: "text", placeholder: "Enter course title" },
+  { label: "Description", name: "description", type: "textarea", placeholder: "Describe your course" },
+  { label: "Category", name: "category", type: "select", options: [], placeholder: "Select category" },
+  { label: "Tags", name: "tags", type: "text", placeholder: "Enter tags separated by commas" },
+  { label: "Duration", name: "duration", type: "text", placeholder: "e.g., 8 weeks" },
+  { label: "Course Image", name: "image", type: "file" },
+
+ 
+  { label: "Free Course", name: "isFree", type: "checkbox" },
+  { label: "Price", name: "price", type: "number", placeholder: "Enter price" },
+  { label: "Discount (%)", name: "discount", type: "number", placeholder: "Enter discount percentage" },
+  { label: "Monthly Payment Option", name: "hasMonthlyPayment", type: "checkbox" },
+  { label: "Monthly Amount", name: "monthlyAmount", type: "number", placeholder: "Enter monthly amount" },
+
+
+  { label: "Instructor Name", name: "instrectorName", type: "select", options: [], placeholder: "Select instructor" },
+  { label: "Instructor Bio", name: "instrectorBio", type: "textarea", placeholder: "Enter instructor bio" },
+
+
+  { label: "Course Modules", name: "modules", type: "array", subfields: [
+      { label: "Module Title", name: "title", type: "text", placeholder: "Module title" }
+    ]
+  }
+];
+
+
   const [inputs, setInputes] = useState({
     title: "",
     description: "",
@@ -20,39 +51,54 @@ const AddCourse = () => {
     instrectorName: "",
     instrectorBio: "",
     hasMonthlyPayment: false,
-    monthlyAmount: ""
+    monthlyAmount: "",
+    modules: [
+      { id: 1, title: "" }
+    ]
 
   });
 
   const getAllDetails = async () => {
     try {
+      setLoading(true)
       const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
       setInstructors(instRes.data.data);
       const catRes = await axios.get("http://localhost:8080/api/v1/view_All_categories");
       console.log(catRes);
 
-      setCategories(catRes.data.data);
+      setCategories(catRes.data.allCoursecategory);
     } catch (error) {
       console.error("Error fetching lists:", error);
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
-        setInstructors(instRes.data.data);
-        const catRes = await axios.get("http://localhost:8080/api/v1/view_All_course_categories");
-        setCategories(catRes.data.data);
-      } catch (error) {
-        console.error("Error fetching lists:", error);
-      }
-    };
-    fetchData();
+
+    getAllDetails();
 
   }, []);
-  //console.log(categories);
-  
+
+  const addModule = () => {
+    const newModule = {
+      id: inputs.modules.length + 1,
+      title: "",
+    };
+    setInputes({
+      ...inputs,
+      modules: [...inputs.modules, newModule],
+    });
+  };
+
+
+  const updateModule = (id, value) => {
+    const updatedModules = inputs.modules.map((module) =>
+      module.id === id ? { ...module, title: value } : module
+    );
+    setInputes({ ...inputs, modules: updatedModules });
+  };
+
 
   const handleChange = (e) => {
     const { name, type, value, checked, files } = e.target;
@@ -94,6 +140,7 @@ const AddCourse = () => {
         category: inputs.category,
         tags: inputs.tags,
         image: imageUrl,
+        courseModules: inputs.modules,
         instructorName: inputs.instrectorName,
         instructorBio: inputs.instrectorBio,
         hasMonthlyPayment: inputs.hasMonthlyPayment,
@@ -104,7 +151,7 @@ const AddCourse = () => {
 
       console.log(res);
 
-      if(res.data.success){
+      if (res.data.success) {
         toast.success(res.data.message)
       }
 
@@ -119,10 +166,29 @@ const AddCourse = () => {
 
 
   console.log(inputs);
+  // if (loading)
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+  //       <div className="text-center">
+  //         <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mb-4"></div>
+  //         <p className="text-xl font-semibold text-gray-700">Loading...</p>
+  //       </div>
+  //     </div>
+  //   );
+
+  // if (error)
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+  //       <div className="text-center bg-white p-8 rounded-2xl shadow-xl">
+  //         <p className="text-xl font-semibold text-red-600">{error}</p>
+  //       </div>
+  //     </div>
+  //   );
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 py-12 px-4">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
@@ -271,7 +337,7 @@ const AddCourse = () => {
                   Instructor Name
                 </label>
                 <select
-                
+
                   onChange={handleChange}
                   name="instrectorName"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
@@ -301,6 +367,56 @@ const AddCourse = () => {
 
 
 
+            </div>
+          </div>
+
+          {/* modules */}
+
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-violet-100">
+
+            <div className="bg-gradient-to-r from-fuchsia-600 to-pink-600 px-8 py-6">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm">
+                  3
+                </span>
+                Course Modules
+              </h2>
+            </div>
+
+
+            <div className="p-8 space-y-6">
+              {inputs.modules.map((module, index) => (
+                <div key={module.id} className="border border-gray-200 rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold text-fuchsia-700 mb-4">
+                    Module {index + 1}: Learning
+                  </h3>
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Module Title
+                    </label>
+                    <input
+                      type="text"
+                      value={module.title}
+                      onChange={(e) => updateModule(module.id, e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
+                      placeholder="Introduction to the topic..."
+                    />
+                  </div>
+
+
+                </div>
+              ))}
+
+              {/* Add Module Button */}
+              <button
+                type="button"
+                onClick={addModule}
+                className="w-full py-4 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white font-semibold rounded-xl hover:from-fuchsia-700 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <FaPlus className="w-5 h-5" />
+                Add Next Module
+              </button>
             </div>
           </div>
 

@@ -339,7 +339,7 @@ exports.getInstituteAdmin = async (req, res) => {
         if (!instituteAdmin) {
             return res.status(404).json({
                 success: false,
-                message: "User not found",
+                message: "institution not found",
                 instituteAdmin: null
             });
         }

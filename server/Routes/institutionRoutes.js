@@ -11,7 +11,7 @@ router.post("/login_institute", loginInstitute)
 router.post("/add_institution_profile", institutionProfile)
 router.get("/get_profile_details", instiAuthToken, getAllInstitutionProfile)
 router.route("/get_institute/:id").get(getInstitute).put(updataeInstitutionDetails)
-router.post("/getInstitutionAdmin", getInstituteAdmin)
+router.get("/getInstitutionAdmin", instiAuthToken, getInstituteAdmin)
 
 
 module.exports = router

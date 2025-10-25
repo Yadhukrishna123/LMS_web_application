@@ -4,56 +4,75 @@ import { FaEdit, FaTrash, FaSearch, FaBook, FaPlus } from "react-icons/fa";
 import Delete from "../TableActions/Delete";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import PaginationButton from "../PaginationButton/PaginationButton";
+import Edit from "../TableActions/Edit";
 
 const ViewCourses = () => {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [deleteClick, setDeleteClick] = useState(false);
   const [id, setId] = useState("");
-  const [totalCourses, setTotalCourses] = useState(0);
-
-
-  const itemsPerPage = 5;
   const deleteCont = "Are you sure you want to delete this course?";
+  const [loading, setLoading] = useState(false)
+  let [currentPage, setCurrentPage] = useState(1)
+  let [itemPerPage, setitemPerPage] = useState(6)
+  const [showEditPopop, setShowEditPopup] = useState(false)
+  let indexOfLastProduct = currentPage * itemPerPage
+  let indexOfFirstnumber = indexOfLastProduct - itemPerPage
+  const coursesFields = [
 
-  // Fetch courses for table (paginated)
-  const getCourses = async (page = 1) => {
+    { label: "Course Title", name: "title", type: "text", placeholder: "Enter course title" },
+    { label: "Description", name: "description", type: "textarea", placeholder: "Describe your course" },
+    { label: "Category", name: "category", type: "select", options: [], placeholder: "Select category" },
+    { label: "Tags", name: "tags", type: "text", placeholder: "Enter tags separated by commas" },
+    { label: "Duration", name: "duration", type: "text", placeholder: "e.g., 8 weeks" },
+    { label: "Course Image", name: "image", type: "file" },
+
+
+    { label: "Free Course", name: "isFree", type: "checkbox" },
+    { label: "Price", name: "price", type: "number", placeholder: "Enter price" },
+    { label: "Discount (%)", name: "discount", type: "number", placeholder: "Enter discount percentage" },
+    { label: "Monthly Payment Option", name: "hasMonthlyPayment", type: "checkbox" },
+    { label: "Monthly Amount", name: "monthlyAmount", type: "number", placeholder: "Enter monthly amount" },
+
+
+    { label: "Instructor Name", name: "instrectorName", type: "select", options: [], placeholder: "Select instructor" },
+    { label: "Instructor Bio", name: "instrectorBio", type: "textarea", placeholder: "Enter instructor bio" },
+
+
+    {
+      label: "Course Modules", name: "modules", type: "array", subfields: [
+        { label: "Module Title", name: "title", type: "text", placeholder: "Module title" }
+      ]
+    }
+  ];
+
+
+
+  const getCourses = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/v1/get_all_courses", {
-        params: { title: search, page, limit: itemsPerPage },
+      setLoading(true)
+      const res = await axios.get(`http://localhost:8080/api/v1/get_all_courses?title=${search}&category=${search}`, {
+        withCredentials: true
       });
-      setCourses(res.data.data || []);
-      setCurrentPage(res.data.page || 1);
-      setTotalPages(res.data.totalPages || 1);
-      setTotalCourses(res.data.totalCourses || 0);
+      console.log(res)
+      setCourses(res.data.courses);
+
+
+
     } catch (error) {
       console.error("Error fetching courses:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
-  // Fetch all courses (for PDF/Print)
-  const getAllCourses = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/v1/get_all_courses", {
-        params: { title: search, page: 1, limit: 1000 },
-      });
-      return res.data.data || [];
-    } catch (error) {
-      console.error("Error fetching all courses:", error);
-      return [];
-    }
-  };
 
   useEffect(() => {
     getCourses();
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(1);
-    getCourses(1);
   }, [search]);
+
+  let showPoroduct = courses.slice(indexOfFirstnumber, indexOfLastProduct)
 
   const handleDelete = (courseId) => {
     setDeleteClick(true);
@@ -69,7 +88,7 @@ const ViewCourses = () => {
     return text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
   };
 
-  // Export PDF
+
   const handleExportPDF = async () => {
     const allCourses = await getAllCourses();
     if (!allCourses.length) return alert("No courses to export");
@@ -169,7 +188,7 @@ const ViewCourses = () => {
           onTimeDelete={onTimeDelete}
         />
       )}
-
+      {showEditPopop && <Edit field={coursesFields} setShowEditPopup={setShowEditPopup} />}
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center gap-3">
@@ -197,7 +216,7 @@ const ViewCourses = () => {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Courses</p>
-              <p className="text-2xl font-bold text-blue-600 text-center p-2">{totalCourses}</p>
+              <p className="text-2xl font-bold text-blue-600 text-center p-2">0</p>
             </div>
             <button
               onClick={handleExportPDF}
@@ -231,15 +250,14 @@ const ViewCourses = () => {
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Course</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Price</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Duration</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Level</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Instructor</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Category</th>
                   <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {courses && courses.length > 0 ? (
-                  courses.map((e, i) => (
+                {showPoroduct && showPoroduct.length > 0 ? (
+                  showPoroduct.map((e, i) => (
                     <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
                       <td className="px-6 py-4">
                         <div className="flex items-start gap-3">
@@ -256,26 +274,16 @@ const ViewCourses = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">₹ {e.price}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{e.duration}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                            e.level === "Beginner"
-                              ? "bg-green-100 text-green-700 border border-green-200"
-                              : e.level === "Intermediate"
-                              ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
-                              : "bg-red-100 text-red-700 border border-red-200"
-                          }`}
-                        >
-                          {e.level}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{e.instructor}</td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{e.instructorName}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full border border-blue-200">{e.category}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
+                          <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"
+                            onClick={() => setShowEditPopup(true)}
+                          >
                             <FaEdit className="group-hover:scale-110 transition" />
                           </button>
                           <button className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition group" onClick={() => handleDelete(e._id)}>
@@ -302,22 +310,9 @@ const ViewCourses = () => {
             </table>
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-2 flex-wrap gap-2">
-              <p className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</p>
-              <div className="flex gap-2 flex-wrap">
-                <button disabled={currentPage === 1} onClick={() => getCourses(currentPage - 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Previous</button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button key={i} onClick={() => getCourses(i + 1)} className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? "bg-blue-600 text-white" : "border-gray-300 text-gray-700"} hover:bg-white transition`}>
-                    {i + 1}
-                  </button>
-                ))}
-                <button disabled={currentPage === totalPages} onClick={() => getCourses(currentPage + 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Next</button>
-              </div>
-            </div>
-          )}
+
         </div>
+        <PaginationButton items={courses} itemPerPage={itemPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
       </div>
     </div>
   );

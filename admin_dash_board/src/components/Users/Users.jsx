@@ -2,47 +2,73 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { FaEdit, FaSearch, FaTrash, FaUserPlus, FaUsers } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
+import PaginationButton from '../PaginationButton/PaginationButton';
+import Edit from '../TableActions/Edit';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [deleteClick, setDeleteClick] = useState(false);
     const [id, setId] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalUsers, setTotalUsers] = useState(0);
-    const itemsPerPage = 5;
-
+    let [currentPage, setCurrentPage] = useState(1)
+    let [itemPerPage, setitemPerPage] = useState(6)
+    let indexOfLastProduct = currentPage * itemPerPage
+    let indexOfFirstnumber = indexOfLastProduct - itemPerPage
+    const [showEditPopop, setShowEditPopup] = useState(false)
+    const usersField = [
+        { label: "First Name", name: "firstname", type: "text", placeholder: "Enter first name" },
+        { label: "Last Name", name: "lastname", type: "text", placeholder: "Enter last name" },
+        { label: "Email", name: "email", type: "email", placeholder: "Enter email" },
+        { label: "Phone", name: "phone", type: "text", placeholder: "Enter phone number" },
+        { label: "Role", name: "role", type: "select", options: ["admin", "instructor", "user"], placeholder: "Select role" },
+    ];
+    const userUpdateInput = {
+        firstname:"",
+        lastname:"",
+        email:"",
+        phone:"",
+        role:""
+    }
     const deleteCont = "Are you sure that you want to delete user?";
 
-    // Fetch all users
+
+
+
+
     const getAllUsers = async () => {
         try {
             const res = await axios.get(
-                `http://localhost:8080/api/v1/get_all_user?firstname=${search}`,{
-                    withCredentials:true
-                }
+                `http://localhost:8080/api/v1/get_all_user?firstname=${search}`, {
+
+                withCredentials: true
+            }
             );
 
             setUsers(res.data.users || []);
-            setCurrentPage(res.data.page || 1);
-            setTotalPages(res.data.totalPages || 1);
-            setTotalUsers(res.data.total || 0);
+
+
+
         } catch (err) {
             console.error("Error fetching users:", err);
         }
     };
 
     useEffect(() => {
-        setCurrentPage(1);
+
         getAllUsers(1);
     }, [search]);
+
+    let showusers = users.slice(indexOfFirstnumber, indexOfLastProduct)
+
 
     const handleDelete = (id) => {
         setDeleteClick(true);
         setId(id);
     };
-
+    const handleEdit = (id) => {
+        setId(id);
+    }
+    console.log(id)
     const onTimeDelete = () => {
         setUsers((prev) => prev.filter((u) => u._id !== id));
     };
@@ -58,6 +84,14 @@ const Users = () => {
                     onTimeDelete={onTimeDelete}
                 />
             )}
+            {showEditPopop && <Edit
+                field={usersField}
+                setShowEditPopup={setShowEditPopup}
+                api_end_point="http://localhost:8080/api/v1/get_user"
+                id={id}
+                updateInput={userUpdateInput}
+                reRender={getAllUsers}
+            />}
 
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header */}
@@ -87,7 +121,7 @@ const Users = () => {
                     <div className="flex items-center gap-4 mt-4 md:mt-0">
                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
                             <p className="text-sm text-gray-600">Total Users</p>
-                            <p className="text-2xl font-bold text-blue-600">{totalUsers}</p>
+                            <p className="text-2xl font-bold text-blue-600">{users.length}</p>
                         </div>
                         <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
                             <FaUserPlus /> Add User
@@ -114,10 +148,10 @@ const Users = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {users.length > 0 ? (
-                                    users.map((u, i) => (
+                                {showusers.length > 0 ? (
+                                    showusers.map((u, i) => (
                                         <tr key={i} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
-                                            <td className="px-6 py-4 whitespace-nowrap">{i + 1}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{(currentPage - 1) * itemPerPage + (i + 1)}</td>
 
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <p className="text-sm font-semibold text-gray-900">
@@ -133,10 +167,10 @@ const Users = () => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span
                                                     className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${u.role === 'admin'
-                                                            ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                                                            : u.role === 'instructor'
-                                                                ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                                                                : 'bg-green-100 text-green-700 border border-green-200'
+                                                        ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                                                        : u.role === 'instructor'
+                                                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                                            : 'bg-green-100 text-green-700 border border-green-200'
                                                         }`}
                                                 >
                                                     {u.role}
@@ -144,7 +178,12 @@ const Users = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 <div className="flex items-center justify-center gap-2">
-                                                    <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
+                                                    <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"
+                                                        onClick={() => {
+                                                            setShowEditPopup(true)
+                                                            handleEdit(u._id)
+                                                        }}
+                                                    >
                                                         <FaEdit className="group-hover:scale-110 transition" />
                                                     </button>
                                                     <button
@@ -173,46 +212,9 @@ const Users = () => {
                             </tbody>
                         </table>
                     </div>
-
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-                            <div className="text-sm text-gray-600">
-                                Showing{" "}
-                                <span className="font-semibold text-gray-900">{users.length}</span> of{" "}
-                                <span className="font-semibold text-gray-900">{totalUsers}</span> users
-                            </div>
-                            <div className="flex gap-2">
-                                <button
-                                    disabled={currentPage === 1}
-                                    onClick={() => getAllUsers(currentPage - 1)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                                >
-                                    Previous
-                                </button>
-                                {[...Array(totalPages)].map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => getAllUsers(i + 1)}
-                                        className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1
-                                                ? 'bg-blue-600 text-white'
-                                                : 'border-gray-300 text-gray-700'
-                                            } hover:bg-white transition`}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
-                                <button
-                                    disabled={currentPage === totalPages}
-                                    onClick={() => getAllUsers(currentPage + 1)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white transition"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    )}
                 </div>
+                <PaginationButton items={users} itemPerPage={itemPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+
             </div>
         </div>
     );

@@ -93,11 +93,15 @@ exports.login = async (req, res) => {
 }
 
 exports.getAllUsers = async (req, res) => {
-    console.log(req.cookies)
+    // console.log(req.cookies)
     try {
+        const { firstname } = req.query
+        let query = {};
+        if (firstname) {
+            query.firstname = { $regex: firstname, $options: "i" };
+        }
 
-
-        const users = await userModal.find()
+        const users = await userModal.find(query)
         if (!users) {
             return res.status(400).json({
                 success: false,
@@ -125,9 +129,9 @@ exports.getUser = async (req, res) => {
     const { id } = req.params
 
     try {
-        const user = await userModal.findById(id)
+        const item = await userModal.findById(id)
 
-        if (!user) {
+        if (!item) {
             return res.status(404).json({
                 success: true,
                 message: "user not found"
@@ -136,7 +140,7 @@ exports.getUser = async (req, res) => {
 
         res.status(200).json({
             successs: true,
-            user,
+            item,
 
         })
 
@@ -149,7 +153,55 @@ exports.getUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params
 
+        const user = await userModal.findByIdAndDelete(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "user not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Users removed successfully!"
+        });
+    } catch (error) {
+
+    }
+}
+
+exports.updateUsers = async (req, res) => {
+
+    try {
+        const { id } = req.params
+        const user = await userModal.findByIdAndUpdate(
+            id,
+            { $set: req.body },
+            { new: true, runValidators: true }
+        )
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            user,
+            message: "User updated successfully",
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 }
 
 exports.forgotPassword = async (req, res) => {

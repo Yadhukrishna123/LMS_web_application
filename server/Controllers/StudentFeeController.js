@@ -25,7 +25,7 @@ exports.createStudentFee = async (req, res) => {
     } = req.body;
 
     try {
-       
+
         if (!studentName || !courseName || !amount) {
             return res.status(400).json({
                 success: false,
@@ -33,7 +33,7 @@ exports.createStudentFee = async (req, res) => {
             });
         }
 
-       
+
         const defaultBilling = {
             firstName: "",
             lastName: "",
@@ -87,6 +87,7 @@ exports.createStudentFee = async (req, res) => {
 
 exports.getAllStudentFees = async (req, res) => {
     try {
+      
         const studentFees = await studentFeeModal.find();
 
         if (!studentFees || studentFees.length === 0) {
@@ -112,11 +113,11 @@ exports.getAllStudentFees = async (req, res) => {
 
 exports.getAllFeeStructore = async (req, res) => {
     try {
-        const { studentName } = req.query
+        const { username  } = req.query
 
         let query = {}
-        if (studentName) {
-            query.studentName = { $regex: studentName, $options: "i" }
+        if (username ) {
+            query.username  = { $regex: username , $options: "i" }
         }
         const feeStructore = await studentFeeModal.find(query)
 

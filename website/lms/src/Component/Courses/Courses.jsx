@@ -9,27 +9,26 @@ const CoursesPage = () => {
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 4;
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(1);
+  // const itemsPerPage = 4;
 
   // Mapping category names to ObjectId if needed
-  const categoryMap = {
-    Programming: "68e4d54b1e00eefc08aa513b",
-    Designing: "68da6c575f0ebd044bf2f05a",
-    Marketing: "68da6b585f0ebd044bf2f058",
-  };
+  // const categoryMap = {
+  //   Programming: "68e4d54b1e00eefc08aa513b",
+  //   Designing: "68da6c575f0ebd044bf2f05a",
+  //   Marketing: "68da6b585f0ebd044bf2f058",
+  // };
 
   const getAllCourses = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`, {
         withCredentials: true
       });
+      console.log(res)
+      setCourses(res.data.courses);
 
 
-
-      setCourses(res.data.data);
-      setTotalPages(res.data.totalPages || 1);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -37,7 +36,7 @@ const CoursesPage = () => {
 
   useEffect(() => {
     getAllCourses();
-  }, [search, category, price, duration, currentPage]);
+  }, [search, category, price, duration,]);
 
   const handleClearFilter = () => {
     setSearch("");
@@ -160,7 +159,7 @@ const CoursesPage = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-center border-t border-white/10 px-4 py-3 sm:px-6 mt-8">
+      {/* <div className="flex items-center justify-center border-t border-white/10 px-4 py-3 sm:px-6 mt-8">
         <div className="flex space-x-1">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
@@ -176,7 +175,7 @@ const CoursesPage = () => {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

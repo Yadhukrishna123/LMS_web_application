@@ -1,52 +1,43 @@
 const cateogry = require("../modals/cateogeries")
 
 exports.addCourseCatagory = async (req, res) => {
-     try {
-            const { title, description, image } = req.body;
-    
-            if (!title || !description || !image) {
-                return res.status(400).json({
-                    message: "All fields are required",
-                });
-            }
-    
-            const data = await cateogry.create(req.body);
-            res.status(200).json({
-                message: "Success",
-                data,
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message,
-            });
-        }
+  try {
+    const { title, description, image } = req.body;
+
+    if (!title || !description || !image) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    const data = await cateogry.create(req.body);
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
 exports.viewAllCourseCatago = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
-    const search = req.query.title || "";
+    const allCoursecategory = await cateogry.find()
 
-    const query = search ? { title: { $regex: search, $options: "i" } } : {};
-
-    const totalItems = await cateogry.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    // Use .lean() to return plain JS objects instead of Mongoose documents
-    const data = await cateogry.find(query)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean();
-
+    if (!allCoursecategory) {
+      return res.status(401).json({
+        success: false,
+        message: "faild to fectch course category",
+      });
+    }
     res.status(200).json({
       success: true,
-      data,
-      page,
-      totalPages,
-      totalItems,
+      allCoursecategory
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -7,6 +7,7 @@ export const Context = (props) => {
     const [showPopup, setShowPopup] = useState(false)
     const [schedules, setSchedules] = useState([])
     const [scheduleId, setScheduleId] = useState("")
+    const [admin, setAdmin] = useState(null)
 
     const isAdminLogedIn = (isAuthenticated) => {
         console.log(isAuthenticated);
@@ -29,11 +30,24 @@ export const Context = (props) => {
     }
     useEffect(() => {
         getAllSchedule()
+        const token = document.cookie.includes("token=")
+        if (!token) return;
+        const geAdmin = async () => {
+            let res = await axios.get("http://localhost:8080/api/v1/getInstitutionAdmin", {
+                withCredentials: true
+            })
+            console.log(res);
+            if (res.data.success) {
+                setAdmin(res.data.instituteAdmin)
+            }
+
+        }
+        geAdmin()
     }, [])
-    //console.log(schedules);
+    console.log(admin)
 
     return (
-        <AdminContext.Provider value={{ isAdminLogedIn, auth, handleShowPopup, showPopup, setShowPopup, schedules, scheduleId }}>
+        <AdminContext.Provider value={{ isAdminLogedIn, auth, admin, handleShowPopup, showPopup, setShowPopup, schedules, scheduleId }}>
             {props.children}
         </AdminContext.Provider>
     )

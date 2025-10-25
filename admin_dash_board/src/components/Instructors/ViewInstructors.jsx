@@ -13,6 +13,7 @@ import {
 import Delete from "../TableActions/Delete";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Edit from "../TableActions/Edit";
 
 const ViewInstructors = () => {
   const [instructors, setInstructors] = useState([]);
@@ -22,8 +23,83 @@ const ViewInstructors = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [deleteClick, setDeleteClick] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [showEditPopop, setShowEditPopup] = useState(false)
   const deleteCont = "Are you sure that you want to delete this Instructor?";
   const itemsPerPage = 5;
+ const instructorFields = [
+  {
+    label: "Name",
+    name: "name",
+    type: "text",
+    placeholder: "Full Name",
+    required: true,
+  },
+  {
+    label: "Email",
+    name: "email",
+    type: "email",
+    placeholder: "Email",
+    required: true,
+  },
+  {
+    label: "Phone",
+    name: "phone",
+    type: "text",
+    placeholder: "Phone",
+  },
+  {
+    label: "Short Bio",
+    name: "bio",
+    type: "textarea",
+    placeholder: "Short Bio",
+    required: true,
+    rows: 3,
+  },
+  {
+    label: "Profile Image",
+    name: "image",
+    type: "file",
+    accept: "image/*",
+    required: true,
+  },
+  {
+    label: "Specialization",
+    name: "specialization",
+    type: "text",
+    placeholder: "e.g., AI, Web Dev",
+  },
+  {
+    label: "Experience",
+    name: "experience",
+    type: "number",
+    placeholder: "Years",
+  },
+  {
+    label: "Qualification",
+    name: "qualification",
+    type: "text",
+    placeholder: "e.g., MSc, PhD",
+  },
+  {
+    label: "LinkedIn",
+    name: "linkedin",
+    type: "text",
+    placeholder: "LinkedIn URL",
+  },
+  {
+    label: "GitHub",
+    name: "github",
+    type: "text",
+    placeholder: "GitHub URL",
+  },
+  {
+    label: "Website",
+    name: "website",
+    type: "text",
+    placeholder: "Personal Website",
+  },
+];
+
 
   // ✅ Fetch all instructors
   const getAllInstructors = async (page = 1) => {
@@ -57,55 +133,55 @@ const ViewInstructors = () => {
   };
 
   const getAllInstructorsForExport = async () => {
-  try {
-    const res = await axios.get("http://localhost:8080/api/v1/view_instructor", {
-      params: { page: 1, limit: 1000, search },
+    try {
+      const res = await axios.get("http://localhost:8080/api/v1/view_instructor", {
+        params: { page: 1, limit: 1000, search },
+      });
+      return res.data.data || [];
+    } catch (err) {
+      console.error("Error fetching all instructors:", err);
+      return [];
+    }
+  };
+
+  // PDF Export
+  const handleExportPDF = async () => {
+    const allInstructors = await getAllInstructorsForExport();
+    if (!allInstructors.length) return alert("No instructors to export");
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Instructor List", 14, 15);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+
+    const tableColumn = ["Name", "Email", "Phone", "Specialization", "Experience", "Qualification"];
+    const tableRows = allInstructors.map((inst) => [
+      inst.name || "-",
+      inst.email || "-",
+      inst.phone || "-",
+      inst.specialization || "-",
+      inst.experience ? `${inst.experience} years` : "-",
+      inst.qualification || "-",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 25,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [59, 130, 246] },
     });
-    return res.data.data || [];
-  } catch (err) {
-    console.error("Error fetching all instructors:", err);
-    return [];
-  }
-};
 
-// PDF Export
-const handleExportPDF = async () => {
-  const allInstructors = await getAllInstructorsForExport();
-  if (!allInstructors.length) return alert("No instructors to export");
+    doc.save("Instructor_List.pdf");
+  };
 
-  const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("Instructor List", 14, 15);
-  doc.setFontSize(11);
-  doc.setTextColor(100);
+  // Print all instructors
+  const handlePrint = async () => {
+    const allInstructors = await getAllInstructorsForExport();
+    if (!allInstructors.length) return alert("No instructors to print");
 
-  const tableColumn = ["Name", "Email", "Phone", "Specialization", "Experience", "Qualification"];
-  const tableRows = allInstructors.map((inst) => [
-    inst.name || "-",
-    inst.email || "-",
-    inst.phone || "-",
-    inst.specialization || "-",
-    inst.experience ? `${inst.experience} years` : "-",
-    inst.qualification || "-",
-  ]);
-
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-    startY: 25,
-    styles: { fontSize: 10 },
-    headStyles: { fillColor: [59, 130, 246] },
-  });
-
-  doc.save("Instructor_List.pdf");
-};
-
-// Print all instructors
-const handlePrint = async () => {
-  const allInstructors = await getAllInstructorsForExport();
-  if (!allInstructors.length) return alert("No instructors to print");
-
-  let printTable = `
+    let printTable = `
     <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
       <thead>
         <tr>
@@ -120,8 +196,8 @@ const handlePrint = async () => {
       <tbody>
   `;
 
-  allInstructors.forEach((inst) => {
-    printTable += `
+    allInstructors.forEach((inst) => {
+      printTable += `
       <tr>
         <td>${inst.name || "-"}</td>
         <td>${inst.email || "-"}</td>
@@ -131,12 +207,12 @@ const handlePrint = async () => {
         <td>${inst.qualification || "-"}</td>
       </tr>
     `;
-  });
+    });
 
-  printTable += `</tbody></table>`;
+    printTable += `</tbody></table>`;
 
-  const printWindow = window.open("", "", "width=900,height=700");
-  printWindow.document.write(`
+    const printWindow = window.open("", "", "width=900,height=700");
+    printWindow.document.write(`
     <html>
       <head>
         <title>Instructor List</title>
@@ -153,13 +229,13 @@ const handlePrint = async () => {
       </body>
     </html>
   `);
-  printWindow.document.close();
-  printWindow.print();
-};
+    printWindow.document.close();
+    printWindow.print();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      
+
       {deleteClick && (
         <Delete
           setDeleteClick={setDeleteClick}
@@ -169,6 +245,7 @@ const handlePrint = async () => {
           onTimeDelete={onTimeDelete}
         />
       )}
+      {showEditPopop && <Edit field={instructorFields} setShowEditPopup={setShowEditPopup}/>}
 
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
@@ -195,7 +272,7 @@ const handlePrint = async () => {
             />
           </div>
 
-         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Instructors</p>
               <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
@@ -312,7 +389,9 @@ const handlePrint = async () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group">
+                          <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"
+                          onClick={()=>setShowEditPopup(true)}
+                          >
                             <FaEdit className="group-hover:scale-110 transition" />
                           </button>
                           <button
@@ -360,11 +439,10 @@ const handlePrint = async () => {
                   <button
                     key={i}
                     onClick={() => getAllInstructors(i + 1)}
-                    className={`px-4 py-2 border rounded-lg text-sm font-medium ${
-                      currentPage === i + 1
+                    className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1
                         ? "bg-blue-600 text-white"
                         : "border-gray-300 text-gray-700"
-                    } hover:bg-white transition`}
+                      } hover:bg-white transition`}
                   >
                     {i + 1}
                   </button>

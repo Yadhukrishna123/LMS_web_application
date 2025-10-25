@@ -18,7 +18,8 @@ const StudentFees = () => {
     const getAllFeeStructore = async () => {
         try {
             setLoading(true)
-            let res = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            let res = await axios.get(`http://localhost:8080/api/v1/get_all_student_fee?username=${search}`)
+
             setFeStructore(res.data.feeStructore)
             console.log(res);
 
@@ -32,10 +33,9 @@ const StudentFees = () => {
 
 
     useEffect(() => {
-
         getAllFeeStructore()
 
-    }, []);
+    }, [search]);
 
     // console.log(feeStructore);
 

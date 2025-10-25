@@ -29,14 +29,16 @@ const AddStudentFee = ({ setShowForm }) => {
         setLoading(true)
         try {
             let getallStudent = await axios.get("http://localhost:8080/api/v1/view_students")
-            let getallCourse = await axios.get("http://localhost:8080/api/v1/get_all_courses")
+            let getallCourse = await axios.get("http://localhost:8080/api/v1/get_all_courses", {
+                withCredentials: true
+            })
             let getAllUsers = await axios.get("http://localhost:8080/api/v1/get_all_user")
 
             console.log(getallStudent);
-            setStudents(getallStudent.data.data)
+            setStudents(getallStudent.data.students)
             console.log(students)
             console.log(getallCourse)
-            setCourses(getallCourse.data.data)
+            setCourses(getallCourse.data.courses)
             console.log(getAllUsers)
             setUsers(getAllUsers.data.users)
             console.log(users);
@@ -79,12 +81,6 @@ const AddStudentFee = ({ setShowForm }) => {
     console.log(firstName)
     console.log(lastname)
     console.log(phone)
-
-
-
-
-
-
 
 
     const handleSubmit = async (e) => {

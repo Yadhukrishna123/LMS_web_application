@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { FiSearch, FiFilter, FiBell, FiAlertCircle, FiCheckCircle, FiClock, FiPhone, FiMail, FiCalendar, FiDollarSign, FiUser, FiBookOpen, FiSend, FiEdit2, FiTrash2, FiPlus, FiDownload } from 'react-icons/fi';
+import PaginationButton from '../PaginationButton/PaginationButton';
 
 
 const DueManagement = () => {
@@ -8,26 +9,18 @@ const DueManagement = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [feedetail, setFeeDetail] = useState([])
     const [loading, setLoading] = useState(false)
-
+    let [currentPage, setCurrentPage] = useState(1)
+    let [itemPerPage, setitemPerPage] = useState(6)
+    let indexOfLastProduct = currentPage * itemPerPage
+    let indexOfFirstnumber = indexOfLastProduct - itemPerPage
 
 
     const getAllData = async () => {
         try {
             setLoading(true)
-            let resOne = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
-            let resTwo = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
-            let paymentData = resOne.data.paymentDetails
-            let studentFeeData = resTwo.data.feeStructore
-
+            let resOne = await axios.get(`http://localhost:8080/api/v1/get_all_payment_details?studentName=${searchTerm}`)
+            setFeeDetail(resOne.data.paymentDetails)
             console.log("resOne", resOne);
-            console.log("resTwo", resTwo);
-
-            const fullPayment = ([...paymentData, ...studentFeeData])
-
-            const avoiDuplicatePAyment = [
-                ...new Map(fullPayment.map((payment) => [payment.receiptNo, payment])).values()
-            ]
-            setFeeDetail(avoiDuplicatePAyment)
 
 
         } catch (error) {
@@ -43,8 +36,9 @@ const DueManagement = () => {
 
     useEffect(() => {
         getAllData()
-    }, [])
+    }, [searchTerm])
 
+    let showDuePayment = feedetail.slice(indexOfFirstnumber, indexOfLastProduct)
 
 
     const getDueDate = (date) => {
@@ -167,7 +161,7 @@ const DueManagement = () => {
                                                 </div>
                                             </td>
 
-                                          
+
                                             <td className="px-4 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-4 h-4 bg-gray-200 rounded"></div>
@@ -175,32 +169,32 @@ const DueManagement = () => {
                                                 </div>
                                             </td>
 
-                                           
+
                                             <td className="px-4 py-4 text-right">
                                                 <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
                                             </td>
 
-                                           
+
                                             <td className="px-4 py-4 text-right">
                                                 <div className="h-4 bg-gray-200 rounded w-24 ml-auto"></div>
                                             </td>
 
-                                            
+
                                             <td className="px-4 py-4 text-right">
                                                 <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
                                             </td>
 
-                                           
+
                                             <td className="px-4 py-4 text-right">
                                                 <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
                                             </td>
 
-                                          
+
                                             <td className="px-4 py-4 text-center">
                                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 rounded-lg h-7 w-28"></div>
                                             </td>
 
-                                            
+
                                             <td className="px-4 py-4">
                                                 <div className="space-y-2">
                                                     <div className="h-3 bg-gray-200 rounded w-28"></div>
@@ -208,12 +202,12 @@ const DueManagement = () => {
                                                 </div>
                                             </td>
 
-                                            
+
                                             <td className="px-4 py-4 text-center">
                                                 <div className="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 rounded-full h-6 w-20 mx-auto"></div>
                                             </td>
 
-                                           
+
                                             <td className="px-4 py-4">
                                                 <div className="flex items-center justify-center gap-2">
                                                     <div className="p-2 bg-gray-200 rounded-lg w-8 h-8"></div>
@@ -221,14 +215,14 @@ const DueManagement = () => {
                                             </td>
                                         </tr>
                                     ))
-                                ) : feedetail.length === 0 ? (
+                                ) : showDuePayment.length === 0 ? (
                                     <tr>
                                         <td colSpan="10" className="text-center py-12 text-slate-500">
                                             No payment records found.
                                         </td>
                                     </tr>
                                 ) : (
-                                    feedetail.map((f, i) => {
+                                    showDuePayment.map((f, i) => {
                                         return (
                                             <tr
                                                 key={i}
@@ -343,6 +337,8 @@ const DueManagement = () => {
 
 
                 </div>
+                <PaginationButton items={feedetail} itemPerPage={itemPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+
             </div>
         </div>
     );

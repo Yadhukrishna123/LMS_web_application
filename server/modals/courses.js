@@ -1,5 +1,17 @@
 const mongoose = require("mongoose")
 
+const courseModuleSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+ 
+});
+
 const courseModal = new mongoose.Schema({
   title: {
     type: String,
@@ -26,12 +38,16 @@ const courseModal = new mongoose.Schema({
     required: true
   },
   tags: {
-    type: [String], 
+    type: [String],
     default: []
   },
   image: {
-    type: [String], 
+    type: [String],
     default: null
+  },
+  courseModules: {
+    type: [courseModuleSchema], 
+    default: [],
   },
   instructorName: {
     type: String,

@@ -24,9 +24,17 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState({});
 
   const studeDetail = async () => {
-    let studentDetail = await axios.get("http://localhost:8080/api/v1/view_students")
-    console.log(studentDetail);
-    setStudentDetails(studentDetail.data.data)
+
+    try {
+      setLoading(true)
+      let studentDetail = await axios.get("http://localhost:8080/api/v1/view_students")
+      console.log(studentDetail);
+      setStudentDetails(studentDetail.data.students)
+    } catch (error) {
+
+    } finally {
+      setLoading(false)
+    }
 
   }
 
@@ -58,13 +66,10 @@ const CheckoutPage = () => {
     );
   }
 
-  const studentName = user
-    ? studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.name
-    : "";
+  const studentName = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.name
+  const studentId = studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.studentId
 
-  const studentId = user
-    ? studentDetails.find((n) => n.accoutRegisterdEmail === user.email)?.studentId
-    : "";
+
 
 
   //console.log("student:", student);

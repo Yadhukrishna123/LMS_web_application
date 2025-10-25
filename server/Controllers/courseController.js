@@ -1,6 +1,6 @@
 const courseModal = require("../modals/courses");
 
-// Create a new course
+
 exports.createCourse = async (req, res) => {
     try {
         const {
@@ -11,6 +11,7 @@ exports.createCourse = async (req, res) => {
             duration,
             category,
             tags,
+            courseModules,
             image,
             instructorName,
             instructorBio,
@@ -33,6 +34,7 @@ exports.createCourse = async (req, res) => {
             category,
             tags: formattedTags || [],
             image,
+            courseModules,
             instructorName,
             instructorBio,
             hasMonthlyPayment,
@@ -50,29 +52,30 @@ exports.createCourse = async (req, res) => {
     }
 };
 
-// Get all courses with optional pagination
+
 exports.getAllCourse = async (req, res) => {
     try {
-        const { page = 1, limit = 10, category, search } = req.query;
-        const query = {};
+        const { title, category } = req.query
+        let query = {};
+        if (title) {
+            query.title = { $regex: title, $options: "i" };
+        }
 
-        if (category) query.category = category;
-        if (search) query.title = { $regex: search, $options: "i" };
+        if (category) {
+            query.category = { $regex: category, $options: "i" }; 
+        }
+        const courses = await courseModal.find(query)
 
-        const totalCourses = await courseModal.countDocuments(query);
-
-        const courses = await courseModal
-            .find(query)
-            .skip((page - 1) * Number(limit))
-            .limit(Number(limit))
-            .sort({ createdAt: -1 });
+        if (!courses) {
+            return res.status(400).json({
+                success: false,
+                message: "Faild to fetch corse"
+            })
+        }
 
         res.status(200).json({
             success: true,
-            data: courses,
-            page: Number(page),
-            totalPages: Math.ceil(totalCourses / Number(limit)),
-            totalCourses,
+            courses,
         });
     } catch (error) {
         console.error(error);

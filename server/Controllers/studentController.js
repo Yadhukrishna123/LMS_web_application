@@ -2,7 +2,7 @@ const Batch = require("../modals/batches");
 const Student = require("../modals/students");
 
 const generateStudentId = async () => {
-  const lastStudent = await Student.findOne({}).sort({ _id: -1 }); 
+  const lastStudent = await Student.findOne({}).sort({ _id: -1 });
   if (!lastStudent || !lastStudent.studentId) return "STD001";
 
   const lastNum = parseInt(lastStudent.studentId.replace("STD", ""));
@@ -13,7 +13,7 @@ const generateStudentId = async () => {
 
 exports.addStudent = async (req, res) => {
   try {
-    const { name, email, phone, age, gender,accoutRegisterdEmail, profileImage, courseEnrolled, address, batch } = req.body;
+    const { name, email, phone, age, gender, accoutRegisterdEmail, profileImage, courseEnrolled, address, batch } = req.body;
 
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, message: "Name, Email and Phone are required" });
@@ -51,29 +51,19 @@ exports.addStudent = async (req, res) => {
 
 exports.getAllStudent = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
-    const search = req.query.search || "";
 
-    const query = search
-      ? { name: { $regex: search, $options: "i" } } // search by name
-      : {};
-
-    const totalItems = await Student.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    const students = await Student.find(query)
-      .populate("batch", "batchName")
-      .skip((page - 1) * limit)
-      .limit(limit);
+    const students = await Student.find()
+    if (!students) {
+      return res.status(401).json({
+        success: false,
+        message: "Faild to fetch syudents"
+      })
+    }
 
     res.status(200).json({
       success: true,
-      data: students,
-      page,
-      totalPages,
-      totalItems,
-    });
+      students
+    })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

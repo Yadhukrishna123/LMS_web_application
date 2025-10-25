@@ -79,7 +79,7 @@ exports.savePayment = async (req, res) => {
 
 exports.getKey = async (req, res) => {
   res.status(200).json({
-    key: process.env.RAZORPAY_KEY_ID
+    key: process.env.RazireKeyId
   })
 }
 
@@ -113,14 +113,16 @@ exports.paymentVerification = async (req, res) => {
 }
 
 exports.getAllPaymentDetails = async (req, res) => {
-  try {
-    // const { name } = req.query
 
-    // let query = {}
-    // if (name) {
-    //     query.name = { $regex: name, $options: "i" }
-    // }
-    const paymentDetails = await Payment.find()
+  try {
+    const { studentName } = req.query
+
+
+    let query = {}
+    if (studentName) {
+      query.studentName = { $regex: studentName, $options: "i" }
+    }
+    const paymentDetails = await Payment.find(query)
 
     if (!paymentDetails) {
       return res.status(400).json({

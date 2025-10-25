@@ -20,19 +20,19 @@ const FeeCollection = () => {
         try {
             setLoading(true)
             let resOne = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
-            let resTwo = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
+            // let resTwo = await axios.get("http://localhost:8080/api/v1/get_all_student_fee")
             console.log("resOne", resOne)
-            console.log("resTwo", resTwo)
-            const one = resOne.data.paymentDetails || []
-            const two = resTwo.data.feeStructore || []
-            const twoInOne = [...one, ...two]
+            setCollections(resOne.data.paymentDetails || [])
 
-            const avoidDuplicatePayment = [
-                ...new Map(twoInOne.map((data) => [data.receiptNo, data])).values()
-            ]
-            console.log(avoidDuplicatePayment);
+            // const two = resTwo.data.feeStructore || []
+            // const twoInOne = [...one, ...two]
 
-            setCollections(avoidDuplicatePayment)
+            // const avoidDuplicatePayment = [
+            //     ...new Map(twoInOne.map((data) => [data.receiptNo, data])).values()
+            // ]
+            // console.log(avoidDuplicatePayment);
+
+
         } catch (error) {
 
         } finally {

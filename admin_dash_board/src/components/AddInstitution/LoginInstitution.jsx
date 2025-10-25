@@ -26,6 +26,8 @@ const LoginInstitution = () => {
             let res = await axios.post("http://localhost:8080/api/v1/login_institute", {
                 email: inputs.email,
                 adminPassword: inputs.password
+            }, {
+                withCredentials: true
             })
             console.log(res);
             if (res.data.success) {
@@ -34,6 +36,7 @@ const LoginInstitution = () => {
                     toast.success(res.data.message)
                     await new Promise((b) => setTimeout(b, 2000))
                     navigate("/my_profile")
+                    window.location.reload()
                 } else if (institutionStatus === "pending") {
                     toast.warn("Institution verification is pending. Please wait for admin verification.");
                 } else if (institutionStatus === "pending") {

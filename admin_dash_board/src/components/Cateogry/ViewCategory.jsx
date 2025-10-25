@@ -5,50 +5,40 @@ import Delete from '../TableActions/Delete';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Link } from 'react-router-dom';
+import PaginationButton from '../PaginationButton/PaginationButton';
+import Edit from '../TableActions/Edit';
 
 const ViewCategory = () => {
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [deleteClick, setDeleteClick] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const itemsPerPage = 5;
-
   const deleteCont = "Are you sure that you delete category";
+  const [showEditPopop, setShowEditPopup] = useState(false)
+  let [currentPage, setCurrentPage] = useState(1)
+  let [itemPerPage, setitemPerPage] = useState(6)
+  let indexOfLastProduct = currentPage * itemPerPage
+  let indexOfFirstnumber = indexOfLastProduct - itemPerPage
 
-  // Fetch paginated categories for table
-  const getCategories = async (page = 1) => {
+  const categoryFields = [
+    { label: "Category Title", name: "title", type: "text", placeholder: "Category Title", required: true },
+    { label: "Category Description", name: "desc", type: "textarea", placeholder: "Category Description", rows: 4 },
+    { label: "Category Image", name: "image", type: "file", accept: "image/*" },
+  ]
+  const getCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/v1/view_All_categories", {
-        params: { page, limit: itemsPerPage, title: search }
-      });
-      setCategories(res.data.data || []);
-      setCurrentPage(res.data.page || page);
-      setTotalPages(res.data.totalPages || 1);
-      setTotalItems(res.data.totalItems || res.data.data?.length || 0);
+      const res = await axios.get("http://localhost:8080/api/v1/view_All_categories");
+      setCategories(res.data.allCoursecategory || []);
+
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
-
-  // Fetch all categories for PDF/Print
-  const getAllCategories = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/api/v1/view_All_categories", {
-        params: { page: 1, limit: 1000, title: search }
-      });
-      return res.data.data || [];
-    } catch (error) {
-      console.error("Error fetching all categories:", error);
-      return [];
-    }
-  };
-
   useEffect(() => {
-    setCurrentPage(1);
-    getCategories(1);
+    getCategories()
   }, [search]);
+
+  let categoriess = categories.slice(indexOfFirstnumber, indexOfLastProduct)
+
 
   const handleDelete = () => setDeleteClick(true);
   const clearFilters = () => setSearch("");
@@ -139,6 +129,7 @@ const ViewCategory = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       {deleteClick && <Delete setDeleteClick={setDeleteClick} deleteCont={deleteCont} />}
+      {showEditPopop && <Edit field={categoryFields} setShowEditPopup={setShowEditPopup} />}
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center gap-3">
@@ -169,7 +160,7 @@ const ViewCategory = () => {
 
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-2 rounded-xl border border-blue-200">
               <p className="text-sm text-gray-600">Total Categories</p>
-              <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
+              <p className="text-2xl font-bold text-blue-600">{categories.length}</p>
             </div>
 
             <button onClick={handleExportPDF} className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center gap-2">
@@ -205,8 +196,8 @@ const ViewCategory = () => {
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200">
-                {categories.length > 0 ? (
-                  categories.map((e, i) => (
+                {categoriess.length > 0 ? (
+                  categoriess.map((e, i) => (
                     <tr key={i} className="hover:bg-blue-50 transition-all">
                       <td className="px-6 py-4 flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
@@ -226,7 +217,7 @@ const ViewCategory = () => {
                         />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
-                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition transform hover:scale-105"><FaEdit /></button>
+                        <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition transform hover:scale-105" onClick={() => setShowEditPopup(true)}><FaEdit /></button>
                         <button onClick={handleDelete} className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition transform hover:scale-105"><FaTrash /></button>
                       </td>
                     </tr>
@@ -240,20 +231,10 @@ const ViewCategory = () => {
             </table>
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-2 flex-wrap gap-2">
-              <p className="text-sm text-gray-600">Showing page {currentPage} of {totalPages}</p>
-              <div className="flex gap-2 flex-wrap">
-                <button disabled={currentPage === 1} onClick={() => getCategories(currentPage - 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Previous</button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button key={i} onClick={() => getCategories(i + 1)} className={`px-4 py-2 border rounded-lg text-sm font-medium ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'border-gray-300 text-gray-700'} hover:bg-white transition`}>{i + 1}</button>
-                ))}
-                <button disabled={currentPage === totalPages} onClick={() => getCategories(currentPage + 1)} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white">Next</button>
-              </div>
-            </div>
-          )}
+
         </div>
+        <PaginationButton items={categories} itemPerPage={itemPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+
       </div>
     </div>
   );
