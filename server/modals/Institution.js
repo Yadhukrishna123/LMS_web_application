@@ -38,7 +38,36 @@ const institutionSchema = new mongoose.Schema(
             enum: ["pending", "approved", "rejected"],
             default: "pending",
         },
+
+        
+        address: {
+            type: String
+        },
+        email: {
+            type: String
+        },
+        phone: {
+            type: String
+        },
+        gstin: {
+            type: String
+        },
+        accreditation: {
+            type: String
+        },
+        founded: {
+            type: String
+        },
+        courses: [String],
+        students: {
+            type: String
+        },
+        placement: {
+            type: String
+        },
+        facilities: [String],
     },
+
     { timestamps: true }
 );
 

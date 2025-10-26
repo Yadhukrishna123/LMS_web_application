@@ -13,7 +13,7 @@ const Detailpage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log(course.courseModules) 
+  console.log(course.courseModules)
   const getCourseDetails = async () => {
     try {
       setLoading(true)
@@ -130,12 +130,12 @@ const Detailpage = () => {
         </div>
       </div>
 
-     
+
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
-        
+
           <div className="lg:col-span-2 space-y-8">
-           
+
             {course.tags?.length > 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-2xl font-bold mb-4 text-gray-800">Topics Covered</h2>
@@ -168,9 +168,9 @@ const Detailpage = () => {
                 <div className="space-y-4">
                   <h2 className="ms-10 text-3xl">Modules</h2>
                   {course.courseModules.map((mod, idx) => (
-                    
+
                     <div key={idx} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                     
+
                       <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 border-b border-gray-200">
                         <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
                           <span className="w-8 h-8 bg-purple-500 text-white rounded-lg flex items-center justify-center text-sm">
@@ -179,7 +179,7 @@ const Detailpage = () => {
                           {mod.title}
                         </h3>
                       </div>
-                     
+
                     </div>
                   ))}
                 </div>
@@ -188,7 +188,7 @@ const Detailpage = () => {
               )}
             </div>
 
-            {/* Additional Images */}
+
             {Array.isArray(course.image) && course.image.length > 1 && (
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Course Gallery</h2>
@@ -206,9 +206,9 @@ const Detailpage = () => {
             )}
           </div>
 
-          {/* Right Column - Sidebar */}
+
           <div className="space-y-8">
-            {/* Instructor Card */}
+
             {course.instructorDetails && (
               <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Instructor</h2>
@@ -258,7 +258,7 @@ const Detailpage = () => {
               </div>
             )}
 
-            {/* Quick Info Card */}
+
             <div className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl shadow-lg p-6 text-white">
               <h3 className="text-xl font-bold mb-4">Course Features</h3>
               <div className="space-y-3">

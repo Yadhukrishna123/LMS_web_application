@@ -151,9 +151,32 @@ exports.loginInstitute = async (req, res) => {
     }
 };
 
+exports.getInstitute = async (req, res) => {
+    const { id } = req.params
+    try {
+        const institute = await institutionModal.findById(id)
 
-exports.institutionProfile = async (req, res) => {
+        if (!institute) {
+            return res.status(400).json({
+                success: false,
+                message: "Institution not found"
+            })
+        }
 
+        if (institute) {
+            res.status(200).json({
+                success: true,
+                institute
+            })
+        }
+    } catch (error) {
+
+    }
+}
+
+
+exports.updateInstitutionProfile = async (req, res) => {
+    const { id } = req.params
     const { image,
         instituteName,
         address,
@@ -169,29 +192,31 @@ exports.institutionProfile = async (req, res) => {
         facilities } = req.body
 
     try {
-        if (!instituteName || !address || !email || !phone || !founded || !courses || !placement) {
+        if ( !address ||  !phone || !founded || !courses || !placement) {
             return res.status(400).json({
                 message: "All fields are required"
             })
         }
 
-        const instiProfule = await institutionProfile.create({
-            image,
-            instituteName,
-            address,
-            email,
-            phone,
-            website,
-            gstin,
-            accreditation,
-            founded,
-            courses,
-            students,
-            placement,
-            facilities
-        })
+        const institutionProfile = await institutionModal.findByIdAndUpdate(
+            id,
+            {
+                image,
+                instituteName,
+                address,
+                email,
+                phone,
+                website,
+                gstin,
+                accreditation,
+                founded,
+                courses,
+                students,
+                placement,
+                facilities
+            })
 
-        if (!instiProfule) {
+        if (!institutionProfile) {
             return res.status(400).json({
                 success: false,
                 message: "Faild to create profile"
@@ -200,8 +225,8 @@ exports.institutionProfile = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Successfully created",
-            instiProfule
+            message: "Successfully updated your institution",
+            institutionProfile
         })
 
     } catch (error) {
@@ -229,31 +254,31 @@ exports.getAllInstitutionProfile = async (req, res) => {
     }
 }
 
-exports.getInstitute = async (req, res) => {
-    const { id } = req.params
+// exports.getInstitute = async (req, res) => {
+//     const { id } = req.params
 
-    try {
-        const institution = await institutionProfile.findById(id)
+//     try {
+//         const institution = await institutionProfile.findById(id)
 
-        if (!institution) {
-            return res.status(404).json({
-                success: true,
-                message: "Institution not found"
-            })
-        }
+//         if (!institution) {
+//             return res.status(404).json({
+//                 success: true,
+//                 message: "Institution not found"
+//             })
+//         }
 
-        res.status(200).json({
-            successs: true,
-            institution,
+//         res.status(200).json({
+//             successs: true,
+//             institution,
 
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
+//         })
+//     } catch (error) {
+//         res.status(500).json({
+//             success: false,
+//             message: error.message
+//         })
+//     }
+// }
 
 exports.updataeInstitutionDetails = async (req, res) => {
     const { id } = req.params
