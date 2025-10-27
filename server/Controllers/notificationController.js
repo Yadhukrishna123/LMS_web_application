@@ -153,3 +153,82 @@ exports.getUserNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+
+exports.deleteAnnouncement = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Notification.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Announcement not found" });
+    }
+    res.json({ success: true, message: "Announcement deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ✅ EDIT Announcement (Admin)
+exports.updateAnnouncement = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, message } = req.body;
+
+    const updated = await Notification.findByIdAndUpdate(
+      id,
+      { title, message },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Announcement not found" });
+    }
+
+    res.json({ success: true, message: "Announcement updated successfully", data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ✅ MARK Notification As Read (Student/Instructor)
+exports.markNotificationAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ success: false, message: "Notification not found" });
+    }
+
+    if (!notification.readBy.includes(userId)) {
+      notification.readBy.push(userId);
+      await notification.save();
+    }
+
+    res.json({ success: true, message: "Notification marked as read" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ✅ DELETE Notification (Student/Instructor)
+exports.deleteUserNotification = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userEmail = req.user.email;
+
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ success: false, message: "Notification not found" });
+    }
+
+    // Remove this user from recipients array (soft delete)
+    notification.recipients = notification.recipients.filter(r => r !== userEmail);
+    await notification.save();
+
+    res.json({ success: true, message: "Notification removed for this user" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
