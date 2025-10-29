@@ -1,18 +1,26 @@
 const express = require("express");
-const { authToken } = require("../middleware/jwtAuth");
 const router = express.Router();
+const { authToken } = require("../middleware/jwtAuth");
+
 const {
   createAnnouncement,
   sendLowAttendance,
   getAnnouncements,
   getUserNotifications,
+  deleteAnnouncement,
+  updateAnnouncement,
+  markNotificationAsRead,
+  deleteUserNotification,
 } = require("../Controllers/notificationController");
 
 router.post("/announcementscreate", createAnnouncement);
 router.post("/low-attendance", sendLowAttendance);
 router.get("/allannouncements", getAnnouncements);
-router.get("/usernotifications", authToken,getUserNotifications);
+router.delete("/announcements/:id", deleteAnnouncement);
+router.put("/announcements/:id", updateAnnouncement);
 
+router.get("/usernotifications", authToken, getUserNotifications);
+router.patch("/notifications/:id/read", authToken, markNotificationAsRead);
+router.delete("/notifications/:id", authToken, deleteUserNotification);
 
 module.exports = router;
-
