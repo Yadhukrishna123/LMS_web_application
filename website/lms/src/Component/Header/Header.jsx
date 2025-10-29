@@ -81,10 +81,10 @@ const Header = () => {
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="px-6 py-2.5 text-indigo-600 font-semibold rounded-full hover:bg-indigo-50 transition-colors">
+                            <Link to="/login" className="px-6 py-2.5 text-indigo-600 font-semibold rounded-full hover:bg-indigo-500 hover:text-white transition-colors shadow-md">
                                 Sign In
                             </Link>
-                            <Link to="/sign_up" className="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors shadow-md">
+                            <Link to="/sign_up" className="px-6 py-2.5 text-indigo-600 font-semibold rounded-full hover:bg-indigo-500 hover:text-white transition-colors shadow-md">
                                 Sign Up
                             </Link>
                         </>
