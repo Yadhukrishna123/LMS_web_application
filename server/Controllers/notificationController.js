@@ -82,6 +82,55 @@ exports.getAnnouncements = async (req, res) => {
   }
 };
 
+// Show students below attendance threshold
+exports.getLowAttendanceStudents = async (req, res) => {
+  try {
+    const { threshold } = req.body;
+    if (!threshold)
+      return res.status(400).json({ success: false, message: "Threshold is required" });
+
+    // 1️⃣ Fetch all attendance documents
+    const attendances = await Attendance.find().populate("records.studentId", "name email");
+
+    const studentStats = {};
+
+    // 2️⃣ Build attendance map
+    attendances.forEach((att) => {
+      att.records.forEach((rec) => {
+        const sid = rec.studentId?._id?.toString();
+        if (!sid) return;
+
+        if (!studentStats[sid]) {
+          studentStats[sid] = { student: rec.studentId, present: 0, total: 0 };
+        }
+
+        if (rec.status !== "unmarked") studentStats[sid].total++;
+        if (rec.status === "present") studentStats[sid].present++;
+      });
+    });
+
+    // 3️⃣ Calculate attendance percentage
+    const results = Object.values(studentStats).map((s) => ({
+      name: s.student.name,
+      email: s.student.email,
+      percentage: s.total ? ((s.present / s.total) * 100).toFixed(1) : "0.0",
+    }));
+
+    // 4️⃣ Filter by threshold
+    const lowStudents = results.filter((s) => parseFloat(s.percentage) < threshold);
+
+    res.status(200).json({
+      success: true,
+      count: lowStudents.length,
+      data: lowStudents,
+    });
+  } catch (err) {
+    console.error("getLowAttendanceStudents error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+
 // Send Low Attendance Notifications
 exports.sendLowAttendance = async (req, res) => {
   try {

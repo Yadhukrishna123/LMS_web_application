@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const batchSchema = new mongoose.Schema({
   batchName: String,
   batchCode: String,
-  course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+  course: { type: mongoose.Schema.Types.ObjectId, ref: "courses" },
   instructor: { type: mongoose.Schema.Types.ObjectId, ref: "Instructor" },
 
   // Only one students array
