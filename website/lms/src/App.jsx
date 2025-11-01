@@ -27,6 +27,8 @@ import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
 import Notification from './Component/NotificationPage/Notification'
 import Mentors from './Component/Mentors/Mentors'
+import HelpCenter from './Component/Help/Support/HelpCenter'
+import ViewTickets from './Component/Help/ViewTickets'
 
 
 
@@ -68,6 +70,9 @@ function App() {
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
 
          <Route path="/notification" element={<Notification />} />
+         <Route path="/help" element={<HelpCenter />} />
+         <Route path="/view_tickets" element={<ViewTickets />} />
+
 
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />

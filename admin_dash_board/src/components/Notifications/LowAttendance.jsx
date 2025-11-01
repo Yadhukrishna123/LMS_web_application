@@ -6,27 +6,36 @@ const LowAttendanceAlerts = () => {
   const [students, setStudents] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [alertSent, setAlertSent] = useState(false);
 
-  // 🔹 Fetch low attendance data on mount
-  useEffect(() => {
-    fetchLowAttendance();
-  }, []);
+  const itemsPerPage = 5;
+  const threshold = 75;
 
-  const fetchLowAttendance = async () => {
+  // 🔹 Fetch low attendance data when page or search changes
+  useEffect(() => {
+    fetchLowAttendance(currentPage, search);
+  }, [currentPage, search]);
+
+  const fetchLowAttendance = async (page, searchTerm) => {
     try {
       const res = await axios.post(
         "http://localhost:8080/api/v1/low-attendance-list",
-        { threshold: 75 }
+        { threshold },
+        {
+          params: { page, limit: itemsPerPage, search: searchTerm },
+        }
       );
 
       if (res.data.success) {
-        // Sort students by attendance percentage (lowest first)
         const sorted = res.data.data.sort(
           (a, b) => parseFloat(a.percentage) - parseFloat(b.percentage)
         );
         setStudents(sorted);
         setFiltered(sorted);
+        setCurrentPage(res.data.page);
+        setTotalPages(res.data.totalPages);
       }
     } catch (err) {
       console.error("Error fetching attendance:", err);
@@ -35,24 +44,31 @@ const LowAttendanceAlerts = () => {
 
   const handleSearch = (value) => {
     setSearch(value);
-    if (!value) return setFiltered(students);
-
+    if (!value) {
+      setFiltered(students);
+      return;
+    }
     const filteredList = students.filter((s) =>
       s.name.toLowerCase().includes(value.toLowerCase())
     );
     setFiltered(filteredList);
   };
 
+  const goPrev = () => {
+    if (currentPage > 1) setCurrentPage((p) => p - 1);
+  };
+
+  const goNext = () => {
+    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+  };
+
   const handleSendAlerts = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/v1/low-attendance",
-        {
-          message:
-            "Your attendance is below 75%. Please attend more classes to avoid issues.",
-          threshold: 75,
-        }
-      );
+      const res = await axios.post("http://localhost:8080/api/v1/low-attendance", {
+        message:
+          "Your attendance is below 75%. Please attend more classes to avoid issues.",
+        threshold,
+      });
       if (res.data.success) {
         setAlertSent(true);
         setTimeout(() => setAlertSent(false), 3000);
@@ -75,7 +91,7 @@ const LowAttendanceAlerts = () => {
               Low Attendance Alerts
             </h2>
             <p className="text-gray-600">
-              View students with attendance below 75% and send alerts.
+              View students with attendance below {threshold}% and send alerts.
             </p>
           </div>
         </div>
@@ -95,7 +111,7 @@ const LowAttendanceAlerts = () => {
 
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-red-50 to-orange-50 px-4 py-2 rounded-xl border border-red-200">
-              <p className="text-sm text-gray-600">Total Students Below 75%</p>
+              <p className="text-sm text-gray-600">Total Students Below {threshold}%</p>
               <p className="text-2xl font-bold text-red-600">
                 {filtered.length}
               </p>
@@ -114,7 +130,7 @@ const LowAttendanceAlerts = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-red-600 to-orange-600 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">
-              Students Below 75% Attendance
+              Students Below {threshold}% Attendance
             </h3>
           </div>
 
@@ -162,19 +178,57 @@ const LowAttendanceAlerts = () => {
                       colSpan="3"
                       className="px-6 py-12 text-center text-gray-500"
                     >
-                      No students found below 75% attendance.
+                      No students found below {threshold}% attendance.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 flex flex-col sm:flex-row justify-between items-center bg-gray-50 border-t">
+              <span className="text-sm text-gray-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex gap-2 mt-2 sm:mt-0">
+                <button
+                  onClick={goPrev}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-4 py-2 rounded-lg text-sm ${
+                      currentPage === i + 1
+                        ? "bg-red-500 text-white"
+                        : "border text-gray-700 hover:bg-white"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={goNext}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Success alert */}
         {alertSent && (
           <div className="mt-6 text-green-700 font-semibold bg-green-50 border border-green-200 rounded-xl p-4 text-center shadow-md">
-            ✅ Alerts sent to all students below 75% attendance!
+            ✅ Alerts sent to all students below {threshold}% attendance!
           </div>
         )}
       </div>

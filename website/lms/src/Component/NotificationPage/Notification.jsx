@@ -6,7 +6,9 @@ import axios from 'axios';
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
-  const token = localStorage.getItem('token'); // ✅ make sure token is defined
+    const [showModal, setShowModal] = useState(false); //  for modal
+  const [selectedId, setSelectedId] = useState(null); //  store notification ID to delete
+  const token = localStorage.getItem('token'); //  make sure token is defined
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -39,13 +41,19 @@ const Notification = () => {
     }
   };
 
-  const deleteNotification = async (id) => {
+    const confirmDelete = (id) => {
+    setSelectedId(id);
+    setShowModal(true); //  open modal
+  };
+  
+  const deleteNotification = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/v1/notifications/${id}`, {
+      await axios.delete(`http://localhost:8080/api/v1/notifications/${selectedId}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-      setNotifications(notifications.filter(n => n.id !== id));
+      setNotifications(notifications.filter(n => n.id !== selectedId));
+      setShowModal(false);
     } catch (err) {
       console.error(err);
     }
@@ -137,8 +145,8 @@ const Notification = () => {
                           {notif.title}
                           {!notif.read && <span className="ml-2 inline-block w-2 h-2 bg-indigo-600 rounded-full"></span>}
                         </h3>
-                        <button
-                          onClick={() => deleteNotification(notif.id)}
+                         <button
+                          onClick={() => confirmDelete(notif.id)} // ✅ trigger modal
                           className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
                         >
                           <MdClose className="w-5 h-5" />
@@ -154,6 +162,51 @@ const Notification = () => {
           )}
         </div>
       </div>
+      {/* Enhanced Glassmorphism Modal - Replace your existing modal code with this */}
+{/* Subtle Glassmorphism Modal - Replace your existing modal code with this */}
+{showModal && (
+  <div 
+    className="fixed inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50 p-4"
+    onClick={() => setShowModal(false)}
+  >
+    <div 
+      className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl p-8 max-w-sm w-full text-center border border-gray-200/50"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Icon container */}
+      <div className="bg-red-50/80 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 border border-red-100">
+        <FaExclamationCircle className="w-8 h-8 text-red-500" />
+      </div>
+      
+      {/* Title */}
+      <h2 className="text-xl font-semibold text-gray-800 mb-2">
+        Delete Notification?
+      </h2>
+      
+      {/* Description */}
+      <p className="text-gray-600 mb-6">
+        Are you sure you want to delete this notification? This action cannot be undone.
+      </p>
+      
+      {/* Buttons */}
+      <div className="flex justify-center gap-3">
+        <button
+          onClick={() => setShowModal(false)}
+          className="px-5 py-2.5 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 font-medium border border-gray-300 hover:bg-gray-50 transition-all shadow-sm"
+        >
+          Cancel
+        </button>
+        
+        <button
+          onClick={deleteNotification}
+          className="px-5 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all shadow-sm hover:shadow-md"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

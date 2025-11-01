@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -41,9 +42,12 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-2 text-sm text-gray-400">
-            {["Home", "About", "FAQs", "Blog", "Contact"].map((link) => (
-              <li key={link} className="hover:text-white cursor-pointer">{link}</li>
-            ))}
+              <li><Link to="/" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">Home</Link></li>
+              <li><Link to="/about" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">About</Link></li>
+              <li><Link to="/faqs" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">FAQs</Link></li>
+              <li><Link to="/blog" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">Blog</Link></li>
+              <li><Link to="/contact" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">Contact</Link></li>
+              <li><Link to="/help" onClick={() => window.scrollTo(0, 0)} className="hover:text-white cursor-pointer">Help Center</Link></li>
           </ul>
         </div>
 

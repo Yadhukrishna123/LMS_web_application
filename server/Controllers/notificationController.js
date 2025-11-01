@@ -85,44 +85,48 @@ exports.getAnnouncements = async (req, res) => {
 // Show students below attendance threshold
 exports.getLowAttendanceStudents = async (req, res) => {
   try {
-    const { threshold } = req.body;
-    if (!threshold)
-      return res.status(400).json({ success: false, message: "Threshold is required" });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const threshold = parseFloat(req.query.threshold) || 75;
 
-    // 1️⃣ Fetch all attendance documents
+    // 1️⃣ Fetch all attendance docs
     const attendances = await Attendance.find().populate("records.studentId", "name email");
 
     const studentStats = {};
 
-    // 2️⃣ Build attendance map
+    // 2️⃣ Build attendance stats
     attendances.forEach((att) => {
       att.records.forEach((rec) => {
         const sid = rec.studentId?._id?.toString();
         if (!sid) return;
-
-        if (!studentStats[sid]) {
-          studentStats[sid] = { student: rec.studentId, present: 0, total: 0 };
-        }
-
+        if (!studentStats[sid]) studentStats[sid] = { student: rec.studentId, present: 0, total: 0 };
         if (rec.status !== "unmarked") studentStats[sid].total++;
         if (rec.status === "present") studentStats[sid].present++;
       });
     });
 
-    // 3️⃣ Calculate attendance percentage
+    // 3️⃣ Calculate percentages
     const results = Object.values(studentStats).map((s) => ({
       name: s.student.name,
       email: s.student.email,
       percentage: s.total ? ((s.present / s.total) * 100).toFixed(1) : "0.0",
     }));
 
-    // 4️⃣ Filter by threshold
+    // 4️⃣ Filter low attendance
     const lowStudents = results.filter((s) => parseFloat(s.percentage) < threshold);
+
+    // 5️⃣ Pagination slice
+    const totalItems = lowStudents.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const paginated = lowStudents.slice((page - 1) * limit, page * limit);
 
     res.status(200).json({
       success: true,
-      count: lowStudents.length,
-      data: lowStudents,
+      count: totalItems,
+      data: paginated,
+      page,
+      totalPages,
+      totalItems,
     });
   } catch (err) {
     console.error("getLowAttendanceStudents error:", err);
