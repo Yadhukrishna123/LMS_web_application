@@ -27,8 +27,9 @@ import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
 import Notification from './Component/NotificationPage/Notification'
 import Mentors from './Component/Mentors/Mentors'
-import HelpCenter from './Component/Help/Support/HelpCenter'
-import ViewTickets from './Component/Help/ViewTickets'
+import HelpTickets from './Component/HelpSupport/HelpTickets'
+import HelpSupportPage from './Component/HelpSupport/HelpCenter'
+import ViewTickets from './Component/HelpSupport/ViewTickets'
 
 
 
@@ -70,7 +71,8 @@ function App() {
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
 
          <Route path="/notification" element={<Notification />} />
-         <Route path="/help" element={<HelpCenter />} />
+         <Route path="/help" element={<HelpSupportPage />} />
+         <Route path="/help_tickets" element={<HelpTickets />} />
          <Route path="/view_tickets" element={<ViewTickets />} />
 
 

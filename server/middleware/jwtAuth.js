@@ -16,7 +16,7 @@ exports.authToken = async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_secret_key);
         // Attach user to request
-        const user = await User.findById(decoded.id); // assuming your JWT has { id: user._id }
+        const user = await User.findById(decoded.id); 
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -25,7 +25,7 @@ exports.authToken = async (req, res, next) => {
             });
         }
 
-        req.user = user; // 🔹 this fixes the undefined _id issue
+        req.user = user; 
         next();
     } catch (err) {
         console.error(err);
@@ -35,4 +35,12 @@ exports.authToken = async (req, res, next) => {
             isAuthentication: false,
         });
     }
+};
+exports.verifyAdmin = async (req, res, next) => {
+  await exports.verifyUser(req, res, async () => {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+    next();
+  });
 };

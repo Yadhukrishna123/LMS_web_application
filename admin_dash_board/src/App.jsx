@@ -60,6 +60,8 @@ import EnrollmentsPage from './components/Enrollments/Enrollments';
 import SendAnnouncement from './components/Notifications/SendAnnouncement';
 import LowAttendance from './components/Notifications/LowAttendance';
 import AnnouncementsPage from './components/Notifications/AnnouncementLists';
+import AdminHelpSupport from './components/Tickets & Support/AdminhelpSupport';
+import SolvedTickets from './components/Tickets & Support/SolvedTickets';
 
 
 
@@ -122,6 +124,8 @@ function App() {
           <Route path="/allannouncements" element={<AnnouncementsPage />} />
           <Route path="/lowattendance" element={<LowAttendance />} />
 
+          <Route path="/adminhelpsupport" element={<AdminHelpSupport />} />
+          <Route path="/solvedtickets" element={<SolvedTickets />} />
         </Route>
       </Routes>
 
