@@ -30,11 +30,6 @@ const UserPage = () => {
                         <button>Add student details</button>
 
                     </Link>
-                    <Link to="/view_tickets">
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                         View Tickets
-                    </button>
-                    </Link>
                    
                 </div>
             </div>
