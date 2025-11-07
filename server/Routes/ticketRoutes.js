@@ -1,17 +1,21 @@
-const { authToken } = require("../middleware/jwtAuth");
-const ticketCtrl = require("../Controllers/ticketController");
 const express = require("express");
 const router = express.Router();
+const { authToken } = require("../middleware/jwtAuth");
+const ticketCtrl = require("../Controllers/ticketController");
 
-// User routes
+// 🔹 User Routes
 router.post("/createticket", authToken, ticketCtrl.createTicket);
 router.get("/getusertickets", authToken, ticketCtrl.getUserTickets);
-router.post("/:id/message", authToken, ticketCtrl.addMessage);
+router.post("/userticket/:id/message", authToken, ticketCtrl.addMessage);
+router.get("/userticket/:id", ticketCtrl.getTicketWithMessages);
 
-// Admin routes
-router.get("/admin", authToken, ticketCtrl.getAdminTickets);
-router.patch("/:id/solve", authToken, ticketCtrl.markAsSolved);
-router.get("/solved", authToken, ticketCtrl.getSolvedTickets);
-router.delete("/:id", authToken, ticketCtrl.deleteTicket);
+// 🔹 Admin Routes
+router.get("/admin", ticketCtrl.getAdminTickets);
+router.get("/ticket/:id", ticketCtrl.getTicketWithMessages);
+router.post("/ticket/:id/message", ticketCtrl.addMessage);
+router.patch("/ticket/:id/status", ticketCtrl.updateStatus);
+router.delete("/ticket/:id", ticketCtrl.deleteTicket);
+router.get("/solved", ticketCtrl.getSolvedTickets);
+router.patch("/ticket/:id/solved", ticketCtrl.markAsSolved);
 
 module.exports = router;

@@ -15,7 +15,7 @@ const ticketSchema = new mongoose.Schema(
       unique: true, 
       default: generateTicketId,
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
     subject: { type: String, required: true },
     category: { type: String, required: true },
     priority: { type: String, enum: ["low", "medium", "high", "urgent"], default: "medium" },
@@ -26,13 +26,6 @@ const ticketSchema = new mongoose.Schema(
       enum: ["open", "in-progress", "solved", "closed"],
       default: "open",
     },
-    messages: [
-      {
-        sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        text: String,
-        createdAt: { type: Date, default: Date.now },
-      },
-    ],
   },
   { timestamps: true }
 );

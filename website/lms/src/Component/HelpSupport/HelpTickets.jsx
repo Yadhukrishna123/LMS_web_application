@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { X, Upload, Ticket, MessageSquare, Clock, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HelpTickets = () => {
+  const navigate = useNavigate();
   const preset_key = "arsmfwi7";
   const cloud_name = "dnqlt6cit";
 
@@ -260,10 +262,7 @@ const HelpTickets = () => {
             </div>
           </div>
           <button
-            onClick={() =>
-              ticket?._id &&
-              (window.location.href = `/support/chat/${ticket._id}`)
-            }
+            onClick={() => navigate(`/help_tickets/${ticket._id}`)}
             className="flex items-center space-x-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors duration-200"
           >
             <MessageSquare className="w-4 h-4" />

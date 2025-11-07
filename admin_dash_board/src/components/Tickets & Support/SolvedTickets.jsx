@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  FaSearch,
-  FaEye,
-  FaTrash,
-  FaFilePdf,
-  FaPrint,
-  FaCheckCircle,
-  FaPlus,
-} from "react-icons/fa";
+import { FaSearch, FaEye, FaTrash, FaFilePdf, FaPrint, FaPlus, FaCheckCircle } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { GhostIcon } from "lucide-react";
 
 const API_BASE = "http://localhost:8080/api/v1";
+const itemsPerPage = 5;
+
+const displayName = (u) => {
+  if (!u) return "N/A";
+  // If backend didn't populate, it could be an ID string
+  if (typeof u === "string") return `User-${u.slice(-6)}`;
+  const full = [u.firstname, u.lastname].filter(Boolean).join(" ").trim();
+  return u.name || full || u.username || u.email || "N/A";
+};
+
+// Fallback: resolvedAt → updatedAt → createdAt
+const resolvedOn = (t) => t?.resolvedOn || t?.resolvedAt || t?.updatedAt || t?.createdAt || null;
+const formatDate = (d) => (d ? new Date(d).toLocaleDateString() : "-");
 
 const TicketsSolved = () => {
   const [tickets, setTickets] = useState([]);
@@ -21,56 +25,66 @@ const TicketsSolved = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 5;
 
   const fetchTickets = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/tickets/solved`, {
+      const res = await axios.get(`${API_BASE}/solved`, {
         params: { page, limit: itemsPerPage, search },
       });
       setTickets(res.data.data || []);
-      setCurrentPage(res.data.page);
-      setTotalPages(res.data.totalPages);
+      setTotalPages(res.data.totalPages || 1);
     } catch (err) {
-      console.error("Error fetching tickets:", err);
+      console.error("Fetch solved tickets error:", err.response?.data || err.message);
+      setTickets([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
-  const goto = (url) => {
-    window.location.href = url;
-  }
 
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  // Fetch whenever page or search changes
   useEffect(() => {
     fetchTickets(currentPage);
-  }, [search, currentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, search]);
 
-  // Delete
+  const goto = (url) => {
+    window.location.href = url;
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this ticket record?")) return;
     try {
-      await axios.delete(`${API_BASE}/tickets/${id}`);
-      fetchTickets(currentPage);
+      await axios.delete(`${API_BASE}/ticket/${id}`);
+      const isLastItemOnPage = tickets.length === 1 && currentPage > 1;
+      const nextPage = isLastItemOnPage ? currentPage - 1 : currentPage;
+      setCurrentPage(nextPage);
+      fetchTickets(nextPage);
     } catch (err) {
-      console.error("Error deleting ticket:", err);
+      console.error("Delete ticket error:", err.response?.data || err.message);
+      alert("Failed to delete ticket.");
     }
   };
 
-  // Export PDF
   const handleExportPDF = () => {
     if (!tickets.length) return alert("No tickets to export.");
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text("Solved Tickets Report", 14, 15);
-    const columns = ["#", "Ticket ID", "Subject", "Assigned To", "Category", "Resolved On"];
+    const columns = ["#", "Ticket ID", "Subject", "Opened By", "Category", "Resolved On"];
     const rows = tickets.map((t, i) => [
-      i + 1,
+      (currentPage - 1) * itemsPerPage + i + 1,
       t.ticketId,
       t.subject,
-      t.assignedTo?.name || "N/A",
+      displayName(t.user),
       t.category,
-      new Date(t.resolvedAt).toLocaleDateString(),
+      formatDate(resolvedOn(t)),
     ]);
     autoTable(doc, {
       head: [columns],
@@ -81,18 +95,18 @@ const TicketsSolved = () => {
     doc.save("Solved_Tickets.pdf");
   };
 
-  // Print
   const handlePrint = () => {
+    if (!tickets.length) return alert("No tickets to print.");
     const rows = tickets
       .map(
         (t, i) => `
         <tr>
-          <td>${i + 1}</td>
+          <td>${(currentPage - 1) * itemsPerPage + i + 1}</td>
           <td>${t.ticketId}</td>
           <td>${t.subject}</td>
-          <td>${t.assignedTo?.name || "N/A"}</td>
+          <td>${displayName(t.user)}</td>
           <td>${t.category}</td>
-          <td>${new Date(t.resolvedAt).toLocaleDateString()}</td>
+          <td>${formatDate(resolvedOn(t))}</td>
         </tr>`
       )
       .join("");
@@ -114,7 +128,7 @@ const TicketsSolved = () => {
         <table>
           <thead>
             <tr>
-              <th>#</th><th>Ticket ID</th><th>Subject</th><th>Assigned To</th><th>Category</th><th>Resolved On</th>
+              <th>#</th><th>Ticket ID</th><th>Subject</th><th>Opened By</th><th>Category</th><th>Resolved On</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -123,10 +137,10 @@ const TicketsSolved = () => {
       </html>
     `);
     win.document.close();
+    win.focus();
     win.print();
   };
 
-  // Pagination
   const goPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
 
@@ -157,22 +171,13 @@ const TicketsSolved = () => {
             />
           </div>
           <div className="flex gap-2 flex-wrap justify-center">
-            <button
-              onClick={handleExportPDF}
-              className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-pink-600 shadow-lg"
-            >
+            <button onClick={handleExportPDF} className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-pink-600 shadow-lg">
               <FaFilePdf /> Export PDF
             </button>
-            <button
-              onClick={handlePrint}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl flex items-center gap-2 hover:from-blue-600 hover:to-indigo-600 shadow-lg"
-            >
+            <button onClick={handlePrint} className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl flex items-center gap-2 hover:from-blue-600 hover:to-indigo-600 shadow-lg">
               <FaPrint /> Print
             </button>
-            <button
-              onClick={() => goto('/adminhelpsupport')}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg flex items-center gap-2"
-            >
+            <button onClick={() => goto('/adminhelpsupport')} className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg flex items-center gap-2">
               <FaPlus /> View Tickets
             </button>
           </div>
@@ -183,12 +188,11 @@ const TicketsSolved = () => {
           <div className="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
             <h3 className="text-xl font-semibold text-white">All Solved Tickets</h3>
           </div>
-
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {["#", "Ticket ID", "Subject", "Assigned To", "Category", "Resolved On", "Actions"].map((h) => (
+                  {["#", "Ticket ID", "Subject", "Opened By", "Category", "Resolved On", "Actions"].map((h) => (
                     <th key={h} className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase">
                       {h}
                     </th>
@@ -206,12 +210,15 @@ const TicketsSolved = () => {
                       <td className="px-6 py-3 text-sm">{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td className="px-6 py-3 text-sm font-semibold text-gray-800">{t.ticketId}</td>
                       <td className="px-6 py-3 text-sm text-gray-600">{t.subject}</td>
-                      <td className="px-6 py-3 text-sm">{t.assignedTo?.name || "Unassigned"}</td>
+                      <td className="px-6 py-3 text-sm">{displayName(t.user)}</td>
                       <td className="px-6 py-3 text-sm">{t.category}</td>
-                      <td className="px-6 py-3 text-sm">{new Date(t.resolvedAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-3 text-sm">{formatDate(resolvedOn(t))}</td>
                       <td className="px-6 py-3 text-center">
                         <div className="flex justify-center gap-3">
-                          <button className="text-green-600 hover:bg-green-50 p-2 rounded-lg">
+                          <button
+                            onClick={() => goto(`/adminhelpsupport?open=${t._id}`)}
+                            className="text-green-600 hover:bg-green-50 p-2 rounded-lg"
+                          >
                             <FaEye />
                           </button>
                           <button

@@ -58,24 +58,6 @@ mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfq
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.listen(process.env.PORT, () => {
     console.log(`server is running on port ${process.env.PORT}`);
 
