@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, User, DollarSign, Shield, CreditCard, ChevronDown, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HelpSupportPage = () => {
   const [expandedFaq, setExpandedFaq] = useState(null);
@@ -79,9 +80,6 @@ const HelpSupportPage = () => {
     setExpandedFaq(expandedFaq === id ? null : id);
   };
 
-  const handleRaiseTicket = () => {
-    window.location.href = '/help_tickets';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
@@ -185,21 +183,21 @@ const HelpSupportPage = () => {
       </div>
 
       {/* Help & Support Section */}
-      <div className="flex justify-center items-center bg-gray-100 py-8">
-        <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Help & Support</h2>
+        <div className="flex justify-center items-center  bg-gray-100 py-10">
+          <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-xl shadow-md p-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-8">Help & Support</h2>
 
-            <div className="flex justify-center flex-wrap gap-4">
-              <button
-                onClick={handleRaiseTicket}
-                className="flex items-center justify-center space-x-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md"
-              >
-                <span>Raise a Ticket</span>
-              </button>
+              <div className="flex justify-center flex-wrap gap-6">
+                <Link
+                  to="/help_tickets"
+                  className="inline-flex items-center justify-center space-x-2 px-8 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-semibold transition duration-200 shadow-sm hover:shadow-md"
+                >
+                  <span>Raise a Ticket</span>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
