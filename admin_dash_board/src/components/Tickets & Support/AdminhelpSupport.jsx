@@ -163,7 +163,7 @@ const AdminHelpSupport = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
                 <FiAlertCircle className="w-6 h-6 text-blue-600" />
               </div>
-              <TrendingUp className="w-5 h-5 text-green-500" />
+              <FiTrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <div className="text-3xl font-bold text-gray-800">{tickets.filter(t => String(t.status).toLowerCase() === 'open').length}</div>
             <div className="text-sm text-gray-600">Open Tickets</div>
@@ -174,7 +174,7 @@ const AdminHelpSupport = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-lg">
                 <FiClock className="w-6 h-6 text-yellow-600" />
               </div>
-              <BarChart3 className="w-5 h-5 text-blue-500" />
+              <FiBarChart2 className="w-5 h-5 text-blue-500" />
             </div>
             <div className="text-3xl font-bold text-gray-800">{tickets.filter(t => String(t.status).toLowerCase() === 'in-progress').length}</div>
             <div className="text-sm text-gray-600">In Progress</div>
@@ -185,7 +185,7 @@ const AdminHelpSupport = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
                 <FiAlertCircle className="w-6 h-6 text-red-600" />
               </div>
-              <TrendingUp className="w-5 h-5 text-red-500" />
+              <FiTrendingUp className="w-5 h-5 text-red-500" />
             </div>
             <div className="text-3xl font-bold text-gray-800">
               {tickets.filter(t => ['high','urgent'].includes(normalizePriority(t.priority))).length}
@@ -196,9 +196,9 @@ const AdminHelpSupport = () => {
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-2">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-lg">
-                <Users className="w-6 h-6 text-emerald-600" />
+                <FiUser className="w-6 h-6 text-emerald-600" />
               </div>
-              <BarChart3 className="w-5 h-5 text-emerald-500" />
+              <FiBarChart2 className="w-5 h-5 text-emerald-500" />
             </div>
             <div className="text-3xl font-bold text-gray-800">{tickets.length}</div>
             <div className="text-sm text-gray-600">Total Tickets</div>
@@ -234,12 +234,12 @@ const AdminHelpSupport = () => {
                 <option value="solved">Solved</option>
                 <option value="closed">Closed</option>
               </select>
-              <ChevronDown className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 pointer-events-none" />
+              <FiChevronDown className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 pointer-events-none" />
             </div>
 
             {/* Priority Filter */}
             <div className="relative group">
-              <Tag className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
+              <FiTag className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
               <select
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
@@ -251,7 +251,7 @@ const AdminHelpSupport = () => {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </select>
-              <ChevronDown className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 pointer-events-none" />
+              <FiChevronDown className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 pointer-events-none" />
             </div>
           </div>
         </div>
@@ -291,7 +291,7 @@ const AdminHelpSupport = () => {
                         <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 text-gray-700 hidden md:table-cell">
                           <div className="flex items-center gap-2">
                             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                              <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                              <FiUser className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                             </div>
                             <span className="font-medium text-xs sm:text-sm">{displayName(ticket.user)}</span>
                           </div>
@@ -315,7 +315,7 @@ const AdminHelpSupport = () => {
                         </td>
                         <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 text-gray-600 text-xs sm:text-sm font-medium hidden lg:table-cell">
                           <div className="flex items-center gap-2">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                            <FiCalendar className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
                             {new Date(ticket.createdAt).toLocaleDateString()}
                           </div>
                         </td>
@@ -376,7 +376,7 @@ const AdminHelpSupport = () => {
                                                 : "bg-gradient-to-br from-blue-400 to-indigo-400"
                                             }`}
                                           >
-                                            <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                                            <FiUsers className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                                           </div>
                                           <span className="font-bold text-gray-800 text-sm sm:text-base">
                                             {name}

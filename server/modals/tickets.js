@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Utility to generate a readable ticket ID
 const generateTicketId = () => {
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
   const timestamp = Date.now().toString().slice(-4);

@@ -2,14 +2,14 @@ const Ticket = require("../modals/tickets");
 const Message = require("../modals/message");
 const User = require("../modals/users");
 
-// Utility to generate ticket IDs like TKT-1234-ABCDEF
+
 const generateTicketId = () => {
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
   const timestamp = Date.now().toString().slice(-4);
   return `TKT-${timestamp}-${random}`;
 };
 
-// --------------------------- CREATE TICKET ---------------------------
+
 exports.createTicket = async (req, res) => {
   try {
     const { subject, category, message, attachment, priority } = req.body;
@@ -43,7 +43,6 @@ exports.createTicket = async (req, res) => {
   }
 };
 
-// --------------------------- USER TICKETS ---------------------------
 exports.getUserTickets = async (req, res) => {
   try {
     const tickets = await Ticket.find({ user: req.user._id }).sort({
@@ -55,7 +54,6 @@ exports.getUserTickets = async (req, res) => {
   }
 };
 
-// --------------------------- ADMIN TICKETS ---------------------------
 exports.getAdminTickets = async (req, res) => {
   try {
     const pageNum = Number(req.query.page) || 1;
@@ -66,14 +64,12 @@ exports.getAdminTickets = async (req, res) => {
 
     const query = {};
 
-    // Exclude closed by default unless explicitly filtered
     if (status && status !== "all") {
       query.status = status;
     } else {
       query.status = { $ne: "closed" };
     }
 
-    // Optional priority filter (case-insensitive; supports "Urgent")
     if (priority && priority !== "all") {
       query.priority = { $regex: `^${priority}$`, $options: "i" };
     }
@@ -106,7 +102,6 @@ exports.getAdminTickets = async (req, res) => {
   }
 };
 
-// --------------------------- ADD MESSAGE ---------------------------
 exports.addMessage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -121,14 +116,12 @@ exports.addMessage = async (req, res) => {
       return res.status(404).json({ success: false, message: "Ticket not found" });
     }
 
-    // Determine sender (user/admin/institution/system fallback)
     let sender = req.user?._id || senderId || null;
 
     if (!sender) {
       const systemUser = await User.findOne({ role: "institution" }).select("_id");
       if (systemUser) sender = systemUser._id;
-      // If Message.sender is required in your schema:
-      // else return res.status(400).json({ success: false, message: "Sender not identified" });
+    
     }
 
     const msg = await Message.create({
@@ -149,7 +142,6 @@ exports.addMessage = async (req, res) => {
   }
 };
 
-// --------------------------- GET TICKET + MESSAGES ---------------------------
 exports.getTicketWithMessages = async (req, res) => {
   try {
     const { id } = req.params;
@@ -174,7 +166,6 @@ exports.getTicketWithMessages = async (req, res) => {
   }
 };
 
-// --------------------------- MARK AS SOLVED ---------------------------
 exports.markAsSolved = async (req, res) => {
   try {
     const { id } = req.params;
@@ -196,7 +187,6 @@ exports.markAsSolved = async (req, res) => {
 };
 
 
-// --------------------------- GET SOLVED TICKETS ---------------------------
 exports.getSolvedTickets = async (req, res) => {
   try {
     const pageNum = Number(req.query.page) || 1;
@@ -217,7 +207,6 @@ exports.getSolvedTickets = async (req, res) => {
     const [tickets, total] = await Promise.all([
       Ticket.find(query)
         .populate("user", "name email firstname lastname username")
-        // Sort by resolvedAt, and fall back to updatedAt/createdAt when missing
         .sort({ resolvedAt: -1, updatedAt: -1, createdAt: -1 })
         .skip((pageNum - 1) * limitNum)
         .limit(limitNum)
@@ -225,7 +214,6 @@ exports.getSolvedTickets = async (req, res) => {
       Ticket.countDocuments(query),
     ]);
 
-    // Provide a computed resolvedOn to the client
     const withResolvedOn = tickets.map((t) => ({
       ...t,
       resolvedOn: t.resolvedAt || t.updatedAt || t.createdAt || null,
@@ -242,7 +230,6 @@ exports.getSolvedTickets = async (req, res) => {
   }
 };
 
-// --------------------------- DELETE TICKET ---------------------------
 exports.deleteTicket = async (req, res) => {
   try {
     await Ticket.findByIdAndDelete(req.params.id);
@@ -253,7 +240,6 @@ exports.deleteTicket = async (req, res) => {
   }
 };
 
-// --------------------------- UPDATE STATUS ---------------------------
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -264,14 +250,10 @@ exports.updateStatus = async (req, res) => {
 
     ticket.status = status;
 
-    // Set resolvedAt when moving into solved/closed (don’t overwrite if already set)
     if ((status === "solved" || status === "closed") && !ticket.resolvedAt) {
       ticket.resolvedAt = new Date();
     }
-    // If reopening, we keep resolvedAt as historical; remove the next lines if you prefer to clear it:
-    // else if (status !== "solved" && status !== "closed") {
-    //   ticket.resolvedAt = undefined;
-    // }
+   
 
     await ticket.save();
     res.json({ success: true, data: ticket });

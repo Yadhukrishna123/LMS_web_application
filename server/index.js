@@ -2,9 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser")
-
-
 const dotenv = require("dotenv")
+
+
+
 dotenv.config({ path: "./Config/config.env" })
 
 
@@ -24,10 +25,8 @@ const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
 const studentFeeRoutes = require("./Routes/studentFeRoutes")
 const paymentRoutes = require("./Routes/paymentRoutes");
-
 const notificationRoutes = require("./Routes/notificationRoutes");
 const ticketRoutes = require("./Routes/ticketRoutes");
-
 const courseFeedbackRoutes = require("./Routes/courseFeedbackRoutes");
 const lessionRoutes = require("./Routes/lessionRoute");
 
@@ -56,10 +55,8 @@ app.use("/api/v1", scheduleRoutes);
 app.use("/api/v1", feeStructoreRoutes);
 app.use("/api/v1", studentFeeRoutes);
 app.use("/api/v1", paymentRoutes);
-
 app.use("/api/v1", notificationRoutes);
 app.use("/api/v1/", ticketRoutes);
-
 app.use("/api/v1", courseFeedbackRoutes);
 app.use("/api/v1", lessionRoutes);
 
