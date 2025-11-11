@@ -7,28 +7,29 @@ const UpcomingEvents = () => {
   useEffect(() => {
     const fetchRandomCourses = async () => {
       try {
-        // Fetch courses from your API
-        const response = await fetch("http://localhost:8080/api/v1/courses?page=1&limit=100");
+        const response = await fetch("http://localhost:8080/api/v1/get_all_courses?page=1&limit=100");
+
+        // Check if the response is actually JSON
+        const contentType = response.headers.get("content-type");
+        if (!response.ok || !contentType?.includes("application/json")) {
+          throw new Error(`Invalid response: ${response.status} ${response.statusText}`);
+        }
+
         const data = await response.json();
-        
+
         if (data.data && data.data.length > 0) {
-          // Get 4 random courses
           const shuffled = [...data.data].sort(() => 0.5 - Math.random());
           const randomCourses = shuffled.slice(0, 4);
-          
-          // Transform courses into events format
           const eventsData = randomCourses.map(course => ({
             id: course._id,
-            title: course.title || 'Web Development Event',
-            description: course.description || 'Discover the latest trends and innovations shaping the future of web development.',
+            title: course.title || "Web Development Event",
+            description: course.description || "Discover the latest trends and innovations shaping the future of web development.",
             image: course.thumbnail || `https://images.unsplash.com/photo-${getRandomImage()}?w=800&q=80`,
-            buttonText: course.price === 0 ? 'REGISTER FOR FREE' : 'GET TICKET',
-            isFree: course.price === 0
+            buttonText: course.price === 0 ? "REGISTER FOR FREE" : "GET TICKET",
+            isFree: course.price === 0,
           }));
-          
           setEvents(eventsData);
         } else {
-          // Fallback demo data
           setEvents(getDemoEvents());
         }
       } catch (error) {

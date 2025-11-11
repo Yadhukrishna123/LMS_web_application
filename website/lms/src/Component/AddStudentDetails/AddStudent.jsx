@@ -44,7 +44,13 @@ const AddStudent = ({ setShowForm, emailll }) => {
     }
 
     useEffect(() => {
+
         getAllUsers()
+
+        axios
+            .get("http://localhost:8080/api/v1/get_all_batches")
+            .then((res) => setBatches(res.data.data || []))
+            .catch((err) => console.error(err));
     }, []);
 
 

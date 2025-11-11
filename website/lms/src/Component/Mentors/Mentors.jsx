@@ -87,8 +87,11 @@ const Mentors = () => {
   const instructorsForScroll = [...instructors, ...instructors];
 
   const scrollAnimationStyle = {
+    animationName: 'scrollLeft',
+    animationDuration: '30s',
+    animationTimingFunction: 'linear',
+    animationIterationCount: 'infinite',
     animationPlayState: isPaused ? 'paused' : 'running',
-    animation: 'scrollLeft 30s linear infinite',
   };
 
   return (

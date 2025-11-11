@@ -134,8 +134,8 @@ const Signup = () => {
                                     onClick={() => handleChange({ target: { name: "role", value: "instructor" } })}
                                     className={`flex-1 py-3 rounded-lg  transition font-semibold ${
                                         inputs.role === "instructor"
-                                            ? "bg-purple-600 text-white border-purple-600 "
-                                            : "bg-white text-gray-600 border-gray-300 hover:border-purple-300"
+                                            ? "bg-green-600 text-white border-green-600 "
+                                            : "bg-white text-gray-600 border-gray-300 hover:border-green-300"
                                     }`}
                                 >
                                     Instructor

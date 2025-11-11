@@ -21,12 +21,14 @@ import ForgetPaddword from './Component/ForgetPassword/ForgetPaddword'
 import ProtectedRoutes from './Utils/ProtectedRoutes'
 
 
-import TakeQuiz from './Component/Quiz/UserQuiz'
 import CheckoutPage from './Component/Purchase/CheckoutPage'
 import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
 import Notification from './Component/NotificationPage/Notification'
 import Mentors from './Component/Mentors/Mentors'
+import HelpTickets from './Component/HelpSupport/HelpTickets'
+import HelpSupportPage from './Component/HelpSupport/HelpCenter'
+import TicketChatPage from './Component/HelpSupport/ViewTickets'
 
 
 
@@ -68,6 +70,10 @@ function App() {
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
 
          <Route path="/notification" element={<Notification />} />
+         
+         <Route path="/help" element={<HelpSupportPage />} />
+         <Route path="/help_tickets" element={<HelpTickets />} />
+         <Route path="/help_tickets/:ticketId" element={<TicketChatPage />} />
 
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />

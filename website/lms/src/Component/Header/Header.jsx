@@ -55,45 +55,44 @@ const Header = () => {
                     <Link to="/contact" className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50">Contact</Link>
                 </nav>
 
-                {/* Desktop Profile + Notification */}
-                <div className='flex items-center'>
-                    <button className="hidden md:block ml-3 text-dark px-4 py-2 relative"
-                        onClick={() => setOpenProfile(!openProfile)}
-                    >
-                        <CgProfile size={30} />
-                        {openProfile && (
-                            <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50">
-                                <ul className="py-2">
-                                    {user ? (
-                                        <>
+                {/* Desktop Profile + Notification / Sign In + Sign Up */}
+                <div className='hidden lg:flex items-center space-x-8'>
+                    {user ? (
+                        <>
+                            <Link to="/notification" className="relative">
+                                <FaBell size={24} className="text-gray-700" />
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">1</span>
+                            </Link>
+                            <button className="text-gray-700 relative"
+                                onClick={() => setOpenProfile(!openProfile)}
+                            >
+                                <CgProfile size={30} />
+                                {openProfile && (
+                                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50 space-x-4">
+                                        <ul className="py-2">
                                             <li>
                                                 <Link to="/user_page" className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
                                             </li>
                                             <li onClick={() => setLogout(true)} className='text-red-500 cursor-pointer px-4 py-2 hover:bg-red-50'>Logout</li>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <li>
-                                                <Link to="/login" className="block px-4 py-2 hover:bg-gray-100">Login</Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/sign_up" className="block px-4 py-2 hover:bg-gray-100">Register</Link>
-                                            </li>
-                                        </>
-                                    )}
-                                </ul>
-                            </div>
-                        )}
-                    </button>
-
-                    <Link to="/notification" className="relative ml-3">
-                        <FaBell size={30} />
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">1</span>
-                    </Link>
+                                        </ul>
+                                    </div>
+                                )}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className="px-6 py-2.5 text-indigo-600 font-semibold rounded-full hover:bg-indigo-500 hover:text-white transition-colors shadow-md">
+                                Sign In
+                            </Link>
+                            <Link to="/sign_up" className="px-6 py-2.5 text-indigo-600 font-semibold rounded-full hover:bg-indigo-500 hover:text-white transition-colors shadow-md">
+                                Sign Up
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Button */}
-                <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-gray-700 focus:outline-none ml-2">
+                <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden text-gray-700 focus:outline-none ml-2 text-2xl">
                     {isOpen ? "✕" : "☰"}
                 </button>
             </div>

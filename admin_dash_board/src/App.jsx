@@ -52,12 +52,16 @@ import FeeStructure from './components/FeeManagement/FeeStructure';
 import StudentFees from './components/FeeManagement/StudentFees';
 import FeeCollection from './components/FeeManagement/FeeCollection';
 
-import PaymentsPage from './components/Enrollments/Enrollments';
 import UserSubmission from './components/Quizes/UserSubmission';
 import AllInstitute from './components/AddInstitution/AllInstitute';
 import RegistrationRequest from './components/AddInstitution/RegistrationRequest';
 import DueManagement from './components/FeeManagement/DueManagement';
 import EnrollmentsPage from './components/Enrollments/Enrollments';
+import SendAnnouncement from './components/Notifications/SendAnnouncement';
+import LowAttendance from './components/Notifications/LowAttendance';
+import AnnouncementsPage from './components/Notifications/AnnouncementLists';
+import AdminHelpSupport from './components/Tickets & Support/AdminhelpSupport';
+import SolvedTickets from './components/Tickets & Support/SolvedTickets';
 
 
 
@@ -109,7 +113,6 @@ function App() {
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
 
-
           <Route path="/fee_dash_board" element={<FeeDashBoard />} />
           <Route path="/fee_structure" element={<FeeStructure />} />
           <Route path="/student_fees" element={<StudentFees />} />
@@ -117,6 +120,12 @@ function App() {
           <Route path="/due_fees" element={<DueManagement />} />
           <Route path="/enrollments" element={<EnrollmentsPage />} />
 
+          <Route path="/sendannouncement" element={<SendAnnouncement />} />
+          <Route path="/allannouncements" element={<AnnouncementsPage />} />
+          <Route path="/lowattendance" element={<LowAttendance />} />
+
+          <Route path="/adminhelpsupport" element={<AdminHelpSupport />} />
+          <Route path="/solvedtickets" element={<SolvedTickets />} />
         </Route>
       </Routes>
 

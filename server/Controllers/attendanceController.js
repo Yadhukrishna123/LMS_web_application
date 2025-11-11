@@ -224,3 +224,54 @@ exports.getAllCourses = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// 📄 In attendanceController.js
+exports.getAttendanceStats = async (req, res) => {
+  try {
+    const { batchId } = req.params;
+    if (!batchId) {
+      return res.status(400).json({ success: false, message: "Batch ID is required" });
+    }
+
+    const allAttendances = await Attendance.find({ batch: batchId }).populate("records.studentId", "name email");
+
+    if (!allAttendances.length)
+      return res.status(404).json({ success: false, message: "No attendance records found" });
+
+    // Create map: studentId -> { present, total }
+    const stats = {};
+
+    allAttendances.forEach(att => {
+      att.records.forEach(rec => {
+        const id = rec.studentId?._id?.toString();
+        if (!id) return;
+
+        if (!stats[id]) {
+          stats[id] = {
+            student: rec.studentId,
+            present: 0,
+            total: 0
+          };
+        }
+
+        if (rec.status !== "unmarked") stats[id].total++;
+        if (rec.status === "present") stats[id].present++;
+      });
+    });
+
+    // Convert to array and sort by lowest percentage
+    const result = Object.values(stats)
+      .map(s => ({
+        student: s.student,
+        present: s.present,
+        total: s.total,
+        percentage: s.total ? ((s.present / s.total) * 100).toFixed(1) : "0.0"
+      }))
+      .sort((a, b) => a.percentage - b.percentage);
+
+    res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error("getAttendanceStats error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
