@@ -19,7 +19,7 @@ exports.createCourse = async (req, res) => {
             monthlyAmount,
         } = req.body;
 
-        if (!title || !description || !price || !duration || !instructorName || !category) {
+        if (!title || !description || !duration || !instructorName || !category) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
@@ -98,7 +98,7 @@ exports.getCourse = async (req, res) => {
     }
 };
 
-// Delete a course by ID
+
 exports.deleteCourse = async (req, res) => {
     const { id } = req.params;
     try {

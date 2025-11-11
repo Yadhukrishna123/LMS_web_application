@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import { AllCourseDetail } from "../AllCourseContext/Context";
+import { toast, ToastContainer } from 'react-toastify'
 
 const CheckoutPage = () => {
 
@@ -80,81 +81,125 @@ const CheckoutPage = () => {
   console.log("name", studentName);
   console.log("id", studentId);
   const handlePay = async () => {
-    const { data: keyData } = await axios.get("http://localhost:8080/api/v1/get_key")
-    const { key } = keyData
-    console.log("key:", key);
-
-    const orderRes = await axios.post("http://localhost:8080/api/v1/create_payment", {
-      amount: courseDetail.price,
-
-    })
-    console.log(orderRes);
-    const orderId = orderRes.data.order.id;
-
-    console.log("key:", key);
-    console.log("order:", orderRes.data);
+    if (!courseDetail) return toast.warning("Course not loaded yet");
 
 
-    if (!courseDetail) return alert("Course not loaded yet");
 
-    const options = {
-      key,
-      amount: Number(courseDetail.price) * 100,
-      currency: "INR",
-      name: "LMS_LERNING",
-      description: "course enrollment",
-      order_id: orderId,
-      prefill: {
-        name: user.firstname,
-        email: user.email,
-        contact: user.phone
-      },
-      theme: { color: "#8b5cf6" },
+    if (courseDetail.isFree === false) {
+      const { data: keyData } = await axios.get("http://localhost:8080/api/v1/get_key")
+      const { key } = keyData
+      console.log("key:", key);
 
-      handler: async function (response) {
-        const paymentInfo = {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          studentName: studentName,
-          studentId: studentId,
-          userId: user._id,
-          courseId: courseDetail._id,
-          courseName: courseDetail.title,
-          username: `${user.firstname} ${user.lastname}`,
-          userEmail: user.email,
-          hasMonthlyPayment: courseDetail.hasMonthlyPayment,
-          monthlyAmount: courseDetail.monthlyAmount,
-          amount: courseDetail.price,
-          date: new Date().toLocaleDateString("en-US"),
-          status: "success",
-          billingDetails: {
-            firstName: user.firstname,
-            lastName: user.lastname,
-            email: user.email,
-            phone: user.phone,
-            country: formData.country,
-            address: formData.address,
-            apartment: formData.apartment,
-            city: formData.city,
-            state: formData.state,
-            zipCode: formData.zipCode
-          },
+      const orderRes = await axios.post("http://localhost:8080/api/v1/create_payment", {
+        amount: courseDetail.price,
+
+      })
+      console.log(orderRes);
+      const orderId = orderRes.data.order.id;
+
+      console.log("key:", key);
+      console.log("order:", orderRes.data);
+
+      const options = {
+        key,
+        amount: Number(courseDetail.price) * 100,
+        currency: "INR",
+        name: "LMS_LERNING",
+        description: "course enrollment",
+        order_id: orderId,
+        prefill: {
+          name: user.firstname,
+          email: user.email,
+          contact: user.phone
+        },
+        theme: { color: "#8b5cf6" },
+
+        handler: async function (response) {
+          const paymentInfo = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            studentName: studentName,
+            studentId: studentId,
+            userId: user._id,
+            courseId: courseDetail._id,
+            courseName: courseDetail.title,
+            username: `${user.firstname} ${user.lastname}`,
+            userEmail: user.email,
+            hasMonthlyPayment: courseDetail.hasMonthlyPayment,
+            monthlyAmount: courseDetail.monthlyAmount,
+            amount: courseDetail.price,
+            date: new Date().toLocaleDateString("en-US"),
+            status: "success",
+            billingDetails: {
+              firstName: user.firstname,
+              lastName: user.lastname,
+              email: user.email,
+              phone: user.phone,
+              country: formData.country,
+              address: formData.address,
+              apartment: formData.apartment,
+              city: formData.city,
+              state: formData.state,
+              zipCode: formData.zipCode
+            },
+          }
+          try {
+            const res = await axios.post("http://localhost:8080/api/v1/save_db", paymentInfo)
+            console.log(res)
+            window.location.href = `/payment_success?reference=${response.razorpay_payment_id}`;
+            console.log(res);
+
+          } catch (error) {
+            console.error("Free enrollment error:", error);
+            toast.warning("Something went wrong while enrolling in the free course.");
+          }
+
+
         }
-        try {
-          const res = await axios.post("http://localhost:8080/api/v1/save_db", paymentInfo)
-          window.location.href = `/payment_success?reference=${response.razorpay_payment_id}`;
-          console.log(res);
 
-        } catch (error) {
-
-        }
       }
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } else if (courseDetail.isFree === true) {
+      const paymentInfo = {
+        razorpay_order_id: "FREE_COURSE_" + Date.now(),
+        razorpay_payment_id: "FREE_" + Math.random().toString(36).substr(2, 9),
+        studentName: studentName,
+        studentId: studentId,
+        userId: user._id,
+        courseId: courseDetail._id,
+        courseName: courseDetail.title,
+        username: `${user.firstname} ${user.lastname}`,
+        userEmail: user.email,
+        hasMonthlyPayment: courseDetail.hasMonthlyPayment,
+        monthlyAmount: courseDetail.monthlyAmount,
+        amount: 0,
+        date: new Date().toLocaleDateString("en-US"),
+        status: "success",
+        billingDetails: {
+          firstName: user.firstname,
+          lastName: user.lastname,
+          email: user.email,
+          phone: user.phone,
+          country: formData.country,
+          address: formData.address,
+          apartment: formData.apartment,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode
+        },
+      }
+      try {
+        const res = await axios.post("http://localhost:8080/api/v1/save_db", paymentInfo)
+        console.log(res)
+        window.location.href = `/payment_success?reference=${paymentInfo.razorpay_payment_id}`;
+        console.log(res);
 
+      } catch (error) {
+        console.error("Free enrollment error:", error);
+        toast.warning("Something went wrong while enrolling in the free course.");
+      }
     }
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-
-
   };
 
   const handleBack = () => navigate(-1);
@@ -177,6 +222,7 @@ const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-12 px-4">
+      <ToastContainer/>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
@@ -459,7 +505,7 @@ const CheckoutPage = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Complete Payment ₹{courseDetail.price}
+                  {courseDetail.price ? `Complete Payment ₹${courseDetail.price}` : "Start Learning"}
                 </span>
               </button>
 
@@ -482,13 +528,7 @@ const CheckoutPage = () => {
                     </svg>
                     <span>SSL Secure</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                      <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-                    </svg>
-                    <span>Fast Delivery</span>
-                  </div>
+
                 </div>
               </div>
             </div>

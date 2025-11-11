@@ -3,23 +3,55 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { AllCourseDetail } from "../AllCourseContext/Context";
 import { useContext } from "react";
+import { toast, ToastContainer } from "react-toastify";
+
 
 const Detailpage = () => {
-  const { sentDataToCheckoutPage } = useContext(AllCourseDetail);
+  const { sentDataToCheckoutPage, user } = useContext(AllCourseDetail);
+
   const { id } = useParams();
   console.log(id)
   const navigate = useNavigate();
   const [course, setCourse] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedBack] = useState("");
+  const [message, setMessage] = useState("")
+  const [feedbacks, setFeedbacks] = useState([])
+  const [enrolled, setEnrolled] = useState(false)
+  console.log(course)
   console.log(course.courseModules)
   const getCourseDetails = async () => {
     try {
       setLoading(true)
       let res = await axios.get(`http://localhost:8080/api/v1/get_course/${id}`)
-      console.log(res)
       setCourse(res.data.data)
+      let getAllFeedbacks = await axios.get("http://localhost:8080/api/v1/get_all_feedback")
+      setFeedbacks(getAllFeedbacks.data.feedbacks)
+
+
+      let checkEnrollment = await axios.post("http://localhost:8080/api/v1/check_enrollment", {
+        userEmail: user?.email,
+        courseId: id
+      })
+
+      if (checkEnrollment.data && checkEnrollment.data.success) {
+        setEnrolled(checkEnrollment.data.enrolled);
+        console.log(checkEnrollment.data.enrolled);
+      } else {
+        setEnrolled(false);
+      }
+
+      console.log(checkEnrollment)
+      console.log(enrolled)
+
+
+
+      // console.log(res)
+
+      // console.log(getAllFeedbacks)
+
     } catch (error) {
       console.error(error);
       setError("Course not found or server error");
@@ -33,6 +65,50 @@ const Detailpage = () => {
   useEffect(() => {
     getCourseDetails()
   }, [id]);
+
+  const handleFeedbak = (e) => {
+    setFeedBack(e.target.value)
+    // console.log(feedback);
+
+  }
+
+  const handleFeedback = async (courseId) => {
+
+    try {
+      setLoading(true)
+      if (!courseId) {
+        console.error("Course Id not found");
+        return;
+      }
+      const payload = {
+        courseId: courseId,
+        userEmail: user?.email,
+        star: rating,
+        feedback: feedback,
+        username: `${user?.firstname} ${user?.lastname}`,
+        firstname: user?.firstname,
+        lastname: user?.lastname,
+      }
+      let res = await axios.post("http://localhost:8080/api/v1/send_feedback", payload)
+
+      console.log(res)
+
+      if (res.data.success) {
+        toast.success(res.data.message)
+        setMessage(res.data.message)
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false)
+      setFeedBack("")
+      setRating(0)
+    }
+  }
+
+  const displayFeedback = feedbacks.filter((f) => f.courseId === id)
+  console.log(displayFeedback)
 
   if (loading)
     return (
@@ -62,6 +138,7 @@ const Detailpage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <ToastContainer />
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-20"></div>
@@ -89,19 +166,41 @@ const Detailpage = () => {
                     </span>
                   </>
                 ) : (
-                  <span className="text-4xl font-bold">₹{course.price}</span>
+                  <span className="text-4xl font-bold">₹{course.price || "Free"}</span>
                 )}
               </div>
 
               <div className="flex gap-4">
-                <Link to={`/checkout/${course._id}`}>
-                  <button
-                    onClick={() => sentDataToCheckoutPage(course)}
-                    className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
-                  >
-                    Enroll Now
-                  </button>
-                </Link>
+
+                {enrolled ? (
+                  <>
+                    <button
+                      disabled
+                      className="px-8 py-4 bg-gray-200 text-gray-500 rounded-xl font-bold text-lg shadow-lg cursor-not-allowed transition-all duration-200"
+                    >
+                      ✅ You are enrolled
+                    </button>
+                    <Link to={`/lern/${course._id}`}>
+                      <button
+                        
+                        className="px-8 ms-5 py-4 bg-gray-200 text-purple-600 rounded-xl font-bold text-lg shadow-lg  transition-all duration-200"
+                      >
+                        Start lerning
+                      </button>
+                    </Link>
+                  </>
+
+                ) : (
+                  <Link to={`/checkout/${course._id}`}>
+                    <button
+                      onClick={() => sentDataToCheckoutPage(course)}
+                      className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+                    >
+                      Enroll Now
+                    </button>
+                  </Link>
+                )}
+
                 <button
                   onClick={() => navigate(-1)}
                   className="px-8 py-4 bg-white bg-opacity-20 text-purple-600 rounded-xl font-bold text-lg backdrop-blur-sm hover:bg-opacity-30 transition-all duration-200"
@@ -289,7 +388,115 @@ const Detailpage = () => {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Rate This Course</h3>
+              <div className="flex gap-2 mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg
+
+                    key={star}
+                    onClick={() => setRating(star)}
+                    className={`w-8 h-8 cursor-pointer transition-colors ${star <= rating ? rating < 4
+                      ? "text-yellow-300"
+                      : "text-green-400"
+                      : "text-gray-300"
+                      }`} fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <textarea
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                rows="4"
+                onChange={handleFeedbak}
+                placeholder="Share your experience with this course..."
+              ></textarea>
+              <button
+                onClick={() => handleFeedback(course._id)}
+                disabled={loading}
+                className="mt-3 w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all flex justify-center items-center"
+              >
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 text-white mr-2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Feedback"
+                )}
+              </button>
+
+              {message && <p className="text-green-500 text-center">{message}</p>}
+
+            </div>
+
+
+
+
+
           </div>
+
+
+
+
+
+          {displayFeedback && displayFeedback.map((f, i) => {
+            return (
+              <>
+                <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow min-w-[300px]">
+                  <div className="flex items-center gap-3 mb-4">
+                    <img
+                      src="https://ui-avatars.com/api/?name=Emma+Wilson&background=f59e0b&color=fff"
+                      alt="Student"
+                      className="w-12 h-12 rounded-full border-2 border-yellow-200"
+                    />
+                    <div>
+                      <h4 className="font-bold text-gray-800">{f.username}</h4>
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, index) => (
+                          <svg key={index} className={`w-4 h-4 ${index < f.star ? "text-yellow-400" : "text-gray-300"}`} fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    {f.feedback}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-3">  {new Date(f.createdAt).toLocaleDateString()}</p>
+                </div>
+              </>
+            )
+          })}
+
+
+
+
+
+
         </div>
       </div>
     </div>
@@ -297,3 +504,11 @@ const Detailpage = () => {
 };
 
 export default Detailpage;
+
+
+
+
+
+
+
+

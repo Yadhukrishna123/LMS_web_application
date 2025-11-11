@@ -23,10 +23,36 @@ import axios from 'axios'
 
 
 const EditProfile = ({ setShowEdit, id }) => {
+    const [input, setInput] = useState({
+        institutionName: "",
+        address: "",
+        adminFullName: "",
+        websiteUrl: "",
+        image: null,
+        adminEmail: "",
+        phone: "",
+        gstin: "",
+        accreditation: "",
+        founded: "founded",
+        courses: "",
+        students: "",
+        placement: "",
+        facilities: "",
+    })
+
+    const handleChange = () => {
+
+    }
 
     const getInstitute = async () => {
-        let res = await axios.get(`http://localhost:8080/api/v1/get_institute/${id}`)
-        console.log(res)
+        try {
+            let res = await axios.get(`http://localhost:8080/api/v1/get_institute/${id}`)
+            console.log(res)
+            setInput(res.data.institute)
+
+        } catch (error) {
+
+        }
     }
 
     useEffect(() => {
@@ -36,7 +62,7 @@ const EditProfile = ({ setShowEdit, id }) => {
     return (
         <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fadeIn"
-            onClick={() => setShowEdit(false)}
+          
         >
             <div
                 className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-slideUp"
@@ -74,8 +100,8 @@ const EditProfile = ({ setShowEdit, id }) => {
                                 <input
                                     type="text"
                                     name="institutionName"
-                                    // value={formData.institutionName}
-                                    // onChange={handleChange}
+                                    value={input.institutionName}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Enter institution name"
                                 />
@@ -93,14 +119,14 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="address"
                                     // value={formData.address}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Enter address"
                                 />
                             </div>
                         </div>
 
-                        {/* Email */}
+
 
                         <div className="group">
                             <label className="block text-gray-700 font-semibold mb-2 text-xs uppercase tracking-wider">
@@ -111,6 +137,8 @@ const EditProfile = ({ setShowEdit, id }) => {
                                 <input
                                     type="text"
                                     name="adminFullName"
+                                    onChange={handleChange}
+
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Enter admin full name"
                                 />
@@ -127,6 +155,8 @@ const EditProfile = ({ setShowEdit, id }) => {
                                 <input
                                     type="text"
                                     name="websiteUrl"
+                                    value={input.websiteUrl}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="https://www.example.com"
                                 />
@@ -140,7 +170,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                             </label>
                             <div className="flex items-center gap-3">
                                 <label className="cursor-pointer bg-indigo-50 border border-indigo-300 text-indigo-600 px-4 py-2.5 rounded-lg hover:bg-indigo-100 transition-all text-sm font-medium">
-                                    <input type="file" accept="image/*" className="hidden" />
+                                    <input type="file" accept="image/*" className="hidden" name='image' onChange={handleChange} />
                                     Choose Image
                                 </label>
                                 <span className="text-gray-500 text-sm">No file chosen</span>
@@ -154,9 +184,9 @@ const EditProfile = ({ setShowEdit, id }) => {
                                 <MdEmail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg group-focus-within:text-indigo-500 transition-colors" />
                                 <input
                                     type="email"
-                                    name="email"
-                                    // value={formData.email}
-                                    // onChange={handleChange}
+                                    name="adminEmail"
+                                    value={input.adminEmail}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="institution@email.com"
                                 />
@@ -174,7 +204,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="phone"
                                     // value={formData.phone}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="+91 XXXXX XXXXX"
                                 />
@@ -192,7 +222,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="gstin"
                                     // value={formData.gstin}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Enter GSTIN"
                                 />
@@ -210,7 +240,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="accreditation"
                                     // value={formData.accreditation}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="NAAC, NBA, etc."
                                 />
@@ -228,7 +258,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="founded"
                                     // value={formData.founded}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="YYYY"
                                 />
@@ -246,7 +276,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="courses"
                                     // value={formData.courses}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="B.Tech, MBA, MCA"
                                 />
@@ -264,7 +294,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="students"
                                     // value={formData.students}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Total number of students"
                                 />
@@ -282,7 +312,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                     type="text"
                                     name="placement"
                                     // value={formData.placement}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm"
                                     placeholder="Placement percentage"
                                 />
@@ -299,7 +329,7 @@ const EditProfile = ({ setShowEdit, id }) => {
                                 <textarea
                                     name="facilities"
                                     // value={formData.facilities}
-                                    // onChange={handleChange}
+                                    onChange={handleChange}
                                     rows="3"
                                     className="w-full bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all resize-none text-sm"
                                     placeholder="Library, laboratories, hostel, sports complex, cafeteria, etc."

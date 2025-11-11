@@ -9,7 +9,9 @@ export const AllCourseDetail = React.createContext()
 export const Context = (props) => {
     const [user, setUser] = useState(null)
     const [courseDetail, seCourseDetail] = useState([])
-
+    // const [result, setResult] = useState([])
+   
+    // const [userAnswer, setUserAnswer ]= useState()
 
     useEffect(() => {
         const token = document.cookie.includes("token=")
@@ -32,10 +34,17 @@ export const Context = (props) => {
 
     }
 
+    // const getQuizResults = (userAnswer) => {
+    //     setUserAnswer(userAnswer)
+
+
+
+    // }
+
 
 
     return (
-        <AllCourseDetail.Provider value={{ user, sentDataToCheckoutPage, setUser, courseDetail }}>
+        <AllCourseDetail.Provider value={{ user, sentDataToCheckoutPage, setUser, courseDetail, }}>
             {props.children}
         </AllCourseDetail.Provider>
     )

@@ -29,19 +29,46 @@ exports.createPayment = async (req, res) => {
 
 exports.savePayment = async (req, res) => {
   try {
-    const { razorpay_payment_id } = req.body;
+    const { razorpay_payment_id, amount, razorpay_order_id, userEmail, courseId } = req.body;
     let paymentData = { ...req.body };
 
-    if (razorpay_payment_id) {
-      const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
+    const isAlreadyExist = await Payment.findOne({
+      userEmail,
+      courseId,
+      status: "success"
+    })
 
-
-      paymentData.paymentMethod = paymentDetails.method || req.body.paymentMethod || null;
-      paymentData.bank = paymentDetails.bank || req.body.bank || null;
-      paymentData.wallet = paymentDetails.wallet || req.body.wallet || null;
-      paymentData.vpa = paymentDetails.vpa || req.body.vpa || null;
+    if (isAlreadyExist) {
+      return res.status(400).json({
+        success: false,
+        message: "You are already enrolled in this course"
+      });
     }
 
+    const isFree = !amount || amount === 0 || razorpay_order_id?.startsWith("FREE_COURSE_");
+    if (!isFree && razorpay_payment_id && razorpay_payment_id.startsWith("pay_")) {
+      try {
+        const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
+
+        paymentData.paymentMethod = paymentDetails.method || req.body.paymentMethod || null;
+        paymentData.bank = paymentDetails.bank || req.body.bank || null;
+        paymentData.wallet = paymentDetails.wallet || req.body.wallet || null;
+        paymentData.vpa = paymentDetails.vpa || req.body.vpa || null;
+
+      } catch (error) {
+        console.error("Razorpay fetch failed:", error);
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Razorpay payment ID",
+        });
+      }
+    } else {
+      paymentData.paymentMethod = "Free Enrollment";
+      paymentData.bank = null;
+      paymentData.wallet = null;
+      paymentData.vpa = null;
+      paymentData.status = "success";
+    }
 
     const payment = new Payment(paymentData);
     await payment.save();
@@ -55,12 +82,12 @@ exports.savePayment = async (req, res) => {
       )
       console.log("Payment confirmation email sent");
     } catch (error) {
-      console.error("Failed to send payment email:", err);
+      console.error("Failed to send payment email:", error);
     }
 
     res.status(200).json({
       success: true,
-      message: "Payment saved successfully",
+      message: isFree ? "Free course saved successfully" : "Payment saved successfully",
       payment
     });
 
@@ -73,6 +100,31 @@ exports.savePayment = async (req, res) => {
   }
 };
 
+
+exports.checkEnrollment = async (req, res) => {
+  try {
+    const { userEmail, courseId } = req.body;
+
+    if (!userEmail || !courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "userEmail and courseId are required",
+      });
+    }
+
+    const ifExist = await Payment.findOne({
+      userEmail,
+      courseId,
+      status: "success"
+    })
+    res.status(200).json({
+      success: true,
+      enrolled: !!ifExist
+    });
+  } catch (error) {
+    res.status(500).json({ enrolled: false, message: "Error checking enrollment" });
+  }
+}
 
 
 

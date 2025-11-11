@@ -27,6 +27,7 @@ import PurchaseSucccessCard from './Component/Purchase/PurchaseSucccessCard'
 import AddStudent from './Component/AddStudentDetails/AddStudent'
 import Notification from './Component/NotificationPage/Notification'
 import Mentors from './Component/Mentors/Mentors'
+import Lerning from './Component/Lerning/Lerning'
 
 
 
@@ -60,14 +61,14 @@ function App() {
         <Route path="/sign_up" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         {/* <Route path="/login" element={<Quizz />} /> */}
-
+        <Route path="/lern/:id" element={<Lerning />} />
 
         <Route path="/user_page" element={<UserPage />} />
         {/* <Route path="/add_student_details" element={<AddStudent />} /> */}
         <Route path="/checkout/:courseId" element={<CheckoutPage />} />
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
 
-         <Route path="/notification" element={<Notification />} />
+        <Route path="/notification" element={<Notification />} />
 
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />
