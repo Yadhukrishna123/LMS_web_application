@@ -24,14 +24,19 @@ const batchRoutes = require("./Routes/batchesRoutes");
 const scheduleRoutes = require("./Routes/scheduleRoutes")
 const studentFeeRoutes = require("./Routes/studentFeRoutes")
 const paymentRoutes = require("./Routes/paymentRoutes");
+
 const notificationRoutes = require("./Routes/notificationRoutes");
 const ticketRoutes = require("./Routes/ticketRoutes");
+
+const courseFeedbackRoutes = require("./Routes/courseFeedbackRoutes");
+const lessionRoutes = require("./Routes/lessionRoute");
+
 
 
 const app = express()
 app.use(cors({
-    credentials:true,
-    origin:true
+    credentials: true,
+    origin: true
 }))
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
@@ -51,8 +56,13 @@ app.use("/api/v1", scheduleRoutes);
 app.use("/api/v1", feeStructoreRoutes);
 app.use("/api/v1", studentFeeRoutes);
 app.use("/api/v1", paymentRoutes);
+
 app.use("/api/v1", notificationRoutes);
 app.use("/api/v1/", ticketRoutes);
+
+app.use("/api/v1", courseFeedbackRoutes);
+app.use("/api/v1", lessionRoutes);
+
 
 mongoose.connect("mongodb+srv://yadhumv365_db_user:mnWBNsTZjg6asrHE@cluster0.gfqyj29.mongodb.net/LMS_WEB_APPLICATION")
 

@@ -1,20 +1,72 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { FaPlus, FaSave, FaTimes, FaCheckCircle, FaQuestionCircle } from 'react-icons/fa';
+import Swal from "sweetalert2";
 
 
 const AddQuizzes = () => {
   const [quiz, setQuiz] = useState({
     question: "",
     options: {
-      optionA: "",
-      optionB: "",
-      optionC: ""
+      A: "",
+      B: "",
+      C: ""
     },
     rightAnswer: "",
   });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (["A", "B", "C"].includes(name)) {
+      setQuiz((prev) => ({
+        ...prev,
+        options: {
+          ...prev.options,
+          [name]: value,
+        },
+      }))
+    } else {
+      setQuiz((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  }
 
+  const handleAddQuizz = async () => {
+    try {
+      const payload = {
+        question: quiz.question,
+        options: quiz.options,
+        rightAnswer: quiz.rightAnswer
+      }
+      const res = await axios.post("http://localhost:8080/api/v1/create_quiz", payload)
+      console.log(res)
+      if (res.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Updated!",
+          text: res.data.message || "Changes have been saved successfully.",
+          showConfirmButton: false,
+          timer: 1800,
+        });
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "Something went wrong!",
+          text: res.data.message || "Unable to update record.",
+        });
+        setQuiz({
+          question: "",
+          options: { A: "", B: "", C: "" },
+          rightAnswer: "",
+        })
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  console.log(quiz)
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -32,7 +84,7 @@ const AddQuizzes = () => {
         </div>
 
         <div className="space-y-5">
-          {/* Question Input */}
+
           <div className="group">
             <label htmlFor="question" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
               <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold mr-2">Q</span>
@@ -40,13 +92,15 @@ const AddQuizzes = () => {
             </label>
             <input
               type="text"
+              onChange={handleChange}
               id="question"
+              name="question"
               className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 outline-none transition duration-300 hover:border-purple-300"
               placeholder="What is your question?"
             />
           </div>
 
-          {/* Options Grid */}
+
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-2xl">
             <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +110,7 @@ const AddQuizzes = () => {
             </h3>
 
             <div className="space-y-4">
-              {/* Option 1 */}
+
               <div>
                 <label htmlFor="option1" className="block text-sm font-medium text-gray-600 mb-2">
                   <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-lg text-center text-xs font-bold leading-6 mr-2">A</span>
@@ -64,13 +118,15 @@ const AddQuizzes = () => {
                 </label>
                 <input
                   type="text"
+                  onChange={handleChange}
+                  name="A"
                   id="option1"
                   className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none transition duration-300"
                   placeholder="First option"
                 />
               </div>
 
-              {/* Option 2 */}
+
               <div>
                 <label htmlFor="option2" className="block text-sm font-medium text-gray-600 mb-2">
                   <span className="inline-block w-6 h-6 bg-green-500 text-white rounded-lg text-center text-xs font-bold leading-6 mr-2">B</span>
@@ -78,13 +134,15 @@ const AddQuizzes = () => {
                 </label>
                 <input
                   type="text"
+                  onChange={handleChange}
+                  name="B"
                   id="option2"
                   className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 outline-none transition duration-300"
                   placeholder="Second option"
                 />
               </div>
 
-              {/* Option 3 */}
+
               <div>
                 <label htmlFor="option3" className="block text-sm font-medium text-gray-600 mb-2">
                   <span className="inline-block w-6 h-6 bg-orange-500 text-white rounded-lg text-center text-xs font-bold leading-6 mr-2">C</span>
@@ -92,6 +150,8 @@ const AddQuizzes = () => {
                 </label>
                 <input
                   type="text"
+                  onChange={handleChange}
+                  name="C"
                   id="option3"
                   className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-500 outline-none transition duration-300"
                   placeholder="Third option"
@@ -100,7 +160,7 @@ const AddQuizzes = () => {
             </div>
           </div>
 
-          {/* Right Answer */}
+
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border-2 border-green-200">
             <label htmlFor="rightAnswer" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,16 +170,20 @@ const AddQuizzes = () => {
             </label>
             <input
               type="text"
+              onChange={handleChange}
+              name="rightAnswer"
               id="rightAnswer"
               className="w-full px-5 py-3 bg-white border-2 border-green-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 outline-none transition duration-300 font-medium"
               placeholder="Enter the correct answer"
             />
           </div>
 
-          {/* Submit Button */}
+
           <button
             type="button"
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 flex items-center justify-center"
+            onClick={handleAddQuizz}
+
           >
             <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

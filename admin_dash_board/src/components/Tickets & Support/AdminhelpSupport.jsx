@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+// import {
+//   Search, Filter, Clock, CheckCircle, XCircle, AlertCircle, Eye, MessageSquare, ChevronDown, Send, User, Calendar, Tag, BarChart3, TrendingUp, Users
+// } from 'lucide-react';
 import {
-  Search, Filter, Clock, CheckCircle, XCircle, AlertCircle, Eye, MessageSquare, ChevronDown, Send, User, Calendar, Tag, BarChart3, TrendingUp, Users
-} from 'lucide-react';
+  FiSearch,
+  FiFilter,
+  FiClock,
+  FiCheckCircle,
+  FiXCircle,
+  FiAlertCircle,
+  FiEye,
+  FiMessageSquare,
+  FiChevronDown,
+  FiSend,
+  FiUser,
+  FiCalendar,
+  FiTag,
+  FiBarChart2,
+  FiTrendingUp,
+  FiUsers,
+} from 'react-icons/fi';
 
 const API_BASE = "http://localhost:8080/api/v1";
 
@@ -143,7 +161,7 @@ const AdminHelpSupport = () => {
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-2">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
-                <AlertCircle className="w-6 h-6 text-blue-600" />
+                <FiAlertCircle className="w-6 h-6 text-blue-600" />
               </div>
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
@@ -154,7 +172,7 @@ const AdminHelpSupport = () => {
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-2">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-lg">
-                <Clock className="w-6 h-6 text-yellow-600" />
+                <FiClock className="w-6 h-6 text-yellow-600" />
               </div>
               <BarChart3 className="w-5 h-5 text-blue-500" />
             </div>
@@ -165,7 +183,7 @@ const AdminHelpSupport = () => {
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-2">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
-                <AlertCircle className="w-6 h-6 text-red-600" />
+                <FiAlertCircle className="w-6 h-6 text-red-600" />
               </div>
               <TrendingUp className="w-5 h-5 text-red-500" />
             </div>
@@ -192,7 +210,7 @@ const AdminHelpSupport = () => {
           <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
             {/* Search */}
             <div className="flex-1 relative group">
-              <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
+              <FiSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
               <input
                 type="text"
                 placeholder="Search by ticket ID or subject..."
@@ -204,7 +222,7 @@ const AdminHelpSupport = () => {
 
             {/* Status Filter */}
             <div className="relative group">
-              <Filter className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
+              <FiFilter className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5 group-focus-within:text-emerald-500 transition-colors" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -243,7 +261,7 @@ const AdminHelpSupport = () => {
           {displayTickets.length === 0 ? (
             <div className="p-8 sm:p-12 md:p-16 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl sm:rounded-2xl mb-4 sm:mb-5">
-                <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
+                <FiMessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">No tickets found</h3>
               <p className="text-gray-600 text-base sm:text-lg">Try adjusting your search or filter criteria</p>
@@ -309,7 +327,7 @@ const AdminHelpSupport = () => {
                             }}
                             className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-lg sm:rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-md hover:shadow-lg text-xs sm:text-sm"
                           >
-                            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <FiEye className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span className="hidden sm:inline">{selectedTicket === ticket._id ? "Hide" : "View"}</span>
                           </button>
                         </td>
@@ -323,7 +341,7 @@ const AdminHelpSupport = () => {
                               {/* Description */}
                               <div className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-5 md:p-6 border-l-4 border-blue-500">
                                 <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                                  <FiMessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                                   <h4 className="text-base sm:text-lg font-bold text-gray-800">Original Message</h4>
                                 </div>
                                 <p className="text-gray-700 leading-relaxed text-xs sm:text-sm md:text-base">{ticketThread.message}</p>
@@ -333,7 +351,7 @@ const AdminHelpSupport = () => {
                               <div>
                                 <div className="flex items-center gap-2 mb-3 sm:mb-4">
                                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg sm:rounded-xl flex items-center justify-center">
-                                    <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    <FiMessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                   </div>
                                   <h4 className="text-base sm:text-lg font-bold text-gray-800">Conversation Thread</h4>
                                 </div>

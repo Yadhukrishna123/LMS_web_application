@@ -14,8 +14,8 @@ const PaginationButton = ({ items, itemPerPage, setCurrentPage, currentPage }) =
 
     let page = numberOfPage.map((p, i) => {
         return (
-            ///
-            <button className={p===currentPage? "border bg-black border-black text-white px-3 py-1 rounded ms-1":"border border-black text-black px-3 py-1 rounded ms-1"}
+            
+            <button className={p===currentPage? "border-none bg-blue-500 border-black text-white px-3 py-1 rounded ms-1":"border border-black text-black px-3 py-1 rounded ms-1"}
                 key={i}
                 onClick={() => handlePagination(p)}
             >

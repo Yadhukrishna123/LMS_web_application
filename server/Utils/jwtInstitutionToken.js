@@ -6,7 +6,7 @@ exports.getnstitutionToken = async (req, res) => {
         id: institutionId,
         time: Date.now()
     }
-    const token = await jwt.sign(options, process.env.JWT_secret_key, { expiresIn: "1min" })
+    const token = await jwt.sign(options, process.env.JWT_secret_key, { expiresIn: "50min" })
 
     if (!token) {
         return res.status(500).json({

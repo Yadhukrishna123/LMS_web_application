@@ -10,33 +10,34 @@ const AddCourse = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const coursesFields = [
-  
-  { label: "Course Title", name: "title", type: "text", placeholder: "Enter course title" },
-  { label: "Description", name: "description", type: "textarea", placeholder: "Describe your course" },
-  { label: "Category", name: "category", type: "select", options: [], placeholder: "Select category" },
-  { label: "Tags", name: "tags", type: "text", placeholder: "Enter tags separated by commas" },
-  { label: "Duration", name: "duration", type: "text", placeholder: "e.g., 8 weeks" },
-  { label: "Course Image", name: "image", type: "file" },
 
- 
-  { label: "Free Course", name: "isFree", type: "checkbox" },
-  { label: "Price", name: "price", type: "number", placeholder: "Enter price" },
-  { label: "Discount (%)", name: "discount", type: "number", placeholder: "Enter discount percentage" },
-  { label: "Monthly Payment Option", name: "hasMonthlyPayment", type: "checkbox" },
-  { label: "Monthly Amount", name: "monthlyAmount", type: "number", placeholder: "Enter monthly amount" },
+    { label: "Course Title", name: "title", type: "text", placeholder: "Enter course title" },
+    { label: "Description", name: "description", type: "textarea", placeholder: "Describe your course" },
+    { label: "Category", name: "category", type: "select", options: [], placeholder: "Select category" },
+    { label: "Tags", name: "tags", type: "text", placeholder: "Enter tags separated by commas" },
+    { label: "Duration", name: "duration", type: "text", placeholder: "e.g., 8 weeks" },
+    { label: "Course Image", name: "image", type: "file" },
 
 
-  { label: "Instructor Name", name: "instrectorName", type: "select", options: [], placeholder: "Select instructor" },
-  { label: "Instructor Bio", name: "instrectorBio", type: "textarea", placeholder: "Enter instructor bio" },
+    { label: "Free Course", name: "isFree", type: "checkbox" },
+    { label: "Price", name: "price", type: "number", placeholder: "Enter price" },
+    { label: "Discount (%)", name: "discount", type: "number", placeholder: "Enter discount percentage" },
+    { label: "Monthly Payment Option", name: "hasMonthlyPayment", type: "checkbox" },
+    { label: "Monthly Amount", name: "monthlyAmount", type: "number", placeholder: "Enter monthly amount" },
 
 
-  { label: "Course Modules", name: "modules", type: "array", subfields: [
-      { label: "Module Title", name: "title", type: "text", placeholder: "Module title" }
-    ]
-  }
-];
+    { label: "Instructor Name", name: "instrectorName", type: "select", options: [], placeholder: "Select instructor" },
+    { label: "Instructor Bio", name: "instrectorBio", type: "textarea", placeholder: "Enter instructor bio" },
+
+
+    {
+      label: "Course Modules", name: "modules", type: "array", subfields: [
+        { label: "Module Title", name: "title", type: "text", placeholder: "Module title" }
+      ]
+    }
+  ];
 
 
   const [inputs, setInputes] = useState({

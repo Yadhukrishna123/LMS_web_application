@@ -57,11 +57,16 @@ import AllInstitute from './components/AddInstitution/AllInstitute';
 import RegistrationRequest from './components/AddInstitution/RegistrationRequest';
 import DueManagement from './components/FeeManagement/DueManagement';
 import EnrollmentsPage from './components/Enrollments/Enrollments';
+
 import SendAnnouncement from './components/Notifications/SendAnnouncement';
 import LowAttendance from './components/Notifications/LowAttendance';
 import AnnouncementsPage from './components/Notifications/AnnouncementLists';
 import AdminHelpSupport from './components/Tickets & Support/AdminhelpSupport';
 import SolvedTickets from './components/Tickets & Support/SolvedTickets';
+
+import Uploadlessions from './components/UploadRecordedVideo.jsx/Uploadlessions';
+import UploadModuleQuizz from './components/UploadRecordedVideo.jsx/UploadModuleQuizz';
+import ViewAllQuizz from './components/UploadRecordedVideo.jsx/ViewAllQuizz';
 
 
 
@@ -112,6 +117,14 @@ function App() {
 
           <Route path="/attendence_tracking" element={<Attenencetracking />} />
           <Route path="/attendence_listing" element={<AttendanceListing />} />
+
+
+
+          <Route path="/upload_lesson" element={<Uploadlessions />} />
+          <Route path="/upload_module_quizz/:id?" element={<UploadModuleQuizz />} />
+          <Route path="/view_all_quizz" element={<ViewAllQuizz />} />
+
+          
 
           <Route path="/fee_dash_board" element={<FeeDashBoard />} />
           <Route path="/fee_structure" element={<FeeStructure />} />

@@ -44,7 +44,7 @@ exports.addQuizz = async (req, res) => {
   try {
     const { question, options, rightAnswer } = req.body
 
-    if (!question || !options || !options.A || !options.B || !options.C || !rightAnswer) {
+    if (!question || !options || !rightAnswer) {
 
       return res.status(400).json({
         success: false,

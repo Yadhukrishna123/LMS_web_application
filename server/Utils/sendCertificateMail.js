@@ -54,6 +54,20 @@ exports.sendCertificatetoStudent = async (email, courseName, studentName) => {
 
 
 
+
+    doc.rect(0, 0, pageWidth, pageHeight).fill("#fffdf7");
+
+    doc.lineWidth(10)
+      .strokeColor("#c5a75b")
+      .rect(30, 30, pageWidth - 60, pageHeight - 60)
+      .stroke();
+
+    doc.lineWidth(2)
+      .strokeColor("#1e3a5f")
+      .rect(45, 45, pageWidth - 90, pageHeight - 90)
+      .stroke();
+
+
    
     const cornerSize = 120;
     doc.save()
