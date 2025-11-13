@@ -32,8 +32,7 @@ import HelpSupportPage from './Component/HelpSupport/HelpCenter'
 import TicketChatPage from './Component/HelpSupport/ViewTickets'
 
 import Lerning from './Component/Lerning/Lerning'
-import InstructorPage from './Component/UserPage/InstructorPage'
-
+import InstructorPage from './Component/Instructors/InstructorPage'
 
 
 
@@ -71,6 +70,8 @@ function App() {
 
         <Route path="/user_page" element={<UserPage />} />
         <Route path="/instructor_page" element={<InstructorPage />} />
+        <Route path="/add_instructor" element={<InstructorPage />} />
+
 
         {/* <Route path="/add_student_details" element={<AddStudent />} /> */}
         <Route path="/checkout/:courseId" element={<CheckoutPage />} />

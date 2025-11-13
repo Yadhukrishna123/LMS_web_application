@@ -410,7 +410,7 @@ exports.approveInstructor = async (req, res) => {
             });
         }
 
-        // ✅ Find and update instructor (MongoDB will handle invalid ID format)
+        // Find and update instructor (MongoDB will handle invalid ID format)
         const instructor = await userModal.findByIdAndUpdate(
             userId,
             {
