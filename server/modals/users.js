@@ -1,4 +1,3 @@
-// modals/users.js
 const mongoose = require("mongoose")
 
 const userScheme = new mongoose.Schema({
@@ -13,11 +12,11 @@ const userScheme = new mongoose.Schema({
         default: false,
     },
     
-    // ✅ NEW: Instructor Approval Fields
+    // Instructor Approval Fields
     isApproved: {
         type: Boolean,
         default: function() {
-            return this.role === 'student'; // Auto-approve students, instructors need approval
+            return this.role === 'student'; 
         }
     },
     verificationStatus: {
