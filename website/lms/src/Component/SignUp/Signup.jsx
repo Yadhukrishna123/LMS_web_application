@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { useState } from 'react';
 import { MdMail, MdLock, MdVisibility, MdVisibilityOff, MdPerson, MdPhone } from 'react-icons/md';
-
+import { toast ,ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { MdVerified } from 'react-icons/md';
 import { FaPhoneFlip  } from 'react-icons/fa6';
@@ -31,6 +32,7 @@ const Signup = () => {
     const handleChange = (e) => {
         setInputs({ ...inputs, [e.target.name]: e.target.value })
     }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
@@ -38,12 +40,38 @@ const Signup = () => {
             console.log(res);
             if (res.data.success) {
                 setMessage(res.data.message)
+                // Different alert for instructors
+                if (inputs.role === 'instructor') {
+                    toast.success("🎉 Registration successful!\n⏳ Your account is pending admin approval.\n📧 You'll receive an email once approved.", {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.success("🎉 Registration successful! Redirecting to login...", {
+                        position: "top-center",
+                        autoClose: 4000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+                
                 await new Promise((back) => setTimeout(back, 3000))
                 navigate("/login")
             }
 
         } catch (error) {
-
+            console.error(error);
+            setMessage(error.response?.data?.message || "Registration failed");
         }
     }
     console.log(inputs);
@@ -106,6 +134,7 @@ const Signup = () => {
                 </div>
 
                 {/* Right Side - Form Section */}
+                      <ToastContainer/>
                 <div className="w-full lg:w-1/2 p-8 md:p-12 flex items-center justify-center">
                     <div className="max-w-md w-full">
                         {/* Header */}

@@ -67,6 +67,7 @@ import SolvedTickets from './components/Tickets & Support/SolvedTickets';
 import Uploadlessions from './components/UploadRecordedVideo.jsx/Uploadlessions';
 import UploadModuleQuizz from './components/UploadRecordedVideo.jsx/UploadModuleQuizz';
 import ViewAllQuizz from './components/UploadRecordedVideo.jsx/ViewAllQuizz';
+import VerifyInstructors from './components/Instructors/VerifyInstuctors';
 
 
 
@@ -97,8 +98,11 @@ function App() {
           <Route path="/add_course_cateogry" element={<AddCategory />} />
           <Route path="/view_course_cateogry" element={<ViewCategory />} />
           <Route path="/view_course" element={<ViewCourses />} />
+          
           <Route path="/view_Instuctors" element={<ViewInstuctors />} />
           <Route path="/add_Instuctors" element={<AddInstructors />} />
+          <Route path="/verify_Instructors" element={<VerifyInstructors />} />
+
           <Route path="/users" element={<Users />} />
           <Route path="/login" element={<LoginInstitution />} />
           <Route path="/my_profile" element={<MyProfile />} />

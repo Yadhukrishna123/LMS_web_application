@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken")
 
 exports.signup = async (req, res) => {
     try {
-        const { firstname, lastname, email, phone, password, role } = req.body
+        const { firstname, lastname, email, phone, password, role, expertise } = req.body
 
         if (!firstname || !lastname || !email || !phone || !password || !role) {
             return res.status(400).json({
@@ -16,27 +16,53 @@ exports.signup = async (req, res) => {
             })
         }
 
+        // Check if instructor already exists
+        const existingUser = await userModal.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Email already registered"
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10)
+        
+        // Create user with approval logic
         const user = await userModal.create({
             firstname,
             lastname,
             email,
             phone,
             password: hashedPassword,
-            role
+            role,
+            expertise, // Save expertise if provided
+            isApproved: role === 'student', // Auto-approve students
+            verificationStatus: role === 'instructor' ? 'pending' : 'approved'
         })
 
         if (!user) {
             return res.status(400).json({
                 success: false,
-                message: "Faild to register"
+                message: "Failed to register"
             })
         }
 
+        // Different success messages
+        const message = role === 'instructor' 
+            ? "Registration successful! Your account is pending admin approval. You'll be notified via email once approved."
+            : "Successfully registered! You can now login.";
+
         res.status(200).json({
             success: true,
-            message: "Successfully registerd",
-            user
+            message,
+            user: {
+                id: user._id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email,
+                role: user.role,
+                verificationStatus: user.verificationStatus
+            }
         })
 
     } catch (error) {
@@ -54,10 +80,11 @@ exports.login = async (req, res) => {
         const user = await userModal.findOne({
             $or: [{ email: email }]
         })
+        
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "Invalued email or phone"
+                message: "Invalid email or phone"
             })
         }
 
@@ -70,16 +97,19 @@ exports.login = async (req, res) => {
             })
         }
 
+        // Check if instructor is approved
+        if (user.role === 'instructor' && !user.isApproved) {
+            return res.status(403).json({
+                success: false,
+                message: user.verificationStatus === 'rejected' 
+                    ? `Your instructor application was rejected. Reason: ${user.rejectionReason || 'Not specified'}`
+                    : "Your account is pending admin approval. Please wait for verification.",
+                verificationStatus: user.verificationStatus
+            });
+        }
+
         await userModal.findByIdAndUpdate(user._id, { isLogin: true })
         const updatedUser = await userModal.findById(user._id);
-
-        // res.status(200).json({
-        //     success: true,
-        //     message: "You are successfully sign in",
-        //     isAuthentication: true,
-        //     user:updatedUser
-
-        // })
 
         req.user = user
         getToken(req, res)
@@ -346,3 +376,169 @@ exports.logout = async (req, res) => {
         });
     }
 }
+exports.getPendingInstructors = async (req, res) => {
+    try {
+        const instructors = await userModal.find({ 
+            role: 'instructor',
+            verificationStatus: 'pending'
+        }).select('-password').sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: instructors.length,
+            data: instructors
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Approve Instructor
+exports.approveInstructor = async (req, res) => {
+    try {
+        const { userId, adminId } = req.body;
+
+        console.log('📥 Approve request received:', { userId, adminId });
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+
+        // ✅ Find and update instructor (MongoDB will handle invalid ID format)
+        const instructor = await userModal.findByIdAndUpdate(
+            userId,
+            {
+                isApproved: true,
+                verificationStatus: 'approved',
+                approvedAt: new Date(),
+                ...(adminId && adminId !== 'ADMIN_ID_HERE' && { approvedBy: adminId })
+            },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!instructor) {
+            return res.status(404).json({
+                success: false,
+                message: "Instructor not found"
+            });
+        }
+
+        console.log('✅ Instructor approved:', instructor.email);
+
+        res.status(200).json({
+            success: true,
+            message: "Instructor approved successfully",
+            data: instructor
+        });
+
+    } catch (error) {
+        console.error('❌ Approve instructor error:', error.message);
+        
+        // Handle MongoDB cast error (invalid ObjectId format)
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user ID format"
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: error.message || "Failed to approve instructor"
+        });
+    }
+};
+
+// Reject Instructor
+exports.rejectInstructor = async (req, res) => {
+    try {
+        const { userId, reason } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+
+        if (!reason) {
+            return res.status(400).json({
+                success: false,
+                message: "Rejection reason is required"
+            });
+        }
+
+        const instructor = await userModal.findByIdAndUpdate(
+            userId,
+            {
+                isApproved: false,
+                verificationStatus: 'rejected',
+                rejectionReason: reason
+            },
+            { new: true }
+        ).select('-password');
+
+        if (!instructor) {
+            return res.status(404).json({
+                success: false,
+                message: "Instructor not found"
+            });
+        }
+
+        console.log('❌ Instructor rejected:', instructor.email);
+
+        res.status(200).json({
+            success: true,
+            message: "Instructor rejected",
+            data: instructor
+        });
+
+    } catch (error) {
+        console.error('Error rejecting instructor:', error.message);
+        
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user ID format"
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get Instructors by Status (for Admin)
+exports.getInstructorsByStatus = async (req, res) => {
+    try {
+        const { status } = req.query; // 'pending', 'approved', 'rejected'
+
+        let query = { role: 'instructor' };
+        if (status) {
+            query.verificationStatus = status;
+        }
+
+        const instructors = await userModal.find(query)
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: instructors.length,
+            data: instructors
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
