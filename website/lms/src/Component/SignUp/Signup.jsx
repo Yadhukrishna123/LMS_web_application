@@ -14,6 +14,7 @@ const Signup = () => {
         firstname: "",
         lastname: "",
         email: "",
+        expertise:"",
         phone: "",
         password: "",
         role: ""
@@ -23,6 +24,7 @@ const Signup = () => {
         firstname: inputs.firstname,
         lastname: inputs.lastname,
         email: inputs.email,
+        expertise: inputs.expertise,
         phone: inputs.phone,
         password: inputs.password,
         role: inputs.role
@@ -40,29 +42,10 @@ const Signup = () => {
             console.log(res);
             if (res.data.success) {
                 setMessage(res.data.message)
-                // Different alert for instructors
                 if (inputs.role === 'instructor') {
-                    toast.success("🎉 Registration successful!\n⏳ Your account is pending admin approval.\n📧 You'll receive an email once approved.", {
-                        position: "top-center",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.success(" Registration successful!\n Your account is pending admin approval."); 
                 } else {
-                    toast.success("🎉 Registration successful! Redirecting to login...", {
-                        position: "top-center",
-                        autoClose: 4000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.success(" Registration successful! Redirecting to login...");
                 }
                 
                 await new Promise((back) => setTimeout(back, 3000))
@@ -230,25 +213,16 @@ const Signup = () => {
                             {/* Expertise Field - Only for Instructors */}
                             {inputs.role === "instructor" && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Expertise</label>
-                                    <div className="relative">
-                                        <select
-                                            name="expertise"
-                                            value={inputs.expertise}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition appearance-none bg-white cursor-pointer"
-                                        >
-                                            <option value="">Select your expertise</option>
-                                            <option value="web-development">Web Development</option>
-                                            <option value="mobile-development">Mobile Development</option>
-                                            <option value="data-science">Data Science</option>
-                                            <option value="machine-learning">Machine Learning</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                        <svg className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Expertise
+                                    </label>
+                                    <input
+                                        name="expertise"
+                                        value={inputs.expertise}
+                                        onChange={handleChange}
+                                        placeholder="e.g., Web Development, Machine Learning"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    />
                                 </div>
                             )}
 
@@ -291,13 +265,6 @@ const Signup = () => {
                                     </a>
                                 </label>
                             </div>
-
-                            {/* Success Message */}
-                            {message && (
-                                <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
-                                    <p className="font-medium">{message}</p>
-                                </div>
-                            )}
 
                             {/* Submit Button */}
                             <button

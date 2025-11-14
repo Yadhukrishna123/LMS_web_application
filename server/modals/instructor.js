@@ -15,6 +15,7 @@ const instructorSchema = new mongoose.Schema({
   phone: String,
   bio: String,
   image: String,
+  expertise: String,
   specialization: String,
   experience: Number,
   qualification: String,

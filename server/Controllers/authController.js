@@ -8,15 +8,14 @@ const jwt = require("jsonwebtoken")
 
 exports.signup = async (req, res) => {
     try {
-        const { firstname, lastname, email, phone, password, role, expertise } = req.body
+        const { firstname, lastname, email, phone, password, role, expertise } = req.body;
 
         if (!firstname || !lastname || !email || !phone || !password || !role) {
             return res.status(400).json({
                 message: "All fields are required"
-            })
+            });
         }
 
-        // Check if instructor already exists
         const existingUser = await userModal.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
@@ -25,9 +24,8 @@ exports.signup = async (req, res) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Create user with approval logic
         const user = await userModal.create({
             firstname,
             lastname,
@@ -35,21 +33,18 @@ exports.signup = async (req, res) => {
             phone,
             password: hashedPassword,
             role,
-            expertise, // Save expertise if provided
-            isApproved: role === 'student', // Auto-approve students
-            verificationStatus: role === 'instructor' ? 'pending' : 'approved'
-        })
+            expertise 
+
+        });
 
         if (!user) {
             return res.status(400).json({
                 success: false,
                 message: "Failed to register"
-            })
+            });
         }
-
-        // Different success messages
         const message = role === 'instructor' 
-            ? "Registration successful! Your account is pending admin approval. You'll be notified via email once approved."
+            ? "Registration successful! Your account is pending admin approval."
             : "Successfully registered! You can now login.";
 
         res.status(200).json({
@@ -61,9 +56,9 @@ exports.signup = async (req, res) => {
                 lastname: user.lastname,
                 email: user.email,
                 role: user.role,
-                verificationStatus: user.verificationStatus
+                verificationStatus: user.verificationStatus 
             }
-        })
+        });
 
     } catch (error) {
         res.status(500).json({
@@ -71,7 +66,7 @@ exports.signup = async (req, res) => {
             message: error.message
         });
     }
-}
+};
 
 exports.login = async (req, res) => {
     const { email, phone, password } = req.body
@@ -439,8 +434,6 @@ exports.approveInstructor = async (req, res) => {
 
     } catch (error) {
         console.error('❌ Approve instructor error:', error.message);
-        
-        // Handle MongoDB cast error (invalid ObjectId format)
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,

@@ -29,10 +29,9 @@ const userScheme = new mongoose.Schema({
     rejectionReason: String,
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
     approvedAt: Date,
-    
     expertise: String,
     
-});
+},{ timestamps: true });
 
 const userModal = mongoose.model("users", userScheme)
 module.exports = userModal

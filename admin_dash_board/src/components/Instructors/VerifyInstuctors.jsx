@@ -13,13 +13,14 @@ const VerifyInstructors = () => {
   const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
+
     fetchPending();
   }, []);
 
   const fetchPending = async () => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/pending_instructors");
-      
+      console.log('Pending instructors response:', res.data);
       if (res.data && res.data.success) {
         setInstructors(res.data.data || []);
       } else {
@@ -30,7 +31,7 @@ const VerifyInstructors = () => {
       console.error('Error fetching pending instructors:', error);
       setInstructors([]); 
       setLoading(false);
-      toast.error('Failed to load pending instructors', { // ✅ Added toast for errors
+      toast.error('Failed to load pending instructors', { 
         position: 'top-center',
         autoClose: 4000,
         theme: 'colored',
@@ -74,7 +75,7 @@ const VerifyInstructors = () => {
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) {
-      toast.warning('Please provide a rejection reason', { // ✅ Replaced alert with toast
+      toast.warning('Please provide a rejection reason', {
         position: 'top-center',
         autoClose: 3000,
         theme: 'colored',
@@ -89,7 +90,7 @@ const VerifyInstructors = () => {
       });
 
       if (res.data.success) {
-        toast.error('❌ Instructor rejected successfully', { // ✅ Replaced alert with toast
+        toast.error('❌ Instructor rejected successfully', { 
           position: 'top-center',
           autoClose: 3000,
           theme: 'colored',
