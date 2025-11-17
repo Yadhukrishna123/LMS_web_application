@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 
 const instructorSchema = new mongoose.Schema({
+
+  userId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  unique: true,
+  sparse: true
+ },
   instructorId: { 
     type: String, 
     unique: true 

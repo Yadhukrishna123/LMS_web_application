@@ -49,8 +49,9 @@ const AddCourse = () => {
     category: "",
     tags: "",
     image: null,
-    instrectorName: "",
-    instrectorBio: "",
+    instructor: "",       
+    instructorName: "",    
+    instructorBio: "",
     hasMonthlyPayment: false,
     monthlyAmount: "",
     modules: [
@@ -142,8 +143,9 @@ const AddCourse = () => {
         tags: inputs.tags,
         image: imageUrl,
         courseModules: inputs.modules,
-        instructorName: inputs.instrectorName,
-        instructorBio: inputs.instrectorBio,
+        instructor: inputs.instructor,        
+        instructorName: inputs.instructorName,
+        instructorBio: inputs.instructorBio,
         hasMonthlyPayment: inputs.hasMonthlyPayment,
         monthlyAmount: inputs.monthlyAmount
 
@@ -332,47 +334,84 @@ const AddCourse = () => {
             </div>
 
             <div className="p-8 space-y-6">
-              {/* Instructor Name */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Instructor Name
-                </label>
-                <select
 
-                  onChange={handleChange}
-                  name="instrectorName"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
-                >
-                  <option value="">Select instructor</option>
-                  {instructors.map((inst) => (
-                    <option key={inst._id} value={inst.name}>
-                      {inst.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+<div>
+  <label className="block text-sm font-semibold text-gray-700 mb-2">
+    Select Instructor *
+  </label>
+  <select
+    onChange={(e) => {
+      const selectedInstructor = instructors.find(
+        inst => inst._id === e.target.value
+      );
 
-              {/* Instructor Bio */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Instructor Bio
-                </label>
-                <textarea
-                  onChange={handleChange}
-                  name="instrectorBio"
-                  rows="4"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors resize-none"
-                  placeholder="Tell us about the instructor..."
-                />
-              </div>
+      if (selectedInstructor) {
+        setInputes({
+          ...inputs,
+          instructor: selectedInstructor._id,
+          instructorName: selectedInstructor.name,        // ✅ FIX: Use 'name' (not firstname + lastname)
+          instructorBio: selectedInstructor.bio || ""     // ✅ FIX: Use 'bio' (not expertise)
+        });
+      } else {
+        setInputes({
+          ...inputs,
+          instructor: "",
+          instructorName: "",
+          instructorBio: ""
+        });
+      }
+    }}
+    value={inputs.instructor}
+    name="instructor"
+    required
+    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
+  >
+    <option value="">Choose an instructor...</option>
+    {instructors.map((inst) => (
+      <option key={inst._id} value={inst._id}>
+        {inst.name} - {inst.email}
+      </option>
+    ))}
+  </select>
+</div>
 
-
-
-            </div>
+{/* Selected Instructor Preview */}
+{inputs.instructor && (
+  <div className="bg-gradient-to-r from-fuchsia-50 to-pink-50 p-6 rounded-xl border-2 border-fuchsia-200">
+    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+      <span className="w-6 h-6 bg-fuchsia-600 text-white rounded-full flex items-center justify-center text-xs">
+        ✓
+      </span>
+      Selected Instructor Details
+    </h3>
+    
+    <div className="space-y-3">
+      <div>
+        <p className="text-xs text-gray-500 mb-1">Name</p>
+        <p className="font-semibold text-gray-800">{inputs.instructorName}</p>
+      </div>
+      
+      {inputs.instructorBio && (
+        <div>
+          <p className="text-xs text-gray-500 mb-1">Bio</p>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {inputs.instructorBio}
+          </p>
+        </div>
+      )}
+      
+      {!inputs.instructorBio && (
+        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+          ⚠️ This instructor hasn't added a bio yet
+        </p>
+      )}
+    </div>
+  </div>
+)}
+            </div>  
           </div>
 
           {/* modules */}
-
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-violet-100">
 
             <div className="bg-gradient-to-r from-fuchsia-600 to-pink-600 px-8 py-6">

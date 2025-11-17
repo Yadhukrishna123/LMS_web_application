@@ -49,13 +49,19 @@ const courseModal = new mongoose.Schema({
     type: [courseModuleSchema], 
     default: [],
   },
+  instructor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true,
+    index: true 
+  },
   instructorName: {
     type: String,
     required: true
   },
   instructorBio: {
     type: String,
-    required: true
+    required: false
   },
   hasMonthlyPayment: {
     type: Boolean,
@@ -68,7 +74,12 @@ const courseModal = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'archived'],
+    default: 'published'
+  },
 
 })
 

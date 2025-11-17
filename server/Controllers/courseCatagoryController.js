@@ -44,7 +44,8 @@ exports.viewAllCourseCatago = async (req, res) => {
       message: error.message,
     });
   }
-};
+ };
+
 exports.viewAllCourseCategories = async (req, res) => {
   try {
     const search = req.query.title || "";

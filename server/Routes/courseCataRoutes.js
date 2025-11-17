@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post("/add_course_cateogry", addCourseCatagory)
 router.get("/view_All_categories", viewAllCourseCatago)
-router.get("/view_All_course_categories", viewAllCourseCategories)
+ router.get("/view_All_course_categories", viewAllCourseCategories)
 
 
 module.exports = router

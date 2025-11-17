@@ -33,6 +33,15 @@ import TicketChatPage from './Component/HelpSupport/ViewTickets'
 
 import Lerning from './Component/Lerning/Lerning'
 import InstructorPage from './Component/Instructors/InstructorPage'
+import MyCourses from './Component/Instructors/Mycourses'
+import EditCoursePage from './Component/Instructors/My Courses/EditCoursePage'
+import CourseAnalyticsPage from './Component/Instructors/My Courses/CourseAnalyticsPage'
+import CourseStudentsPage from './Component/Instructors/My Courses/CourseStudentsPage'
+import StudentsEnrolledPage from './Component/Instructors/Enrolled_Students'
+import CreateInstructorCourse from './Component/Instructors/My Courses/CreateCourse'
+import InstructorQuizManager from './Component/Instructors/Quiz Manager/InstructorQuizManager'
+import InstructorQuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
+import QuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
 
 
 
@@ -69,10 +78,6 @@ function App() {
         <Route path="/lern/:id" element={<Lerning />} />
 
         <Route path="/user_page" element={<UserPage />} />
-        <Route path="/instructor_page" element={<InstructorPage />} />
-        <Route path="/add_instructor" element={<InstructorPage />} />
-
-
         {/* <Route path="/add_student_details" element={<AddStudent />} /> */}
         <Route path="/checkout/:courseId" element={<CheckoutPage />} />
         <Route path="/payment_success" element={<PurchaseSucccessCard />} />
@@ -80,15 +85,35 @@ function App() {
 
          <Route path="/notification" element={<Notification />} />
          
-         <Route path="/help" element={<HelpSupportPage />} />
-         <Route path="/help_tickets" element={<HelpTickets />} />
+         <Route path="/help" element={<ProtectedRoutes isAuthentication={user}><HelpSupportPage /> </ProtectedRoutes>} />
+         <Route path="/help_tickets" element={<ProtectedRoutes isAuthentication={user}><HelpTickets /> </ProtectedRoutes>} />
          <Route path="/help_tickets/:ticketId" element={<TicketChatPage />} />
 
         <Route path="/notification" element={<Notification />} />
 
-
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />
         {/* <Route path="/take_quiz/:quizId" element={<UserQuiz userId={user?._id} />} /> */}
+
+        {/* All Instructor Routes Are here */}
+
+        <Route path="/instructor_page" element={<InstructorPage />} />
+        <Route path="/add_instructor" element={<InstructorPage />} />
+
+        <Route path="/my_courses" element={<MyCourses />} />
+        <Route path="/create_course" element={<CreateInstructorCourse />} />
+
+        <Route path="/edit_course/:id" element={<EditCoursePage  />} />
+        <Route path="/course_analytics/:id" element={<CourseAnalyticsPage />} />
+        <Route path="/course_analytics" element={<CourseAnalyticsPage />} />
+        <Route path="/course_students/:id" element={<CourseStudentsPage />} />
+
+        <Route path="/enrolled_students" element={<StudentsEnrolledPage />} />
+
+        <Route path="/instructor_quiz_manager" element={<InstructorQuizManager />} />
+        <Route path="/instructor_quiz_submissions/:quizId" element={<QuizSubmissions />} />
+
+
+
 
 
       </Routes>
