@@ -170,7 +170,7 @@ exports.getInstructorQuizzes = async (req, res) => {
         submissions: relatedSubmissions, 
       };
     });
-    
+
     res.status(200).json({
       success: true,
       data: merged,
@@ -185,14 +185,32 @@ exports.getInstructorQuizzes = async (req, res) => {
 
 exports.getQuizById = async (req, res) => {
   try {
-    const quiz = await submitanswer.findById(req.params.id); // _id from URL
-    if (!quiz) return res.status(404).json({ success: false, message: "Quiz not found" });
-    res.status(200).json({ success: true, quiz });
+    const quizId = req.params.id;
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: "Quiz not found" });
+    }
+
+    const submissions = await submitanswer.find({
+      quizName: quiz.question
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        quizName: quiz.question,
+        questions: [quiz],
+        submissions: submissions,
+      }
+    });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 exports.getSubmissionsByQuizId = async (req, res) => {
   try {
