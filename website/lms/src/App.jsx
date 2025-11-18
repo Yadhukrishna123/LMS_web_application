@@ -36,7 +36,6 @@ import InstructorPage from './Component/Instructors/InstructorPage'
 import MyCourses from './Component/Instructors/Mycourses'
 import EditCoursePage from './Component/Instructors/My Courses/EditCoursePage'
 import CourseStudentsPage from './Component/Instructors/My Courses/CourseStudentsPage'
-import StudentsEnrolledPage from './Component/Instructors/Enrolled_Students'
 import CreateInstructorCourse from './Component/Instructors/My Courses/CreateCourse'
 import InstructorQuizManager from './Component/Instructors/Quiz Manager/InstructorQuizManager'
 import QuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
@@ -103,8 +102,6 @@ function App() {
 
         <Route path="/edit_course/:id" element={<EditCoursePage  />} />
         <Route path="/course_students/:id" element={<CourseStudentsPage />} />
-
-        <Route path="/enrolled_students" element={<StudentsEnrolledPage />} />
 
         <Route path="/add_quiz" element={<InstructorAddQuiz />} />
         <Route path="/instructor_quiz_manager" element={<InstructorQuizManager />} />

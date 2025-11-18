@@ -10,4 +10,5 @@ router.get("/get_all_payment_details", getAllPaymentDetails)
 
 router.post("/check_enrollment", checkEnrollment)
 
+
 module.exports = router;

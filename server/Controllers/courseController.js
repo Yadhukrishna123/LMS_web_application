@@ -1,5 +1,6 @@
 const courseModal = require("../modals/courses");
 const Instructor = require("../modals/instructor");
+const Payment = require("../modals/paymentModel");
 const User = require("../modals/users");
 
 // Create Course
@@ -124,17 +125,32 @@ exports.getInstructorCourses = async (req, res) => {
 
     if (!instructor) {
       return res.status(404).json({
-        message: "Instructor profile not found for this user",
+        message: "Instructor profile not found",
         success: false
       });
     }
 
     const courses = await courseModal.find({ instructor: instructor._id });
 
+    // Attach students count for each course
+    const finalCourses = await Promise.all(
+      courses.map(async (course) => {
+        const enrolledStudents = await Payment.countDocuments({
+          courseId: course._id.toString(),
+          status: "success"
+        });
+
+        return {
+          ...course._doc,
+          enrolledStudents
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
-      instructor: instructor,
-      courses: courses
+      instructor,
+      courses: finalCourses
     });
 
   } catch (error) {
@@ -146,6 +162,8 @@ exports.getInstructorCourses = async (req, res) => {
     });
   }
 };
+
+
 // Update Course
 exports.updateCourse = async (req, res) => {
     try {
@@ -275,4 +293,34 @@ exports.createInstructorCourse = async (req, res) => {
             message: error.message 
         });
     }
+};
+
+exports.getCourseStudents = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+
+    const payments = await Payment.find({
+      courseId,
+      status: "success",
+    }).select("studentName userEmail date createdAt");
+
+    const students = payments.map((p) => ({
+      _id: p._id,
+      name: p.studentName,
+      email: p.userEmail,
+      enrolledAt: p.date || p.createdAt,
+    }));
+
+    res.status(200).json({
+      success: true,
+      students,
+    });
+
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
 };
