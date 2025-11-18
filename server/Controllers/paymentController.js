@@ -167,8 +167,14 @@ exports.paymentVerification = async (req, res) => {
 exports.getAllPaymentDetails = async (req, res) => {
 
   try {
-    const { studentName } = req.query
+    const { studentName, status } = req.query
 
+    if (status && !['all', 'pending', 'overdue', 'completed'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status filter. Must be 'all', 'pending', 'overdue', or 'completed'"
+      });
+    }
 
     let query = {}
     if (studentName) {
@@ -183,10 +189,39 @@ exports.getAllPaymentDetails = async (req, res) => {
       })
     }
 
+    let filteredPayments = paymentDetails;
+
+    if (status && status !== 'all') {
+      const currentDate = new Date();
+
+      filteredPayments = paymentDetails.filter(payment => {
+
+        const [month, day, year] = payment.date.split("/").map(Number);
+        const paymentDate = new Date(year, month - 1, day);
+        const dueDate = new Date(paymentDate);
+        dueDate.setMonth(dueDate.getMonth() + 1);
+
+        if (status === 'completed') {
+
+          return !payment.hasMonthlyPayment;
+        } else if (status === 'pending') {
+
+          return payment.hasMonthlyPayment && currentDate <= dueDate;
+        } else if (status === 'overdue') {
+
+          return payment.hasMonthlyPayment && currentDate > dueDate;
+        }
+
+        return false;
+      });
+    }
+
     res.status(200).json({
       success: true,
-      paymentDetails,
-    })
+      paymentDetails: filteredPayments,
+      total: filteredPayments.length
+    });
+
   } catch (error) {
     res.status(500).json({
       success: false,

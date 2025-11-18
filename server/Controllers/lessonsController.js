@@ -186,9 +186,9 @@ exports.updateModuleQuizz = async (req, res) => {
 
 exports.submitModuleQuiz = async (req, res) => {
     try {
-        const { userName, email, moduleName, moduleId, quizId, answer, score, } = req.body;
+        const { userName, email, courseName, moduleName, moduleId, quizId, answer, score, } = req.body;
 
-        if (!userName || !email || !moduleName || !moduleId || !quizId || !answer || !score) {
+        if (!userName || !email || !moduleName || !courseName || !moduleId || !quizId || !answer || !score) {
             return res.status(400).json({
                 success: false,
                 message: "All required fields must be provided",
@@ -203,6 +203,7 @@ exports.submitModuleQuiz = async (req, res) => {
             existingSubmission.answer = answer;
             existingSubmission.score = score;
             existingSubmission.moduleName = moduleName;
+            existingSubmission.courseName = courseName;
             existingSubmission.userName = userName;
             existingSubmission.submittedAt = new Date();
 
@@ -211,6 +212,7 @@ exports.submitModuleQuiz = async (req, res) => {
             submitAnswers = await userSubmitModal.create({
                 userName,
                 email,
+                courseName,
                 moduleName,
                 moduleId,
                 quizId,
@@ -260,7 +262,7 @@ exports.getAllSubmitAnswers = async (req, res) => {
 exports.handleCourseCompetion = async (req, res) => {
     const { email, courseName, studentName } = req.body;
     try {
-        await sendCertificatetoStudent( email, courseName, studentName)
+        await sendCertificatetoStudent(email, courseName, studentName)
         res.json({
             success: true,
             message: "Certificate sent to your email!"

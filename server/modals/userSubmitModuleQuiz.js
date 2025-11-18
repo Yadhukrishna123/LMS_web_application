@@ -10,6 +10,10 @@ const quizAnswerSubmit = new mongoose.Schema({
         type: String,
         required: true
     },
+    courseName:{
+        type: String,
+        required: true
+    },
     moduleName: {
         type: String,
         required: true

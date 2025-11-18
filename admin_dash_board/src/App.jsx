@@ -67,6 +67,7 @@ import SolvedTickets from './components/Tickets & Support/SolvedTickets';
 import Uploadlessions from './components/UploadRecordedVideo.jsx/Uploadlessions';
 import UploadModuleQuizz from './components/UploadRecordedVideo.jsx/UploadModuleQuizz';
 import ViewAllQuizz from './components/UploadRecordedVideo.jsx/ViewAllQuizz';
+import UserModuleQuizSubmission from './components/UploadRecordedVideo.jsx/UserModuleQuizSubmission';
 
 
 
@@ -123,6 +124,7 @@ function App() {
           <Route path="/upload_lesson" element={<Uploadlessions />} />
           <Route path="/upload_module_quizz/:id?" element={<UploadModuleQuizz />} />
           <Route path="/view_all_quizz" element={<ViewAllQuizz />} />
+            <Route path="/view_all_quizz_submit" element={<UserModuleQuizSubmission />} />
 
           
 
