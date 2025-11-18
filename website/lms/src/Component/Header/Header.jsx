@@ -66,7 +66,6 @@ const Header = () => {
         ...commonNav,
         { name: 'My Courses', path: '/my_courses', show: true },
         { name: 'Students', path: '/enrolled_students', show: true },
-        { name: 'Analytics', path: '/course_analytics', show: true },
         { name: 'Contact', path: '/contact', show: true },
       ];
     } else {
