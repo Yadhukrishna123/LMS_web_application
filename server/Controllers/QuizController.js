@@ -156,18 +156,32 @@ exports.getAllSubmittedQuizz = async (req, res) => {
 
 // Get quizzes for an instructor
 exports.getInstructorQuizzes = async (req, res) => {
-  try {
+  try {    
+    const quizzes = await Quiz.find();
     const submissions = await submitanswer.find();
-
+    const merged = quizzes.map((quiz) => {
+      const relatedSubmissions = submissions.filter(
+        (sub) => sub.quizName === quiz.question   
+      );
+      return {
+        ...quiz._doc,
+        quizName: quiz.question,         
+        questions: [quiz],               
+        submissions: relatedSubmissions, 
+      };
+    });
+    
     res.status(200).json({
       success: true,
-      data: submissions,
+      data: merged,
     });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 exports.getQuizById = async (req, res) => {
   try {
