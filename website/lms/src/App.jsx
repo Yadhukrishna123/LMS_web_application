@@ -42,6 +42,7 @@ import CreateInstructorCourse from './Component/Instructors/My Courses/CreateCou
 import InstructorQuizManager from './Component/Instructors/Quiz Manager/InstructorQuizManager'
 import InstructorQuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
 import QuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
+import InstructorAddQuiz from './Component/Instructors/Quiz Manager/InstructorAddQuiz'
 
 
 
@@ -109,8 +110,10 @@ function App() {
 
         <Route path="/enrolled_students" element={<StudentsEnrolledPage />} />
 
+        <Route path="/add_quiz" element={<InstructorAddQuiz />} />
         <Route path="/instructor_quiz_manager" element={<InstructorQuizManager />} />
         <Route path="/instructor_quiz_submissions/:quizId" element={<QuizSubmissions />} />
+
 
 
 
