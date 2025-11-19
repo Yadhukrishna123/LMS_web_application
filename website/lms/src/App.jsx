@@ -40,6 +40,8 @@ import CreateInstructorCourse from './Component/Instructors/My Courses/CreateCou
 import InstructorQuizManager from './Component/Instructors/Quiz Manager/InstructorQuizManager'
 import QuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmissions'
 import InstructorAddQuiz from './Component/Instructors/Quiz Manager/InstructorAddQuiz'
+import SettingsPage from './Component/Instructors/Settings'
+import NotFound from './Component/NotFound'
 
 
 
@@ -106,6 +108,10 @@ function App() {
         <Route path="/add_quiz" element={<InstructorAddQuiz />} />
         <Route path="/instructor_quiz_manager" element={<InstructorQuizManager />} />
         <Route path="/instructor_quiz_submissions/:quizId" element={<QuizSubmissions />} />
+        <Route path="/settings_page" element={<SettingsPage />} />
+
+
+        <Route path="*" element={<NotFound />} />
 
 
 

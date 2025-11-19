@@ -318,19 +318,13 @@ const CourseCardGrid = ({ course, onDelete }) => {
         </div>
 
         {/* Actions */}
-        <div className="grid grid-cols-2 gap-2 mb-2">
+        <div className="grid grid-cols-1 gap-2 mb-2">
           {/*  Use _id instead of id */}
           <Link
             to={`/edit_course/${course._id}`}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-semibold text-center transition"
           >
             <FaEdit className="inline mr-1" /> Edit
-          </Link>
-          <Link
-            to={`/course_analytics/${course._id}`}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-semibold text-center transition"
-          >
-            <FaEye className="inline mr-1" /> Analytics
           </Link>
         </div>
 

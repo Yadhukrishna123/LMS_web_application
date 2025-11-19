@@ -159,7 +159,7 @@ const Header = () => {
       return [
         { name: 'Dashboard', path: '/instructor_page', icon: <LayoutDashboard className="w-4 h-4" />, color: 'blue' },
         { name: 'My Courses', path: '/my_courses', icon: <BookOpen className="w-4 h-4" />, color: 'green' },
-        { name: 'Settings', path: '/settings', icon: <Settings className="w-4 h-4" />, color: 'gray' },
+        { name: 'Settings', path: '/settings_page', icon: <Settings className="w-4 h-4" />, color: 'gray' },
       ];
     } else {
       return [
