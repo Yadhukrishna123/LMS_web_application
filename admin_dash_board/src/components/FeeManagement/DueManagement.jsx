@@ -6,9 +6,10 @@ import PaginationButton from '../PaginationButton/PaginationButton';
 
 const DueManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterStatus, setFilterStatus] = useState('all');
+    // const [filterStatus, setFilterStatus] = useState('all');
     const [feedetail, setFeeDetail] = useState([])
     const [loading, setLoading] = useState(false)
+    const [status, setStatus] = useState("")
     let [currentPage, setCurrentPage] = useState(1)
     let [itemPerPage, setitemPerPage] = useState(6)
     let indexOfLastProduct = currentPage * itemPerPage
@@ -18,7 +19,7 @@ const DueManagement = () => {
     const getAllData = async () => {
         try {
             setLoading(true)
-            let resOne = await axios.get(`http://localhost:8080/api/v1/get_all_payment_details?studentName=${searchTerm}`)
+            let resOne = await axios.get(`http://localhost:8080/api/v1/get_all_payment_details?studentName=${searchTerm}&status=${status}`)
             setFeeDetail(resOne.data.paymentDetails)
             console.log("resOne", resOne);
 
@@ -36,7 +37,7 @@ const DueManagement = () => {
 
     useEffect(() => {
         getAllData()
-    }, [searchTerm])
+    }, [searchTerm, status])
 
     let showDuePayment = feedetail.slice(indexOfFirstnumber, indexOfLastProduct)
 
@@ -48,6 +49,11 @@ const DueManagement = () => {
         dueDate.setMonth(dueDate.getMonth() + 1);
         const pad = (n) => n.toString().padStart(2, "0");
         return `${pad(dueDate.getMonth() + 1)}/${pad(dueDate.getDate())}/${dueDate.getFullYear()}`;
+    }
+
+    const handleFilter = (filter) => {
+        console.log(filter)
+        setStatus(filter)
     }
 
 
@@ -89,8 +95,8 @@ const DueManagement = () => {
 
                         <div className="flex gap-2">
                             <button
-                                onClick={() => setFilterStatus('all')}
-                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${filterStatus === 'all'
+                                onClick={() => handleFilter('all')}
+                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${status === 'all'
                                     ? 'bg-indigo-600 text-white shadow-md'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
@@ -98,8 +104,8 @@ const DueManagement = () => {
                                 All
                             </button>
                             <button
-                                onClick={() => setFilterStatus('pending')}
-                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${filterStatus === 'pending'
+                                onClick={() => handleFilter('pending')}
+                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${status === 'pending'
                                     ? 'bg-amber-600 text-white shadow-md'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
@@ -107,8 +113,8 @@ const DueManagement = () => {
                                 Pending
                             </button>
                             <button
-                                onClick={() => setFilterStatus('overdue')}
-                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${filterStatus === 'overdue'
+                                onClick={() => handleFilter('overdue')}
+                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${status === 'overdue'
                                     ? 'bg-red-600 text-white shadow-md'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
@@ -116,8 +122,8 @@ const DueManagement = () => {
                                 Overdue
                             </button>
                             <button
-                                onClick={() => setFilterStatus('completed')}
-                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${filterStatus === 'completed'
+                                onClick={() => handleFilter('completed')}
+                                className={`px-4 py-2.5 rounded-lg font-medium transition-all ${status === 'completed'
                                     ? 'bg-emerald-600 text-white shadow-md'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
