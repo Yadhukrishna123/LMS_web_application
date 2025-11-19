@@ -35,9 +35,6 @@ const Header = () => {
   const getProfileRoute = () => {
     return user?.role === 'instructor' ? '/instructor_page' : '/user_page';
   };
-  
-
-
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -47,8 +44,6 @@ const Header = () => {
         const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
           withCredentials: true,
         });
-        
-
 
         if (res.data.success) {
           setNotifications(res.data.notifications);
@@ -104,7 +99,6 @@ const Header = () => {
     ];
 
     if (!user) {
-
       return [
         ...commonNav,
         { name: 'Courses', path: '/allcourses', show: true },
@@ -114,14 +108,12 @@ const Header = () => {
     }
 
     if (user.role === 'instructor') {
-
       return [
         ...commonNav,
         { name: 'My Courses', path: '/my_courses', show: true },
         { name: 'Contact', path: '/contact', show: true },
       ];
     } else {
-
       return [
         ...commonNav,
         { name: 'Browse Courses', path: '/allcourses', show: true },
@@ -132,29 +124,16 @@ const Header = () => {
     }
   };
 
-
-  // ROLE-BASED DROPDOWN ITEMS
   const getDropdownItems = () => {
     if (!user) {
       return [
         { name: 'Categories', path: '/cateogeries', icon: <Grid className="w-4 h-4" />, color: 'blue' },
         { name: 'Mentors', path: '/mentors', icon: <Users className="w-4 h-4" />, color: 'green' },
         { name: 'Testimonials', path: '/testimonials', icon: <MessageSquare className="w-4 h-4" />, color: 'purple' },
-
-
-  const getDropdownItems = () => {
-    if (!user) {
-
-      return [
-        { name: 'Categories', path: '/cateogeries', },
-        { name: 'Mentors', path: '/mentors', },
-        { name: 'Testimonials', path: '/testimonials', },
-
       ];
     }
 
     if (user.role === 'instructor') {
-
       return [
         { name: 'Create Course', path: '/create_course', icon: <Plus className="w-4 h-4" />, color: 'blue' },
         { name: 'Quiz Manager', path: '/instructor_quiz_manager', icon: <FileText className="w-4 h-4" />, color: 'orange' },
@@ -166,21 +145,6 @@ const Header = () => {
         { name: 'Mentors', path: '/mentors', icon: <Users className="w-4 h-4" />, color: 'green' },
         { name: 'Testimonials', path: '/testimonials', icon: <MessageSquare className="w-4 h-4" />, color: 'purple' },
         { name: 'Help & Support', path: '/help', icon: <HelpCircle className="w-4 h-4" />, color: 'orange' },
-
-
-      return [
-        { name: 'Create Course', path: '/create_course', },
-        { name: 'Quiz Manager', path: '/instructor_quiz_manager', },
-        { name: 'Help & Support', path: '/help', },
-      ];
-    } else {
-   
-      return [
-        { name: 'Categories', path: '/cateogeries', },
-        { name: 'Mentors', path: '/mentors', },
-        { name: 'Testimonials', path: '/testimonials', },
-        { name: 'Help & Support', path: '/help', },
-
       ];
     }
   };
@@ -190,7 +154,6 @@ const Header = () => {
 
     if (user.role === 'instructor') {
       return [
-
         { name: 'Dashboard', path: '/instructor_page', icon: <LayoutDashboard className="w-4 h-4" />, color: 'blue' },
         { name: 'My Courses', path: '/my_courses', icon: <BookOpen className="w-4 h-4" />, color: 'green' },
         { name: 'Settings', path: '/settings_page', icon: <Settings className="w-4 h-4" />, color: 'gray' },
@@ -201,16 +164,6 @@ const Header = () => {
         { name: 'My Courses', path: '/user_page', icon: <BookOpen className="w-4 h-4" />, color: 'green' },
         { name: 'Certificates', path: '/certificates', icon: <Award className="w-4 h-4" />, color: 'yellow' },
         { name: 'Settings', path: '/settings', icon: <Settings className="w-4 h-4" />, color: 'gray' },
-
-        { name: 'Dashboard', path: '/instructor_page', },
-        { name: 'My Courses', path: '/instructor/courses', },
-        { name: 'Earnings', path: '/instructor/earnings', },
-        { name: 'Settings', path: '/settings', },
-      ];
-    } else {
-      return [
-        { name: 'My Profile', path: '/user_page', },
-        { name: 'Certificates', path: '/certificates', },
       ];
     }
   };
@@ -287,17 +240,7 @@ const Header = () => {
               className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 flex items-center space-x-2"
             >
               <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
-
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
             </button>
 
             {isDropdownOpen && (
@@ -327,20 +270,6 @@ const Header = () => {
                   </div>
                 </div>
               </>
-
-              <div className="absolute top-full left-0 bg-white shadow-xl rounded-xl mt-2 w-52 z-50 border border-gray-100 overflow-hidden">
-                {dropdownItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    to={item.path}
-                    className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-150"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <span>{item.icon}</span>
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-              </div>
             )}
           </div>
         </nav>
@@ -359,14 +288,6 @@ const Header = () => {
                     </span>
                   )}
                 </div>
-        <div className='hidden lg:flex items-center space-x-6'>
-          {user ? (
-            <>
-              <Link to="/notification" className="relative hover:opacity-80 transition">
-                <FaBell size={24} className="text-gray-700" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {unreadCount}
-                </span>
               </Link>
 
               {user.role === 'instructor' && (
@@ -382,8 +303,6 @@ const Header = () => {
               <div className="relative">
                 <button 
                   className="flex items-center gap-3 p-2 pr-3 rounded-xl hover:bg-gray-100 transition-all" 
-                <button
-                  className="text-gray-700 relative flex items-center space-x-2"
                   onClick={() => setOpenProfile(!openProfile)}
                 >
                   {/* Avatar */}
@@ -405,7 +324,6 @@ const Header = () => {
                 </button>
 
                 {openProfile && (
-
                   <>
                     <div 
                       className="fixed inset-0 z-40" 
@@ -469,49 +387,6 @@ const Header = () => {
                       </div>
                     </div>
                   </>
-
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50">
-                    {/* User Info Header */}
-                    <div className="px-4 py-3 border-b bg-gray-50">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {user.name || 'User'}
-                      </p>
-                      <p className="text-xs text-indigo-600 capitalize font-medium mt-1">
-                        {user.role === 'instructor' ? ' Instructor' : ' Student'}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">{user.email}</p>
-                    </div>
-
-                   
-                    <ul className="py-2">
-                      {profileMenuItems.map((item, index) => (
-                        <li key={index}>
-                          <Link
-                            to={item.path}
-                            className="flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-100 text-gray-700"
-                            onClick={() => setOpenProfile(false)}
-                          >
-                            <span>{item.icon}</span>
-                            <span>{item.name}</span>
-                          </Link>
-                        </li>
-                      ))}
-
-                    
-                      <li className="border-t mt-2 pt-2">
-                        <button
-                          onClick={() => {
-                            setLogout(true);
-                            setOpenProfile(false);
-                          }}
-                          className='flex items-center space-x-2 w-full text-left text-red-500 font-medium cursor-pointer px-4 py-2.5 hover:bg-red-50'
-                        >
-                          <span>Logout</span>
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-
                 )}
               </div>
             </>
@@ -581,12 +456,9 @@ const Header = () => {
             {mainNavigation.map((item, index) => (
               item.show && (
                 <Link
-
+                  key={index}
                   to={item.path} 
                   className="px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium"
-
-                  to={item.path}
-                  className="px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}
@@ -602,19 +474,6 @@ const Header = () => {
               >
                 <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors'
-              >
-                <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
 
               {isDropdownOpen && (
@@ -624,9 +483,6 @@ const Header = () => {
                       key={index}
                       to={item.path} 
                       className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
-
-                      to={item.path}
-                      className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-indigo-600 rounded-lg hover:bg-indigo-50"
                       onClick={() => setIsOpen(false)}
                     >
                       <div className={`w-9 h-9 rounded-lg ${getColorClasses(item.color)} flex items-center justify-center`}>
@@ -643,12 +499,8 @@ const Header = () => {
             {user ? (
               <>
                 {user.role === 'instructor' && (
-
                   <Link 
                     to="/create_course"
-
-                  <Link
-                    to="/instructor/create-course"
                     className="mt-2 w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 font-semibold text-center"
                     onClick={() => setIsOpen(false)}
                   >
