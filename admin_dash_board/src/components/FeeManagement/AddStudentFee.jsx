@@ -60,11 +60,13 @@ const AddStudentFee = ({ setShowForm }) => {
 
         if (name === "courseName") {
             const selectedCourse = courses.find((c) => c.title === value)
-            setInput({ ...input, [name]: value, totalFee: selectedCourse ? selectedCourse.price : 0 })
+            const coursePrice = selectedCourse && typeof selectedCourse.price === "number" ? selectedCourse.price : 0;
+            setInput({ ...input, [name]: value, totalFee: coursePrice })
         } else {
             setInput({
                 ...input,
                 [name]: value,
+              
             });
         }
     }

@@ -3,8 +3,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import { AllCourseDetail } from '../AllCourseContext/Context';
 import axios from 'axios';
 
-const ModuleQuizz = ({ currentQuizz, onBack, moduleName, moduleId, currentQuizId, onQuizSubmitSuccess }) => {
-  console.log(moduleId)
+const ModuleQuizz = ({ currentQuizz, onBack, moduleName, moduleId, currentQuizId, onQuizSubmitSuccess , courseName}) => {
+  console.log(courseName)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState("");
   let [quizz, setQuizz] = useState([])
@@ -82,6 +82,7 @@ const ModuleQuizz = ({ currentQuizz, onBack, moduleName, moduleId, currentQuizId
         const payload = {
           userName: `${user.firstname} ${user.lastname}`,
           email: user.email,
+          courseName:courseName,
           moduleName: moduleName,
           moduleId: moduleId,
           quizId: currentQuizId,

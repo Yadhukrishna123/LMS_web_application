@@ -20,12 +20,14 @@ const Detailpage = () => {
   const [message, setMessage] = useState("")
   const [feedbacks, setFeedbacks] = useState([])
   const [enrolled, setEnrolled] = useState(false)
+  const [isCourseFree, setIsCourseFree] = useState(false)
   console.log(course)
   console.log(course.courseModules)
   const getCourseDetails = async () => {
     try {
       setLoading(true)
       let res = await axios.get(`http://localhost:8080/api/v1/get_course/${id}`)
+      console.log(res)
       setCourse(res.data.data)
       let getAllFeedbacks = await axios.get("http://localhost:8080/api/v1/get_all_feedback")
       setFeedbacks(getAllFeedbacks.data.feedbacks)
@@ -35,6 +37,8 @@ const Detailpage = () => {
         userEmail: user?.email,
         courseId: id
       })
+
+      console.log(checkEnrollment.data)
 
       if (checkEnrollment.data && checkEnrollment.data.success) {
         setEnrolled(checkEnrollment.data.enrolled);
@@ -180,14 +184,18 @@ const Detailpage = () => {
                     >
                       ✅ You are enrolled
                     </button>
-                    <Link to={`/lern/${course._id}`}>
-                      <button
+                    {course.isFree && (
+                      <Link to={`/lern/${course._id}`}>
+                        <button
                         
-                        className="px-8 ms-5 py-4 bg-gray-200 text-purple-600 rounded-xl font-bold text-lg shadow-lg  transition-all duration-200"
-                      >
-                        Start lerning
-                      </button>
-                    </Link>
+
+                          className="px-8 ms-5 py-4 bg-gray-200 text-purple-600 rounded-xl font-bold text-lg shadow-lg  transition-all duration-200"
+                        >
+                          Start lerning
+                        </button>
+                      </Link>
+                    )}
+
                   </>
 
                 ) : (

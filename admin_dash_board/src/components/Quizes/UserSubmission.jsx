@@ -44,11 +44,7 @@ const UserSubmission = () => {
     return 'bg-orange-100 text-orange-700 border-orange-200';
   };
 
-  // Filter results based on search
-  // const filteredResults = results.filter(result =>
-  //   result.userName.toLowerCase().includes(search.toLowerCase()) ||
-  //   result.email.toLowerCase().includes(search.toLowerCase())
-  // );
+ 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">

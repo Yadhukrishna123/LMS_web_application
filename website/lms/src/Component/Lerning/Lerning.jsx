@@ -424,6 +424,7 @@ const Lerning = () => {
           onBack={handleBackFromQuiz}
           currentQuizId={currentQuizId}
           onQuizSubmitSuccess={onQuizSubmitSuccess}
+          courseName = {course?.title}
         />
       ) : clickReview ? (
         <ModuleQuizReview
