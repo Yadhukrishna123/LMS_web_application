@@ -192,7 +192,7 @@ const UserPage = () => {
 
  <div className="space-y-8 px-4 sm:px-6 lg:px-20 py-10 bg-gray-50">
       
-      {/* Learning Statistics */}
+   
       <section className="bg-white rounded-3xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           <FaChartLine className="text-blue-600" />
@@ -218,11 +218,7 @@ const UserPage = () => {
             <div className="text-sm text-gray-600 mt-1">Enrolled</div>
           </div>
           
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaFire className="text-orange-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-orange-600">{stats.currentStreak}</div>
-            <div className="text-sm text-gray-600 mt-1">Day Streak</div>
-          </div>
+         
           
           <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 hover:shadow-lg transition-all">
             <FaCertificate className="text-yellow-600 text-2xl mb-2" />
@@ -381,7 +377,7 @@ const UserPage = () => {
         </div>
       </section>
 
-      {/* Recent Activity */}
+      {/* Recent Activity
       <section className="bg-white rounded-3xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           <FaClock className="text-green-600" />
@@ -414,7 +410,7 @@ const UserPage = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
     </div>
 

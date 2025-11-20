@@ -1,9 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaTrash, FaQuestionCircle } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from "sweetalert2";
 
 const UploadModuleQuizz = () => {
     const [isEdit, setIsEdit] = useState(false)
@@ -12,6 +14,7 @@ const UploadModuleQuizz = () => {
     const [loading, setLoading] = useState(false);
     const [courseid, setCourseid] = useState("")
     const { id } = useParams()
+    const navigate = useNavigate()
     const [quiz, setQuiz] = useState({
         course: "",
         moduleQuizz: [
@@ -23,6 +26,7 @@ const UploadModuleQuizz = () => {
             }
         ]
     });
+
 
 
     const getAllCourseDetails = async () => {
@@ -156,6 +160,24 @@ const UploadModuleQuizz = () => {
                 }
                 let editRes = await axios.put(`http://localhost:8080/api/v1/get_module_quiz/${id}`, payload)
                 console.log(editRes);
+
+
+                if (editRes.data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Updated!",
+                        text: editRes.data.message || "Changes have been saved successfully.",
+                        showConfirmButton: false,
+                        timer: 1800,
+                    });
+
+                    await new Promise((back) => setTimeout(back, 2000))
+
+                    navigate("/view_all_quizz")
+
+
+                }
+
 
             } else {
                 const res = await axios.post("http://localhost:8080/api/v1/create_module_quizz", {

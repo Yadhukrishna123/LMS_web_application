@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBell } from "react-icons/fa";
-import { 
-  User, 
-  BookOpen, 
-  Award, 
-  LayoutDashboard, 
+import {
+  User,
+  BookOpen,
+  Award,
+  LayoutDashboard,
   LogOut,
   ChevronDown,
   Settings,
@@ -28,7 +28,7 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [isLogout, setLogout] = useState(false);
-  const token = localStorage.getItem('token');
+
 
   const toggleDropdown = () => setIsDropdownOpen(prev => !prev);
 
@@ -44,6 +44,7 @@ const Header = () => {
         const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
           withCredentials: true,
         });
+        console.log(res)
 
         if (res.data.success) {
           setNotifications(res.data.notifications);
@@ -53,38 +54,34 @@ const Header = () => {
       }
     };
     fetchNotifications();
-  }, [token]);
+  }, []);
 
-  // Get user display name with multiple fallbacks
   const getUserDisplayName = () => {
     if (!user) return 'User';
-    
-    // Try different possible name fields
+
     const possibleName = user.name || user.username || user.fullName || user.firstName;
-    
+
     if (possibleName) {
       return possibleName;
     }
-    
-    // If no name, extract from email
+
     if (user.email) {
-      const emailName = user.email.split('@')[0];
-      // Convert meera.pillai to Meera Pillai
+      const emailName = user.firstname.split('@')[0];
       return emailName
         .split('.')
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
     }
-    
+
     return 'User';
   };
 
-  // Get initials for avatar
+
   const getUserInitials = () => {
     const displayName = getUserDisplayName();
-    
+
     if (displayName === 'User') return 'U';
-    
+
     const words = displayName.split(' ');
     if (words.length >= 2) {
       return (words[0][0] + words[words.length - 1][0]).toUpperCase();
@@ -172,7 +169,6 @@ const Header = () => {
   const dropdownItems = getDropdownItems();
   const profileMenuItems = getProfileMenuItems();
 
-  // Get color classes for icons
   const getColorClasses = (color) => {
     const colors = {
       blue: 'bg-blue-100 text-blue-600',
@@ -185,7 +181,6 @@ const Header = () => {
     return colors[color] || colors.blue;
   };
 
-  // Avatar colors based on user name
   const getAvatarGradient = () => {
     const gradients = [
       'from-blue-400 to-blue-600',
@@ -199,7 +194,6 @@ const Header = () => {
     return gradients[index];
   };
 
-  // Get formatted role display
   const getRoleDisplay = () => {
     if (!user?.role) return 'Student';
     return user.role.charAt(0).toUpperCase() + user.role.slice(1);
@@ -210,7 +204,6 @@ const Header = () => {
       {isLogout && <Logout setLogout={setLogout} />}
 
       <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-        {/* Logo */}
         <div className="text-2xl font-bold text-blue-600 cursor-pointer" onClick={() => navigate('/')}>
           <img
             className='sm:w-24'
@@ -219,7 +212,6 @@ const Header = () => {
           />
         </div>
 
-        {/* DESKTOP NAVIGATION */}
         <nav className="hidden lg:flex items-center space-x-1">
           {mainNavigation.map((item, index) => (
             item.show && (
@@ -245,16 +237,16 @@ const Header = () => {
 
             {isDropdownOpen && (
               <>
-                <div 
-                  className="fixed inset-0 z-40" 
+                <div
+                  className="fixed inset-0 z-40"
                   onClick={() => setIsDropdownOpen(false)}
                 ></div>
                 <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 p-3">
                   <div className="grid gap-2">
                     {dropdownItems.map((item, index) => (
-                      <Link 
+                      <Link
                         key={index}
-                        to={item.path} 
+                        to={item.path}
                         className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-indigo-50 rounded-xl transition-all group border border-transparent hover:border-indigo-200"
                         onClick={() => setIsDropdownOpen(false)}
                       >
@@ -274,11 +266,11 @@ const Header = () => {
           </div>
         </nav>
 
-        {/* DESKTOP PROFILE SECTION */}
+
         <div className='hidden lg:flex items-center space-x-6'>
           {user ? (
             <>
-              {/* Notification Bell */}
+
               <Link to="/notification" className="relative group">
                 <div className="p-3 bg-gray-100 hover:bg-indigo-100 rounded-xl transition-all">
                   <FaBell size={20} className="text-gray-700 group-hover:text-indigo-600" />
@@ -299,17 +291,17 @@ const Header = () => {
                 </Link>
               )}
 
-              {/* Profile Dropdown */}
+
               <div className="relative">
-                <button 
-                  className="flex items-center gap-3 p-2 pr-3 rounded-xl hover:bg-gray-100 transition-all" 
+                <button
+                  className="flex items-center gap-3 p-2 pr-3 rounded-xl hover:bg-gray-100 transition-all"
                   onClick={() => setOpenProfile(!openProfile)}
                 >
                   {/* Avatar */}
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getAvatarGradient()} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
                     {getUserInitials()}
                   </div>
-                  
+
                   {/* User Name & Role */}
                   <div className="hidden xl:block text-left">
                     <p className="text-sm font-semibold text-gray-900 leading-tight">
@@ -319,18 +311,18 @@ const Header = () => {
                       {getRoleDisplay()}
                     </p>
                   </div>
-                  
+
                   <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${openProfile ? 'rotate-180' : ''}`} />
                 </button>
 
                 {openProfile && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-40" 
+                    <div
+                      className="fixed inset-0 z-40"
                       onClick={() => setOpenProfile(false)}
                     ></div>
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
-                      {/* Profile Header */}
+
                       <div className="p-6 bg-gradient-to-br from-gray-50 to-indigo-50 border-b border-gray-100">
                         <div className="flex items-center gap-4">
                           <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${getAvatarGradient()} flex items-center justify-center text-white font-bold text-2xl shadow-lg`}>
@@ -350,14 +342,14 @@ const Header = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Menu Items */}
                       <div className="p-3">
                         <div className="space-y-2">
                           {profileMenuItems.map((item, index) => (
-                            <Link 
+                            <Link
                               key={index}
-                              to={item.path} 
+                              to={item.path}
                               className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-all group"
                               onClick={() => setOpenProfile(false)}
                             >
@@ -368,14 +360,14 @@ const Header = () => {
                             </Link>
                           ))}
                         </div>
-                        
+
                         {/* Logout */}
                         <div className="mt-3 pt-3 border-t border-gray-100">
-                          <button 
+                          <button
                             onClick={() => {
                               setLogout(true);
                               setOpenProfile(false);
-                            }} 
+                            }}
                             className='flex items-center gap-3 w-full p-3 text-red-600 hover:bg-red-50 rounded-xl transition-all group'
                           >
                             <div className="w-9 h-9 rounded-lg bg-red-100 text-red-600 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -436,8 +428,8 @@ const Header = () => {
                       <span className="text-xs font-medium text-gray-700 capitalize">{getRoleDisplay()}</span>
                     </div>
                   </div>
-                  <Link 
-                    to="/notification" 
+                  <Link
+                    to="/notification"
                     className="relative p-2 bg-white rounded-lg shadow-sm"
                     onClick={() => setIsOpen(false)}
                   >
@@ -457,7 +449,7 @@ const Header = () => {
               item.show && (
                 <Link
                   key={index}
-                  to={item.path} 
+                  to={item.path}
                   className="px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium"
                   onClick={() => setIsOpen(false)}
                 >
@@ -468,8 +460,8 @@ const Header = () => {
 
             {/* Mobile Dropdown */}
             <div>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium'
               >
                 <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
@@ -481,7 +473,7 @@ const Header = () => {
                   {dropdownItems.map((item, index) => (
                     <Link
                       key={index}
-                      to={item.path} 
+                      to={item.path}
                       className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
                       onClick={() => setIsOpen(false)}
                     >
@@ -499,7 +491,7 @@ const Header = () => {
             {user ? (
               <>
                 {user.role === 'instructor' && (
-                  <Link 
+                  <Link
                     to="/create_course"
                     className="mt-2 w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 font-semibold text-center"
                     onClick={() => setIsOpen(false)}
