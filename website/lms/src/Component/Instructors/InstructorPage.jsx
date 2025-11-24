@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  FaBook, 
-  FaUsers, 
-  FaDollarSign, 
+import React, { useEffect, useState, useContext } from 'react';
+import {
+  FaBook,
+  FaUsers,
+  FaDollarSign,
   FaStar,
   FaChartLine,
   FaPlus,
@@ -15,18 +15,27 @@ import {
   FaPhone,
   FaLinkedin,
   FaGithub,
-  FaGlobe
+  FaGlobe,
+  FaSass
 } from 'react-icons/fa';
+import { MdAssignment } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import AddInstructors from '../Instructors/AddInstructors'
+import UploadAssignment from './UploadAssignment';
+import { AllCourseDetail } from '../AllCourseContext/Context';
 
 const InstructorPage = () => {
+  const { user } = useContext(AllCourseDetail);
+
   const [instructorData, setInstructorData] = useState(null);
   const [email, setEmail] = useState(null);
-  const [instructorDetails, setInstructorDetails] = useState(null); 
+  const [instructorDetails, setInstructorDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false); 
+  const [showForm, setShowForm] = useState(false);
+  const [clickCreateAssignMent, setClickCreateAssignment] = useState(false)
+  const [course, setCourse] = useState([])
+
   const [stats, setStats] = useState({
     totalCourses: 0,
     totalStudents: 0,
@@ -34,17 +43,14 @@ const InstructorPage = () => {
     averageRating: 0
   });
 
-  useEffect(() => {
-    fetchInstructorData();
-    fetchInstructorDetails();
-  }, []);
+
 
   const fetchInstructorData = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/me`, {
         withCredentials: true
       });
-      
+
       if (res.data.success) {
         setInstructorData(res.data.user);
         setEmail(res.data.user.email);
@@ -59,25 +65,34 @@ const InstructorPage = () => {
 
   const fetchInstructorDetails = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/v1/get_instructor_details', {
-        withCredentials: true
-      });
-      
-      console.log('Instructor Details:', res.data);
-      
-      if (res.data.success && res.data.instructorDetails) {
-        setInstructorDetails(res.data.instructorDetails);
+      setLoading(true)
+      const res = await axios.get('http://localhost:8080/api/v1/get_all_courses');
+      setCourse(res.data.courses)
+      console.log(res)
+      if (res.data.success && res.data.courses) {
+        setCourse(res.data.courses)
       }
     } catch (error) {
       console.error('Error fetching instructor details:', error);
+    } finally {
+      setLoading(false)
     }
   };
 
-  const recentCourses = [
-    { id: 1, title: 'React Masterclass 2024', students: 245, rating: 4.8, status: 'Published' },
-    { id: 2, title: 'Node.js Backend Development', students: 189, rating: 4.6, status: 'Published' },
-    { id: 3, title: 'Full Stack Web Development', students: 312, rating: 4.9, status: 'Draft' },
-  ];
+
+  useEffect(() => {
+    fetchInstructorData();
+    fetchInstructorDetails();
+  }, []);
+
+  const filtered = course.filter(
+    (item) => item.instructoremail === instructorData?.email
+  );
+
+  const totalCourse = filtered.length
+  console.log(totalCourse)
+
+
 
   const recentStudents = [
     { id: 1, name: 'John Doe', course: 'React Masterclass', enrolledDate: '2024-01-10' },
@@ -90,6 +105,12 @@ const InstructorPage = () => {
     { id: 2, title: 'Q&A Session', time: '2:00 PM', date: 'Tomorrow' },
     { id: 3, title: 'Course Review Meeting', time: '4:00 PM', date: 'Jan 15' },
   ];
+
+  console.log("Instructor Email:", instructorData?.email);
+  console.log("Courses:", course);
+
+
+
 
   if (loading) {
     return (
@@ -104,7 +125,7 @@ const InstructorPage = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-xl text-gray-600">Failed to load instructor data</p>
-          <button 
+          <button
             onClick={fetchInstructorData}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
@@ -117,8 +138,12 @@ const InstructorPage = () => {
 
   return (
     <>
-      {/* Modal - Rendered outside main content */}
+
       {showForm && <AddInstructors setShowForm={setShowForm} emailll={email} />}
+      {clickCreateAssignMent && <UploadAssignment
+        setClickCreateAssignment={setClickCreateAssignment}
+        clickCreateAssignMent={clickCreateAssignMent}
+      />}
 
       {/* Main Page Content */}
       <div className="min-h-screen bg-gray-50 p-6">
@@ -131,19 +156,19 @@ const InstructorPage = () => {
                   Welcome back, {instructorData.firstname} {instructorData.lastname}! 👋
                 </h1>
                 <p className="text-blue-100 text-lg">
-                  {instructorDetails?.specialization 
-                    ? `Expert in ${instructorDetails.specialization}` 
+                  {instructorDetails?.specialization
+                    ? `Expert in ${instructorDetails.specialization}`
                     : 'Ready to inspire minds today?'}
                 </p>
               </div>
-              
+
               {/* Profile Image */}
               <div className="flex-shrink-0">
                 {instructorDetails?.image ? (
-                  <img 
-                    src={instructorDetails.image} 
+                  <img
+                    src={instructorDetails.image}
                     alt={instructorData.firstname}
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4  shadow-lg"
                   />
                 ) : (
                   <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white bg-opacity-30 flex items-center justify-center border-4 border-white shadow-lg">
@@ -275,7 +300,7 @@ const InstructorPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-500 text-sm font-medium">Total Courses</p>
-                  <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.totalCourses || 12}</h3>
+                  <h3 className="text-3xl font-bold text-gray-900 mt-1">{totalCourse}</h3>
                   <p className="text-green-600 text-xs mt-1">↑ 2 this month</p>
                 </div>
                 <div className="bg-blue-100 p-3 rounded-lg">
@@ -348,13 +373,13 @@ const InstructorPage = () => {
                 <span className="font-semibold text-sm">Manage Courses</span>
               </Link>
 
-              <Link
-                to="/instructor/analytics"
+              <button
+                onClick={() => setClickCreateAssignment(true)}
                 className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-sm hover:shadow-md"
               >
-                <FaChartLine className="text-xl" />
-                <span className="font-semibold text-sm">View Analytics</span>
-              </Link>
+                <MdAssignment className="text-xl" />
+                <span className="font-semibold text-sm">Upload Assignment</span>
+              </button>
 
               <Link
                 to="/instructor/schedule"
@@ -383,9 +408,9 @@ const InstructorPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {recentCourses.map((course) => (
+                  {filtered && filtered.map((course, i) => (
                     <div
-                      key={course.id}
+                      key={i}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
                     >
                       <div className="flex items-center gap-4 flex-1">
@@ -396,21 +421,20 @@ const InstructorPage = () => {
                           <h3 className="font-semibold text-gray-900 text-sm truncate">{course.title}</h3>
                           <div className="flex items-center gap-3 mt-1">
                             <span className="text-xs text-gray-600 flex items-center gap-1">
-                              <FaUsers className="text-xs" /> {course.students}
+                              <FaUsers className="text-xs" /> 0
                             </span>
                             <span className="text-xs text-gray-600 flex items-center gap-1">
-                              <FaStar className="text-yellow-500 text-xs" /> {course.rating}
+                              <FaStar className="text-yellow-500 text-xs" /> 0
                             </span>
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <span
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                            course.status === 'Published'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          }`}
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${course.status === 'Published'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                            }`}
                         >
                           {course.status}
                         </span>
@@ -470,13 +494,12 @@ const InstructorPage = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Verification</span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      instructorData.verificationStatus === 'approved' 
-                        ? 'bg-green-500' 
-                        : instructorData.verificationStatus === 'pending'
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${instructorData.verificationStatus === 'approved'
+                      ? 'bg-green-500'
+                      : instructorData.verificationStatus === 'pending'
                         ? 'bg-yellow-500'
                         : 'bg-red-500'
-                    }`}>
+                      }`}>
                       {instructorData.verificationStatus?.toUpperCase()}
                     </span>
                   </div>

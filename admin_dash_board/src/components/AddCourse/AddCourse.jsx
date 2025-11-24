@@ -10,6 +10,7 @@ const AddCourse = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [instrectorEmail, setInstrectorEmail] = useState("")
 
   const coursesFields = [
 
@@ -49,8 +50,8 @@ const AddCourse = () => {
     category: "",
     tags: "",
     image: null,
-    instructor: "",       
-    instructorName: "",    
+    instructor: "",
+    instructorName: "",
     instructorBio: "",
     hasMonthlyPayment: false,
     monthlyAmount: "",
@@ -63,10 +64,14 @@ const AddCourse = () => {
   const getAllDetails = async () => {
     try {
       setLoading(true)
-      const instRes = await axios.get("http://localhost:8080/api/v1/view_instructor");
-      setInstructors(instRes.data.data);
+      const insterecters = await axios.get("http://localhost:8080/api/v1/get_all_approved_instrectors");
+
+      console.log(insterecters)
+
+      setInstructors(insterecters.data.instrecters);
       const catRes = await axios.get("http://localhost:8080/api/v1/view_All_categories");
       console.log(catRes);
+
 
       setCategories(catRes.data.allCoursecategory);
     } catch (error) {
@@ -114,6 +119,11 @@ const AddCourse = () => {
     }
   };
 
+  const handleEmail = (email) => {
+    console.log(email)
+    setInstrectorEmail(email)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -143,9 +153,8 @@ const AddCourse = () => {
         tags: inputs.tags,
         image: imageUrl,
         courseModules: inputs.modules,
-        instructor: inputs.instructor,        
-        instructorName: inputs.instructorName,
-        instructorBio: inputs.instructorBio,
+        instructor: inputs.instructor,
+        instructoremail: instrectorEmail,
         hasMonthlyPayment: inputs.hasMonthlyPayment,
         monthlyAmount: inputs.monthlyAmount
 
@@ -335,80 +344,64 @@ const AddCourse = () => {
 
             <div className="p-8 space-y-6">
 
-<div>
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    Select Instructor *
-  </label>
-  <select
-    onChange={(e) => {
-      const selectedInstructor = instructors.find(
-        inst => inst._id === e.target.value
-      );
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Select Instructor *
+                </label>
+                <select
+                  value={inputs.instructor}
+                  onChange={(e) => {
+                    handleChange(e)
+                    handleEmail(e.target.value)
+                  }}
 
-      if (selectedInstructor) {
-        setInputes({
-          ...inputs,
-          instructor: selectedInstructor._id,
-          instructorName: selectedInstructor.name,        // ✅ FIX: Use 'name' (not firstname + lastname)
-          instructorBio: selectedInstructor.bio || ""     // ✅ FIX: Use 'bio' (not expertise)
-        });
-      } else {
-        setInputes({
-          ...inputs,
-          instructor: "",
-          instructorName: "",
-          instructorBio: ""
-        });
-      }
-    }}
-    value={inputs.instructor}
-    name="instructor"
-    required
-    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
-  >
-    <option value="">Choose an instructor...</option>
-    {instructors.map((inst) => (
-      <option key={inst._id} value={inst._id}>
-        {inst.name} - {inst.email}
-      </option>
-    ))}
-  </select>
-</div>
+                  name="instructor"
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-fuchsia-500 focus:outline-none transition-colors"
+                >
+                  <option value="">Choose an instructor...</option>
+                  {instructors.map((inst, i) => (
+                    <option key={i} value={inst.email}>
+                      {`${inst.firstname} ${inst.lastname} - ${inst.expertise}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-{/* Selected Instructor Preview */}
-{inputs.instructor && (
-  <div className="bg-gradient-to-r from-fuchsia-50 to-pink-50 p-6 rounded-xl border-2 border-fuchsia-200">
-    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-      <span className="w-6 h-6 bg-fuchsia-600 text-white rounded-full flex items-center justify-center text-xs">
-        ✓
-      </span>
-      Selected Instructor Details
-    </h3>
-    
-    <div className="space-y-3">
-      <div>
-        <p className="text-xs text-gray-500 mb-1">Name</p>
-        <p className="font-semibold text-gray-800">{inputs.instructorName}</p>
-      </div>
-      
-      {inputs.instructorBio && (
-        <div>
-          <p className="text-xs text-gray-500 mb-1">Bio</p>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {inputs.instructorBio}
-          </p>
-        </div>
-      )}
-      
-      {!inputs.instructorBio && (
-        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
-          ⚠️ This instructor hasn't added a bio yet
-        </p>
-      )}
-    </div>
-  </div>
-)}
-            </div>  
+              {/* Selected Instructor Preview */}
+              {/* {inputs.instructor && (
+                <div className="bg-gradient-to-r from-fuchsia-50 to-pink-50 p-6 rounded-xl border-2 border-fuchsia-200">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-fuchsia-600 text-white rounded-full flex items-center justify-center text-xs">
+                      ✓
+                    </span>
+                    Selected Instructor Details
+                  </h3>
+
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Name</p>
+                      <p className="font-semibold text-gray-800">{inputs.instructorName}</p>
+                    </div>
+
+                    {inputs.instructorBio && (
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Bio</p>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {inputs.instructorBio}
+                        </p>
+                      </div>
+                    )}
+
+                    {!inputs.instructorBio && (
+                      <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+                        ⚠️ This instructor hasn't added a bio yet
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )} */}
+            </div>
           </div>
 
           {/* modules */}

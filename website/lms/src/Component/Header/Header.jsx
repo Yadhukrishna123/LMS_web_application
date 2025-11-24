@@ -66,7 +66,7 @@ const Header = () => {
     }
 
     if (user.email) {
-      const emailName = user.firstname.split('@')[0];
+      const emailName = `${user.firstname} ${user.lastname}`.split('@')[0];
       return emailName
         .split('.')
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))

@@ -27,8 +27,12 @@ const AddInstructors = ({ setShowForm, emailll }) => {
 
     const handleChange = (e) => {
         const { name, files, value } = e.target;
-        if (files && files.length > 0) setInputs({ ...inputs, [name]: files[0] });
-        else setInputs({ ...inputs, [name]: value });
+        if (files && files.length > 0) {
+            setInputs({ ...inputs, [name]: files[0] });
+        } else {
+            setInputs({ ...inputs, [name]: value });
+        }
+
     };
 
     const handleSubmit = async (e) => {
@@ -92,10 +96,10 @@ const AddInstructors = ({ setShowForm, emailll }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
             <ToastContainer position="top-right" />
-            
+
             {/* Click outside to close */}
-            <div 
-                className="absolute inset-0" 
+            <div
+                className="absolute inset-0"
                 onClick={() => setShowForm(false)}
             ></div>
 

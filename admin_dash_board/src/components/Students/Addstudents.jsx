@@ -141,7 +141,7 @@ const AddStudents = () => {
             <input
               type="file"
               name="profileImage"
-              accept="image/*"
+              // accept="image/*"
               onChange={handleChange}
               className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none hover:border-blue-400 transition"
             />

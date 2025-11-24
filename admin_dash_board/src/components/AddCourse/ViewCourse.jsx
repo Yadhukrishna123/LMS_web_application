@@ -47,6 +47,22 @@ const ViewCourses = () => {
     }
   ];
 
+  const courseUpdateInput = {
+    title: "",
+    description: "",
+    price: "",
+    isFree: false,
+    duration: "",
+    category: "",
+    tags: "",
+    image: null,
+    instructor: "",
+    instructorName: "",
+    instructorBio: "",
+    hasMonthlyPayment: false,
+    monthlyAmount: "",
+  }
+
 
 
   const getCourses = async () => {
@@ -177,6 +193,10 @@ const ViewCourses = () => {
     printWindow.print();
   };
 
+  const handleEdit = (id) => {
+    setId(id);
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       {deleteClick && (
@@ -188,7 +208,12 @@ const ViewCourses = () => {
           onTimeDelete={onTimeDelete}
         />
       )}
-      {showEditPopop && <Edit field={coursesFields} setShowEditPopup={setShowEditPopup} />}
+      {showEditPopop && <Edit
+        field={coursesFields}
+        updateInput={courseUpdateInput}
+        setShowEditPopup={setShowEditPopup}
+        id={id}
+      />}
       <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center gap-3">
@@ -282,7 +307,10 @@ const ViewCourses = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button className="p-2 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg transition group"
-                            onClick={() => setShowEditPopup(true)}
+                            onClick={() => {
+                              setShowEditPopup(true);
+                              handleEdit(e._id)
+                            }}
                           >
                             <FaEdit className="group-hover:scale-110 transition" />
                           </button>

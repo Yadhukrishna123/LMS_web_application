@@ -17,13 +17,12 @@ exports.createCourse = async (req, res) => {
             courseModules,
             image,
             instructor, 
-            instructorName,
-            instructorBio,
+            instructoremail,
             hasMonthlyPayment,
             monthlyAmount,
         } = req.body;
 
-        if (!title || !description || !duration || !instructorName || !category) {
+        if (!title || !description || !duration || !instructor || !instructoremail || !category) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
@@ -40,8 +39,7 @@ exports.createCourse = async (req, res) => {
             image,
             courseModules,
             instructor, 
-            instructorName,
-            instructorBio,
+            instructoremail,
             hasMonthlyPayment,
             monthlyAmount,
         });

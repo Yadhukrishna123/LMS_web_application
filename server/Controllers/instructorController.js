@@ -14,7 +14,8 @@ const generateInstructorId = async () => {
 exports.addInstructor = async (req, res) => {
   try {
     const {
-      name,
+      firstname,
+      lastname,
       email,
       phone,
       bio,
@@ -28,7 +29,8 @@ exports.addInstructor = async (req, res) => {
     } = req.body;
 
     if (
-      !name ||
+      !firstname ||
+      !lastname ||
       !email ||
       !bio ||
       !phone ||
@@ -54,7 +56,7 @@ exports.addInstructor = async (req, res) => {
   }
 };
 
-// View All Instructors
+
 exports.viewInstructors = async (req, res) => {
   try {
     const { page = 1, limit = 1000, search } = req.query;
@@ -86,7 +88,7 @@ exports.viewInstructors = async (req, res) => {
   }
 };
 
-// INSTRUCTOR: Add Own Details
+
 exports.addInstructorDetails = async (req, res) => {
   try {
     const {
@@ -130,10 +132,10 @@ exports.addInstructorDetails = async (req, res) => {
       });
     }
 
-    // Generate instructor ID
+  
     const instructorId = await generateInstructorId();
 
-    // Save userId for proper linking
+   
     const instructor = await instructorModel.create({
       userId: req.user._id, // Save userId for proper linking
       instructorId,
@@ -162,10 +164,10 @@ exports.addInstructorDetails = async (req, res) => {
   }
 };
 
-// INSTRUCTOR: Get Own Details
+
 exports.getInstructorDetails = async (req, res) => {
   try {
-    // Authentication check
+   
     if (!req.user || !req.user._id) {
       return res.status(401).json({
         success: false,
@@ -173,7 +175,7 @@ exports.getInstructorDetails = async (req, res) => {
       });
     }
 
-    //  always search by userId
+   
     const instructorDetails = await instructorModel.findOne({
       userId: req.user._id,
     });
@@ -199,7 +201,7 @@ exports.getInstructorDetails = async (req, res) => {
   }
 };
 
-// Update Instructor Details
+
 exports.updateInstructorDetails = async (req, res) => {
   const { id } = req.params;
   try {
@@ -212,7 +214,7 @@ exports.updateInstructorDetails = async (req, res) => {
       });
     }
 
-    //  Ownership check using ONLY userId
+  
     if (req.user && req.user.role === "instructor") {
       const isOwner =
         instructor.userId &&
@@ -246,7 +248,7 @@ exports.updateInstructorDetails = async (req, res) => {
   }
 };
 
-// Delete Instructor
+
 exports.deleteInstructorDetails = async (req, res) => {
   const { id } = req.params;
   try {
