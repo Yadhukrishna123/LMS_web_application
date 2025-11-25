@@ -10,7 +10,7 @@ const assignmentModal = new mongoose.Schema({
         type: String,
         required: true,
     },
-     course: {
+    course: {
         type: String,
         required: true,
     },

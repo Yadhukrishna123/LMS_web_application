@@ -29,6 +29,8 @@ const InstructorPage = () => {
   const { user } = useContext(AllCourseDetail);
 
   const [instructorData, setInstructorData] = useState(null);
+  const [instructors, setInstructors] = useState(false)
+  const [feeDetail, setFeeDetail] = useState([])
   const [email, setEmail] = useState(null);
   const [instructorDetails, setInstructorDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -67,8 +69,15 @@ const InstructorPage = () => {
     try {
       setLoading(true)
       const res = await axios.get('http://localhost:8080/api/v1/get_all_courses');
+      const instrectors = await axios.get("http://localhost:8080/api/v1/get_all_approved_instrectors")
+      let paymentRes = await axios.get('http://localhost:8080/api/v1/get_all_payment_details')
+   
       setCourse(res.data.courses)
+      setInstructors(instrectors.data.instrecters)
+      setFeeDetail(paymentRes.data.paymentDetails)
       console.log(res)
+      console.log(instrectors)
+      console.log(paymentRes)
       if (res.data.success && res.data.courses) {
         setCourse(res.data.courses)
       }
@@ -90,8 +99,17 @@ const InstructorPage = () => {
   );
 
   const totalCourse = filtered.length
-  console.log(totalCourse)
+  console.log(filtered)
+  console.log(feeDetail)
 
+const instructorname = filtered.map((c)=>c.title)
+console.log(instructorname)
+
+const students = feeDetail.filter((p) =>
+  instructorname.includes(p.courseName)
+);
+
+console.log(students)
 
 
   const recentStudents = [
@@ -143,6 +161,7 @@ const InstructorPage = () => {
       {clickCreateAssignMent && <UploadAssignment
         setClickCreateAssignment={setClickCreateAssignment}
         clickCreateAssignMent={clickCreateAssignMent}
+        course={filtered}
       />}
 
       {/* Main Page Content */}
@@ -466,18 +485,15 @@ const InstructorPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentStudents.map((student) => (
-                        <tr key={student.id} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                      {students && students.map((student, i) => (
+                        <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 transition">
                           <td className="py-3 px-2">
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                {student.name.charAt(0)}
-                              </div>
-                              <span className="font-medium text-gray-900 text-sm">{student.name}</span>
+                              <span className="font-medium text-gray-900 text-sm">{student.studentName}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-2 text-gray-600 text-sm">{student.course}</td>
-                          <td className="py-3 px-2 text-gray-600 text-sm">{student.enrolledDate}</td>
+                          <td className="py-3 px-2 text-gray-600 text-sm">{student.courseName}</td>
+                          <td className="py-3 px-2 text-gray-600 text-sm">{student.date}</td>
                         </tr>
                       ))}
                     </tbody>

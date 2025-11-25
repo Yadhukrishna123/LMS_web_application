@@ -3,10 +3,12 @@ import React, { useState } from 'react'
 import { FaTimes, FaUpload, FaCalendarAlt, FaClock, FaBook, FaUsers, FaStar } from 'react-icons/fa';
 import Swal from "sweetalert2";
 
-const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent }) => {
+const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, course }) => {
+    console.log(course)
     const [inputs, setInputs] = useState({
+        course: "",
         title: '',
-        course: '',
+
         description: '',
         dueDate: '',
         totalMarks: '',
@@ -110,6 +112,34 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent }) =
                                 Assignment Information
                             </h3>
 
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                                    <FaUsers className="text-indigo-600" />
+                                    Course *
+                                </label>
+
+                                <select
+                                    name="course"
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl
+             focus:ring-4 focus:ring-purple-200 focus:border-purple-500
+             outline-none hover:border-purple-400 transition"
+                                >
+                                    <option value="">Select course</option>
+                                    {course && course.map((c, i) => {
+                                        return (
+                                            <option key={i} value="class-10a">{c.title}</option>
+
+                                        )
+                                    })}
+                                    {/* <option value="class-10b">Class 10B</option>
+                                    <option value="class-11a">Class 11A</option>
+                                    <option value="class-11b">Class 11B</option>
+                                    <option value="all-students">All Students</option> */}
+                                </select>
+                            </div>
+
                             <div className="grid gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -126,19 +156,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent }) =
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                        Course *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="course"
-                                        placeholder="e.g., Mathematics, Science"
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none hover:border-blue-400 transition"
-                                    />
-                                </div>
+
 
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-2">

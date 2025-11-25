@@ -19,6 +19,7 @@ const UserPage = () => {
     const { user } = useContext(AllCourseDetail)
     const [showForm, setShowForm] = useState(false)
     const [usercourse, setUserCourse] = useState([])
+    const [assignment, setAssignment] = useState([])
     const [loading, setLoading] = useState(false)
     const [clickAssignment, setClickAssignment] = useState(false)
      const [clicksubmittingAssignment, setclickSubmittingAssignment] = useState(false)
@@ -32,12 +33,19 @@ const UserPage = () => {
             let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
             let allCourse = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`)
             let allCourseComplete = await axios.get("http://localhost:8080/api/v1/get_all_completers")
+            let allAssignment = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
+    
+
             console.log(res)
             console.log(allCourse)
             console.log(allCourseComplete)
+              console.log(allAssignment)
             setUserCourse(res.data.paymentDetails)
             setCourse(allCourse.data.courses)
             setCompleted(allCourseComplete.data.allCourseCompleters)
+            setAssignment(allAssignment.data.assignment)
+
+
         } catch (error) {
             console.error(error)
         } finally {
@@ -61,32 +69,7 @@ const UserPage = () => {
 
     console.log(userCompletedWithcertificate)
 
-  const certificates = [
-    {
-      id: 1,
-      courseName: 'Python for Data Science',
-      completionDate: 'Nov 10, 2025',
-      certificateId: 'CERT-2025-001234',
-      instructor: 'Sarah Johnson',
-      score: 95
-    },
-    {
-      id: 2,
-      courseName: 'Web Development Bootcamp',
-      completionDate: 'Oct 28, 2025',
-      certificateId: 'CERT-2025-001189',
-      instructor: 'Alex Turner',
-      score: 92
-    },
-    {
-      id: 3,
-      courseName: 'JavaScript ES6+',
-      completionDate: 'Oct 15, 2025',
-      certificateId: 'CERT-2025-001156',
-      instructor: 'Mike Stevens',
-      score: 88
-    }
-  ];
+
 
   const stats = {
     totalHours: 127,
@@ -106,11 +89,15 @@ const UserPage = () => {
 
     
     console.log(completed)
-    console.log(usercourse)
+    console.log(assignment)
     return (
         <div className="px-4 sm:px-6 lg:px-20 py-10 bg-gray-50 min-h-screen">
             {showForm && <AddStudent setShowForm = {setShowForm} emailll={email} />}
-            {clickAssignment && <UserAssignment setClickAssignment = {setClickAssignment}/>}
+            {clickAssignment && <UserAssignment
+             setClickAssignment = {setClickAssignment} 
+             assignment={assignment}
+             userCourses={userCourses}
+             />}
             {clicksubmittingAssignment && <SubmittingAssignment setclickSubmittingAssignment={setclickSubmittingAssignment}/>}
             {clickSubmittedAssignment && <SubmittedAssignments setClickSubmittedAssignment={setClickSubmittedAssignment}/>}
               <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">

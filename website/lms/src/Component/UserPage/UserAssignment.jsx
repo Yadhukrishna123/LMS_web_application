@@ -1,10 +1,36 @@
+import axios from 'axios'
 import React from 'react'
-import { FaBookmark, FaTimes} from 'react-icons/fa'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { FaBookmark, FaTimes } from 'react-icons/fa'
 
 
-const UserAssignment = ({setClickAssignment}) => {
-    return (
-        <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
+const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
+  console.log(userCourses)
+   console.log(assignment)
+  let [loading, setLoading] = useState(false)
+
+
+  const getAllAssignments = async () => {
+    try {
+      setLoading(true)
+      let res = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
+      console.log(res)
+    } catch (error) {
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getAllAssignments()
+  }, [])
+
+  const currentuserAssignment = userCourses.filter((c) => c.courseName === assignment.course)
+  console.log(currentuserAssignment)
+  return (
+    <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
 
       {/* Popup Box */}
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -121,7 +147,7 @@ const UserAssignment = ({setClickAssignment}) => {
 
       </div>
     </div>
-    )
+  )
 }
 
 export default UserAssignment
