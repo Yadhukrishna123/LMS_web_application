@@ -1,11 +1,78 @@
 import React from 'react'
-import { FaArrowRight, FaCheckCircle, FaTimes} from 'react-icons/fa'
+import { useContext } from 'react';
+import { FaArrowRight, FaCheckCircle, FaTimes } from 'react-icons/fa'
+import { AllCourseDetail } from '../AllCourseContext/Context';
+import { useState } from 'react';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 
-const SubmittingAssignment = ({setclickSubmittingAssignment}) => {
+const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCourses }) => {
+  const { user } = useContext(AllCourseDetail);
+
+  const [formData, setFormData] = useState({
+    assignmentName: "",
+    assignmentFile: null,
+    comment: "",
+  })
+  console.log(assignment, userCourses)
+
+  const userCourseid = userCourses.map((c) => c.courseId)
+  console.log(userCourseid)
+
+  const currentuserAssignment = assignment.filter(a => {
+
+    const parsedCourse = JSON.parse(a.course);
+    console.log(parsedCourse)
+    return userCourseid.includes(parsedCourse.id);
+
+
+
+  })
+  console.log(currentuserAssignment)
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, assignmentFile: e.target.files[0] })
+  }
+
+  const handleSubmit = async () => {
+    if (!formData.assignmentName) return toast.warning("Please select an assignment");
+    if (!formData.assignmentFile) return toast.warning("Please upload a file");
+
+    let sendData = new FormData()
+    sendData.append("assignmentName", formData.assignmentName);
+    sendData.append("comment", formData.comment);
+    sendData.append("userId", user._id);
+    sendData.append("file", formData.assignmentFile);
+    // let payload = {
+    //   assignmentName: formData.assignmentName,
+    //   assignmentFile: sendData,
+    //   comment: formData.comment,
+    //   userId: user?._id
+    // }
+
+    try {
+      let res = await axios.post("http://localhost:8080/api/v1/submit_assignment", sendData)
+      console.log(res)
+
+      if(res.data.success){
+        toast.success(res.data.message)
+        setclickSubmittingAssignment(false)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+  }
+
+
   return (
-     <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
+      <ToastContainer/>
 
-      {/* Popup Box */}
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
 
         {/* Header */}
@@ -37,10 +104,18 @@ const SubmittingAssignment = ({setclickSubmittingAssignment}) => {
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Select Assignment
               </label>
-              <select className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
-                <option>React Components Assignment</option>
-                <option>Database Design Project</option>
-                <option>API Integration Task</option>
+              <select
+                name="assignmentName"
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                <option>Select assignment</option>
+                {currentuserAssignment && currentuserAssignment.map((a, i) => {
+                  return (
+                    <option key={i}>{a.title}</option>
+                  )
+                })}
+
+
               </select>
             </div>
 
@@ -51,6 +126,7 @@ const SubmittingAssignment = ({setclickSubmittingAssignment}) => {
               </label>
               <input
                 type="file"
+                onChange={handleFileChange}
                 className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl transition-all
                       focus:ring-2 focus:ring-green-500 focus:border-transparent
                       file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 
@@ -64,6 +140,10 @@ const SubmittingAssignment = ({setclickSubmittingAssignment}) => {
                 Comments (Optional)
               </label>
               <textarea
+                name="comment"
+                onChange={handleChange}
+                value={formData.comment}
+
                 rows="4"
                 placeholder="Add any notes or comments about your submission..."
                 className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
@@ -71,7 +151,8 @@ const SubmittingAssignment = ({setclickSubmittingAssignment}) => {
             </div>
 
             {/* Submit Button */}
-            <button className="w-full py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center justify-center gap-2">
+            <button className="w-full py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center justify-center gap-2"
+              onClick={handleSubmit}>
               <FaCheckCircle />
               Submit Assignment
             </button>

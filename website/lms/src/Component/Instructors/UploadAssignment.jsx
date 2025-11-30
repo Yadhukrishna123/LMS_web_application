@@ -129,7 +129,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
                                     <option value="">Select course</option>
                                     {course && course.map((c, i) => {
                                         return (
-                                            <option key={i} value="class-10a">{c.title}</option>
+                                            <option key={i}  value={JSON.stringify({ id: c._id, name: c.title })}>{c.title}</option>
 
                                         )
                                     })}

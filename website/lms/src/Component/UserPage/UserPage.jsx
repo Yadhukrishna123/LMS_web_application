@@ -64,7 +64,7 @@ const UserPage = () => {
     const totalCourse = userCourses.length
    
 
-    const userCompletedWithcertificate = completed.filter((c)=>c.userEmail === user.email && c.userId === user._id)
+    const userCompletedWithcertificate = completed.filter((c)=>c.userEmail === user?.email && c.userId === user._id)
 
 
     console.log(userCompletedWithcertificate)
@@ -98,7 +98,11 @@ const UserPage = () => {
              assignment={assignment}
              userCourses={userCourses}
              />}
-            {clicksubmittingAssignment && <SubmittingAssignment setclickSubmittingAssignment={setclickSubmittingAssignment}/>}
+            {clicksubmittingAssignment && <SubmittingAssignment
+             setclickSubmittingAssignment={setclickSubmittingAssignment}
+             assignment={assignment}
+             userCourses={userCourses}
+             />}
             {clickSubmittedAssignment && <SubmittedAssignments setClickSubmittedAssignment={setClickSubmittedAssignment}/>}
               <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
  

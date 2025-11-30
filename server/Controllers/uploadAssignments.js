@@ -1,54 +1,96 @@
 const assignments = require("../modals/assignmentModal")
+const submitAssign = require("../modals/assignmentSubbmitingSchema")
 
 exports.uploadAssignment = async (req, res) => {
-    try {
-        const { courseId, course, title, description, deadline, maxMarks } = req.body
+  try {
+    const { courseId, course, title, description, deadline, maxMarks } = req.body
 
-        if (!courseId || !title || !course || !description || !deadline || !maxMarks) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required"
-            })
-        }
-
-        const assignment = await assignments.create({
-            courseId, title, course, description, deadline, maxMarks
-        })
-
-        res.status(200).json({
-            success: true,
-            message: "Assignment created successfuly",
-            assignment
-        })
-
-
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: err.message
-        });
+    if (!courseId || !title || !course || !description || !deadline || !maxMarks) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      })
     }
+
+    const assignment = await assignments.create({
+      courseId, title, course, description, deadline, maxMarks
+    })
+
+    res.status(200).json({
+      success: true,
+      message: "Assignment created successfuly",
+      assignment
+    })
+
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
 }
 
 exports.getAllAssignments = async (req, res) => {
-       try {
-          const assignment = await assignments.find();
-      
-          if (!assignment) {
-            return res.status(400).json({
-              success: false,
-              message: "Faild to fetch assignment"
-            })
-          }
-      
-          res.status(200).json({
-            success: true,
-            assignment,
-          });
-        } catch (error) {
-          res.status(500).json({
-            success: false,
-            message: error.message,
-          });
-        }
+  try {
+    const assignment = await assignments.find();
+
+    if (!assignment) {
+      return res.status(400).json({
+        success: false,
+        message: "Faild to fetch assignment"
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      assignment,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
+
+exports.submitingAssignment = async (req, res) => {
+  try {
+    const { assignmentName, comment, userId } = req.body;
+
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Assignment file is required"
+      });
+    }
+        const assignmentFile = req.file.path
+
+
+    if (!assignmentName || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Assignment file name and userId are required"
+      })
+    }
+
+    const submiting = await submitAssign.create({
+      assignmentName, comment, userId, assignmentFile
+    })
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully submited assignment",
+      submiting
+    })
+
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+

@@ -9,6 +9,7 @@ export const AllCourseDetail = React.createContext()
 export const Context = (props) => {
     const [user, setUser] = useState(null)
     const [courseDetail, seCourseDetail] = useState([])
+    const [assignments, setAssignments] = useState([])
     // const [result, setResult] = useState([])
    
     // const [userAnswer, setUserAnswer ]= useState()
@@ -34,6 +35,10 @@ export const Context = (props) => {
 
     }
 
+
+    const assignmentSubmitting = (a) => {
+        setAssignments(a)
+    }
     // const getQuizResults = (userAnswer) => {
     //     setUserAnswer(userAnswer)
 
@@ -44,7 +49,7 @@ export const Context = (props) => {
 
 
     return (
-        <AllCourseDetail.Provider value={{ user, sentDataToCheckoutPage, setUser, courseDetail, }}>
+        <AllCourseDetail.Provider value={{ user, sentDataToCheckoutPage, setUser, courseDetail, assignmentSubmitting, assignments}}>
             {props.children}
         </AllCourseDetail.Provider>
     )
