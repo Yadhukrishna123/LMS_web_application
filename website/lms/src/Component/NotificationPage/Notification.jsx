@@ -1,212 +1,384 @@
 import React, { useState, useEffect } from 'react';
-import { BsBellFill } from 'react-icons/bs';
-import { FaClock, FaDollarSign, FaExclamationCircle, FaCheckCircle } from 'react-icons/fa';
-import { MdClose } from 'react-icons/md';
+import { BsBellFill, BsCheck2All } from 'react-icons/bs';
+import { FaClock, FaExclamationTriangle, FaCheckCircle, FaInfoCircle, FaBell } from 'react-icons/fa';
+import { HiOutlineTrash, HiOutlineMailOpen } from 'react-icons/hi';
+import { IoNotificationsOutline } from 'react-icons/io5';
 import axios from 'axios';
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
-    const [showModal, setShowModal] = useState(false); //  for modal
-  const [selectedId, setSelectedId] = useState(null); //  store notification ID to delete
-  const token = localStorage.getItem('token'); //  make sure token is defined
+  const [showModal, setShowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [activeTab, setActiveTab] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // ✅ Create axios instance with default config
+  const api = axios.create({
+    baseURL: 'http://localhost:8080/api/v1',
+    withCredentials: true, // This sends cookies automatically
+  });
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
-          withCredentials: true,
-        });
-        
-
-        if (res.data.success) {
-          setNotifications(res.data.notifications);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchNotifications();
-  }, [token]);
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await api.get('/usernotifications');
+      
+      if (res.data.success) {
+        setNotifications(res.data.notifications);
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError(err.response?.status === 401 ? 'Please login to view notifications' : 'Failed to load notifications');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const filteredNotifications = notifications.filter(n => {
+    if (activeTab === 'unread') return !n.read;
+    if (activeTab === 'read') return n.read;
+    return true;
+  });
+
+  // ✅ Fixed: Using withCredentials instead of Bearer token
   const markAsRead = async (id) => {
     try {
-      await axios.patch(`http://localhost:8080/api/v1/notifications/${id}/read`, null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+      await api.patch(`/notifications/${id}/read`);
+      setNotifications(prev => 
+        prev.map(n => n._id === id || n.id === id ? { ...n, read: true } : n)
+      );
     } catch (err) {
-      console.error(err);
+      console.error('Mark as read error:', err);
+      if (err.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      }
     }
   };
 
-    const confirmDelete = (id) => {
+  const confirmDelete = (id, e) => {
+    e?.stopPropagation();
     setSelectedId(id);
-    setShowModal(true); //  open modal
+    setShowModal(true);
   };
-  
+
+  // ✅ Fixed: Using withCredentials
   const deleteNotification = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/v1/notifications/${selectedId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-      setNotifications(notifications.filter(n => n.id !== selectedId));
+      await api.delete(`/notifications/${selectedId}`);
+      setNotifications(prev => 
+        prev.filter(n => n._id !== selectedId && n.id !== selectedId)
+      );
       setShowModal(false);
+      setSelectedId(null);
     } catch (err) {
-      console.error(err);
+      console.error('Delete error:', err);
+      if (err.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      }
     }
   };
 
+  // ✅ Fixed: Using withCredentials
   const markAllAsRead = async () => {
     try {
-      // Optional: send batch read request to backend
-      await Promise.all(notifications.filter(n => !n.read).map(n =>
-        axios.patch(`http://localhost:8080/api/v1/notifications/${n.id}/read`, null, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      ));
-      setNotifications(notifications.map(n => ({ ...n, read: true })));
+      const unreadNotifications = notifications.filter(n => !n.read);
+      
+      await Promise.all(
+        unreadNotifications.map(n => 
+          api.patch(`/notifications/${n._id || n.id}/read`)
+        )
+      );
+      
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     } catch (err) {
-      console.error(err);
+      console.error('Mark all read error:', err);
+      if (err.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      }
     }
   };
 
-  const getNotificationStyle = (type) => {
-    switch (type) {
-      case 'urgent': return 'border-l-4 border-red-500 bg-red-50';
-      case 'warning': return 'border-l-4 border-amber-500 bg-amber-50';
-      case 'info': return 'border-l-4 border-blue-500 bg-blue-50';
-      case 'success': return 'border-l-4 border-green-500 bg-green-50';
-      default: return 'border-l-4 border-gray-500 bg-gray-50';
-    }
+  const getTypeStyles = (type) => {
+    const styles = {
+      urgent: {
+        bg: 'bg-rose-50',
+        iconBg: 'bg-rose-100',
+        iconColor: 'text-rose-600',
+        badge: 'bg-rose-100 text-rose-700',
+        icon: FaExclamationTriangle
+      },
+      warning: {
+        bg: 'bg-amber-50',
+        iconBg: 'bg-amber-100',
+        iconColor: 'text-amber-600',
+        badge: 'bg-amber-100 text-amber-700',
+        icon: FaClock
+      },
+      info: {
+        bg: 'bg-sky-50',
+        iconBg: 'bg-sky-100',
+        iconColor: 'text-sky-600',
+        badge: 'bg-sky-100 text-sky-700',
+        icon: FaInfoCircle
+      },
+      success: {
+        bg: 'bg-emerald-50',
+        iconBg: 'bg-emerald-100',
+        iconColor: 'text-emerald-600',
+        badge: 'bg-emerald-100 text-emerald-700',
+        icon: FaCheckCircle
+      }
+    };
+    return styles[type] || {
+      bg: 'bg-gray-50',
+      iconBg: 'bg-gray-100',
+      iconColor: 'text-gray-600',
+      badge: 'bg-gray-100 text-gray-700',
+      icon: FaBell
+    };
   };
 
-  const getIcon = (type) => {
-    switch (type) {
-      case 'urgent': return <FaExclamationCircle className="w-6 h-6 text-red-500" />;
-      case 'warning': return <FaClock className="w-6 h-6 text-amber-500" />;
-      case 'info': return <FaDollarSign className="w-6 h-6 text-blue-500" />;
-      case 'success': return <FaCheckCircle className="w-6 h-6 text-green-500" />;
-      default: return <BsBellFill className="w-6 h-6 text-gray-500" />;
-    }
-  };
+  const getNotificationId = (notif) => notif._id || notif.id;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <BsBellFill className="w-8 h-8 text-indigo-600" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-                  {unreadCount}
-                </span>
-              )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Header Bar */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-3xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                  <BsBellFill className="w-5 h-5 text-white" />
+                </div>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Notifications</h1>
+                <p className="text-sm text-gray-500">{notifications.length} total</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">Notifications</h1>
-              <p className="text-gray-500 text-sm">Stay updated with your alerts</p>
-            </div>
+            
+            {unreadCount > 0 && (
+              <button
+                onClick={markAllAsRead}
+                className="flex items-center gap-2 px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-medium text-sm"
+              >
+                <BsCheck2All className="w-5 h-5" />
+                <span className="hidden sm:inline">Mark all read</span>
+              </button>
+            )}
           </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={markAllAsRead}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg"
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 flex items-center justify-between">
+            <span>{error}</span>
+            <button 
+              onClick={() => setError(null)}
+              className="text-rose-500 hover:text-rose-700"
             >
-              Mark all as read
+              ✕
             </button>
-          )}
+          </div>
+        )}
+
+        {/* Tab Navigation */}
+        <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-6">
+          {[
+            { id: 'all', label: 'All', count: notifications.length },
+            { id: 'unread', label: 'Unread', count: unreadCount },
+            { id: 'read', label: 'Read', count: notifications.length - unreadCount }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === tab.id
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                activeTab === tab.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600'
+              }`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
         </div>
 
         {/* Notifications List */}
-        <div className="space-y-4">
-          {notifications.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-              <BsBellFill className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No notifications</h3>
-              <p className="text-gray-400">You're all caught up!</p>
-            </div>
-          ) : (
-            notifications.map((notif) => (
-              <div
-                key={notif.id}
-                className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 ${!notif.read ? 'ring-2 ring-indigo-200' : ''}`}
-              >
-                <div className={`p-6 rounded-xl ${getNotificationStyle(notif.type)}`}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 mt-1">{getIcon(notif.type)}</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <h3 className="text-lg font-bold text-gray-800">
-                          {notif.title}
-                          {!notif.read && <span className="ml-2 inline-block w-2 h-2 bg-indigo-600 rounded-full"></span>}
-                        </h3>
-                         <button
-                          onClick={() => confirmDelete(notif.id)} // ✅ trigger modal
-                          className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
-                        >
-                          <MdClose className="w-5 h-5" />
-                        </button>
-                      </div>
-                      <p className="text-gray-700 mb-3">{notif.message}</p>
-                      <span className="text-gray-400 text-sm">{notif.timestamp}</span>
-                    </div>
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white rounded-2xl p-5 animate-pulse">
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-xl" />
+                  <div className="flex-1 space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-1/3" />
+                    <div className="h-3 bg-gray-200 rounded w-full" />
+                    <div className="h-3 bg-gray-200 rounded w-1/4" />
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : filteredNotifications.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <IoNotificationsOutline className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">No notifications</h3>
+            <p className="text-gray-500">
+              {activeTab === 'unread' ? "You've read everything!" : "Nothing to show here"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredNotifications.map((notif) => {
+              const typeStyle = getTypeStyles(notif.type);
+              const IconComponent = typeStyle.icon;
+              const notifId = getNotificationId(notif);
+              
+              return (
+                <div
+                  key={notifId}
+                  onClick={() => !notif.read && markAsRead(notifId)}
+                  className={`group relative bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden ${
+                    !notif.read ? 'ring-1 ring-indigo-100' : ''
+                  }`}
+                >
+                  {/* Unread indicator */}
+                  {!notif.read && (
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600" />
+                  )}
+                  
+                  <div className="p-5">
+                    <div className="flex gap-4">
+                      {/* Icon */}
+                      <div className={`flex-shrink-0 w-12 h-12 ${typeStyle.iconBg} rounded-xl flex items-center justify-center`}>
+                        <IconComponent className={`w-5 h-5 ${typeStyle.iconColor}`} />
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-3 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold text-gray-900">
+                              {notif.title}
+                            </h3>
+                            {!notif.read && (
+                              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
+                                New
+                              </span>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {!notif.read && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(notifId);
+                                }}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                title="Mark as read"
+                              >
+                                <HiOutlineMailOpen className="w-4 h-4 text-gray-500" />
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => confirmDelete(notifId, e)}
+                              className="p-2 hover:bg-rose-50 rounded-lg transition-colors"
+                              title="Delete"
+                            >
+                              <HiOutlineTrash className="w-4 h-4 text-gray-500 hover:text-rose-600" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm mb-3 leading-relaxed">
+                          {notif.message}
+                        </p>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                            <FaClock className="w-3 h-3" />
+                            {notif.timestamp || 'Just now'}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-lg ${typeStyle.badge}`}>
+                            {notif.type?.charAt(0).toUpperCase() + notif.type?.slice(1) || 'General'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-      {/* Enhanced Glassmorphism Modal - Replace your existing modal code with this */}
-{/* Subtle Glassmorphism Modal - Replace your existing modal code with this */}
-{showModal && (
-  <div 
-    className="fixed inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50 p-4"
-    onClick={() => setShowModal(false)}
-  >
-    <div 
-      className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl p-8 max-w-sm w-full text-center border border-gray-200/50"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Icon container */}
-      <div className="bg-red-50/80 backdrop-blur-sm rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 border border-red-100">
-        <FaExclamationCircle className="w-8 h-8 text-red-500" />
-      </div>
-      
-      {/* Title */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-2">
-        Delete Notification?
-      </h2>
-      
-      {/* Description */}
-      <p className="text-gray-600 mb-6">
-        Are you sure you want to delete this notification? This action cannot be undone.
-      </p>
-      
-      {/* Buttons */}
-      <div className="flex justify-center gap-3">
-        <button
+
+      {/* Delete Modal */}
+      {showModal && (
+        <div 
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
           onClick={() => setShowModal(false)}
-          className="px-5 py-2.5 rounded-lg bg-white/80 backdrop-blur-sm text-gray-700 font-medium border border-gray-300 hover:bg-gray-50 transition-all shadow-sm"
         >
-          Cancel
-        </button>
-        
-        <button
-          onClick={deleteNotification}
-          className="px-5 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all shadow-sm hover:shadow-md"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          <div 
+            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <HiOutlineTrash className="w-7 h-7 text-rose-600" />
+            </div>
+            
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+              Delete notification?
+            </h2>
+            
+            <p className="text-gray-500 text-center mb-6">
+              This can't be undone.
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setSelectedId(null);
+                }}
+                className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteNotification}
+                className="flex-1 py-3 px-4 bg-rose-600 text-white rounded-xl font-medium hover:bg-rose-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

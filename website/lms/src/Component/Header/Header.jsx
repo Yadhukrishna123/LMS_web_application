@@ -41,10 +41,13 @@ const Header = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
+        const res = await axios.get("http://localhost:8080/api/v1/usernotifications", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
-
+        
         if (res.data.success) {
           setNotifications(res.data.notifications);
         }
@@ -93,9 +96,11 @@ const Header = () => {
   };
 
   const getMainNavigation = () => {
+    const homePath = user?.role === 'instructor' ? '/instructor_landing' : '/';
+
     const commonNav = [
-      { name: 'Home', path: '/', show: true },
-      { name: 'About', path: '/about', show: true },
+      { name: 'Home', path: homePath, show: true },
+      { name: 'About', path: '/about', show: user?.role !== 'instructor' }, 
     ];
 
     if (!user) {
@@ -110,18 +115,21 @@ const Header = () => {
     if (user.role === 'instructor') {
       return [
         ...commonNav,
+        { name: 'Create Course', path: '/create_course', show: true },
         { name: 'My Courses', path: '/my_courses', show: true },
-        { name: 'Contact', path: '/contact', show: true },
-      ];
-    } else {
-      return [
-        ...commonNav,
-        { name: 'Browse Courses', path: '/allcourses', show: true },
-        { name: 'My Learning', path: '/user_page', show: true },
-        { name: 'Quiz', path: '/quizzes', show: true },
+        { name: 'Quiz Manager', path: '/instructor_quiz_manager', show: true },
+        { name: 'Help & Support', path: '/help', show: true },
         { name: 'Contact', path: '/contact', show: true },
       ];
     }
+
+    return [
+      ...commonNav,
+      { name: 'Browse Courses', path: '/allcourses', show: true },
+      { name: 'My Learning', path: '/user_page', show: true },
+      { name: 'Quiz', path: '/quizzes', show: true },
+      { name: 'Contact', path: '/contact', show: true },
+    ];
   };
 
   const getDropdownItems = () => {
@@ -134,11 +142,8 @@ const Header = () => {
     }
 
     if (user.role === 'instructor') {
-      return [
-        { name: 'Create Course', path: '/create_course', icon: <Plus className="w-4 h-4" />, color: 'blue' },
-        { name: 'Quiz Manager', path: '/instructor_quiz_manager', icon: <FileText className="w-4 h-4" />, color: 'orange' },
-        { name: 'Help & Support', path: '/help', icon: <HelpCircle className="w-4 h-4" />, color: 'green' },
-      ];
+      return [];
+
     } else {
       return [
         { name: 'Categories', path: '/cateogeries', icon: <Grid className="w-4 h-4" />, color: 'blue' },
@@ -211,7 +216,7 @@ const Header = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         {/* Logo */}
-        <div className="text-2xl font-bold text-blue-600 cursor-pointer" onClick={() => navigate('/')}>
+        <div className="text-2xl font-bold text-blue-600 cursor-pointer">
           <img
             className='sm:w-24'
             src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/logo_Asset-7.png"
@@ -234,44 +239,56 @@ const Header = () => {
           ))}
 
           {/* Dropdown Menu */}
-          <div className="relative">
-            <button
-              onClick={toggleDropdown}
-              className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 flex items-center space-x-2"
-            >
-              <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
+          {(!user || user.role !== 'instructor') && (
+            <div className="relative">
+              <button
+                onClick={toggleDropdown}
+                className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 flex items-center space-x-2"
+              >
+                <span>Explore</span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    isDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
 
-            {isDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40" 
-                  onClick={() => setIsDropdownOpen(false)}
-                ></div>
-                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 p-3">
-                  <div className="grid gap-2">
-                    {dropdownItems.map((item, index) => (
-                      <Link 
-                        key={index}
-                        to={item.path} 
-                        className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-indigo-50 rounded-xl transition-all group border border-transparent hover:border-indigo-200"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <div className={`w-10 h-10 rounded-lg ${getColorClasses(item.color)} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                          {item.icon}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 text-sm">{item.name}</p>
-                          <p className="text-xs text-gray-500">Click to explore</p>
-                        </div>
-                      </Link>
-                    ))}
+              {isDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsDropdownOpen(false)}
+                  ></div>
+                  <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 p-3">
+                    <div className="grid gap-2">
+                      {dropdownItems.map((item, index) => (
+                        <Link
+                          key={index}
+                          to={item.path}
+                          className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-indigo-50 rounded-xl transition-all group border border-transparent hover:border-indigo-200"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <div
+                            className={`w-10 h-10 rounded-lg ${getColorClasses(
+                              item.color
+                            )} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}
+                          >
+                            {item.icon}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 text-sm">
+                              {item.name}
+                            </p>
+                            <p className="text-xs text-gray-500">Click to explore</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
-          </div>
+                </>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* DESKTOP PROFILE SECTION */}
@@ -467,33 +484,45 @@ const Header = () => {
             ))}
 
             {/* Mobile Dropdown */}
-            <div>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-                className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium'
-              >
-                <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+            {(!user || user.role !== 'instructor') && (
+              <div>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                  className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium'
+                >
+                  <span>Explore</span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
 
-              {isDropdownOpen && (
-                <div className="grid grid-cols-1 gap-2 mt-2 pl-2">
-                  {dropdownItems.map((item, index) => (
-                    <Link
-                      key={index}
-                      to={item.path} 
-                      className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <div className={`w-9 h-9 rounded-lg ${getColorClasses(item.color)} flex items-center justify-center`}>
-                        {item.icon}
-                      </div>
-                      <span className="font-medium text-gray-700">{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+                {isDropdownOpen && (
+                  <div className="grid grid-cols-1 gap-2 mt-2 pl-2">
+                    {dropdownItems.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.path}
+                        className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <div
+                          className={`w-9 h-9 rounded-lg ${getColorClasses(
+                            item.color
+                          )} flex items-center justify-center`}
+                        >
+                          {item.icon}
+                        </div>
+                        <span className="font-medium text-gray-700">
+                          {item.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* User Actions */}
             {user ? (

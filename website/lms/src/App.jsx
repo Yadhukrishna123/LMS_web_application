@@ -42,6 +42,7 @@ import QuizSubmissions from './Component/Instructors/Quiz Manager/QuizSubmission
 import InstructorAddQuiz from './Component/Instructors/Quiz Manager/InstructorAddQuiz'
 import SettingsPage from './Component/Instructors/Settings'
 import NotFound from './Component/NotFound'
+import InstructorLanding from './Component/Instructors/InstructorLanding'
 
 
 
@@ -89,13 +90,14 @@ function App() {
          <Route path="/help_tickets" element={<ProtectedRoutes isAuthentication={user}><HelpTickets /> </ProtectedRoutes>} />
          <Route path="/help_tickets/:ticketId" element={<TicketChatPage />} />
 
-        <Route path="/notification" element={<Notification />} />
+        {/* <Route path="/notification" element={<Notification />} /> */}
 
         <Route path="/quizzes" element={<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />
         {/* <Route path="/take_quiz/:quizId" element={<UserQuiz userId={user?._id} />} /> */}
 
         {/* All Instructor Routes Are here */}
 
+        <Route path="/instructor_landing" element={<InstructorLanding />} />
         <Route path="/instructor_page" element={<InstructorPage />} />
         <Route path="/add_instructor" element={<InstructorPage />} />
 

@@ -181,24 +181,22 @@ exports.sendLowAttendance = async (req, res) => {
 
 exports.getUserNotifications = async (req, res) => {
   try {
-    const userId = req.user._id; // now defined
+    const userId = req.user._id;
     const userType = req.user.role;
 
-    let notifications = [];
+    // Fetch notifications where the user is a recipient
+    const announcements = await Notification.find({
+      recipients: { $in: [req.user.email, userType] }
+    });
 
-    if (userType === "student") {
-      const announcements = await Notification.find({
-  recipients: { $in: [req.user.email, req.user.role] }
-});
-      notifications = announcements.map(n => ({
-        id: n._id,
-        type: n.type === "low_attendance" ? "info" : "success",
-        title: n.title,
-        message: n.message,
-        read: n.readBy.includes(userId),
-        timestamp: n.createdAt.toLocaleDateString(),
-      }));
-    }
+    const notifications = announcements.map(n => ({
+      id: n._id,
+      type: n.type === "low_attendance" ? "info" : "success",
+      title: n.title,
+      message: n.message,
+      read: n.readBy.includes(userId),
+      timestamp: n.createdAt.toLocaleDateString(),
+    }));
 
     res.json({ success: true, notifications });
   } catch (err) {
@@ -206,6 +204,7 @@ exports.getUserNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 
 exports.deleteAnnouncement = async (req, res) => {
