@@ -58,34 +58,69 @@ exports.createCourse = async (req, res) => {
 };
 // Get All Courses
 exports.getAllCourse = async (req, res) => {
-    try {
-        const { title, category } = req.query;
-        let query = {};
-        if (title) {
-            query.title = { $regex: title, $options: "i" };
-        }
+  try {
+    const {
+      title = '',
+      category = '',
+      price = '',
+      duration = '',
+      page = 1,
+      limit = 8,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
 
-        if (category) {
-            query.category = { $regex: category, $options: "i" };
-        }
-        const courses = await courseModal.find(query);
+    const query = {
+      ...(title && { title: { $regex: title.trim(), $options: 'i' } }),
+      ...(category && { category: { $regex: category.trim(), $options: 'i' } })
+    };
 
-        if (!courses) {
-            return res.status(400).json({
-                success: false,
-                message: "Faild to fetch corse"
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            courses,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: error.message });
+    if (price) {
+      const [min = 0, max = 999999] = price.split('-').map(p => parseInt(p.trim()));
+      query.price = { $gte: min, $lte: max };
     }
+
+    if (duration) {
+      const durations = { Short: { $lt: 2 }, Medium: { $gte: 3, $lte: 4 }, Long: { $gte: 6, $lte: 12 } };
+      query.durationMonths = durations[duration] || {};
+    }
+
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+    const skip = (pageNum - 1) * limitNum;
+
+    const allowedSortFields = ['createdAt', 'price', 'title', 'rating', 'updatedAt'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const sort = { [sortField]: sortOrder === 'asc' ? 1 : -1 };
+
+    const totalCourses = await courseModal.countDocuments(query);
+    const totalPages = Math.ceil(totalCourses / limitNum) || 1;
+
+    const courses = await courseModal.find(query).sort(sort).skip(skip).limit(limitNum).lean();
+
+    res.status(200).json({
+      success: true,
+      courses: courses || [],
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalCourses,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1,
+        limit: limitNum
+      }
+    });
+  } catch (error) {
+    console.error('getAllCourse Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      courses: [],
+      pagination: { currentPage: 1, totalPages: 1, totalCourses: 0, hasNextPage: false, hasPrevPage: false, limit: 8 }
+    });
+  }
 };
+
 // Get Single Course
 exports.getCourse = async (req, res) => {
     const { id } = req.params;
