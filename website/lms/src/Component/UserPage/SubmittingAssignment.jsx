@@ -17,11 +17,12 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
   })
   console.log(assignment, userCourses)
 
- const userCourseid = userCourses.map((c) => c.courseId)
+  const userCourseid = userCourses.map((c) => c.courseId)
   console.log(userCourseid)
 
   const currentuserAssignment = assignment.filter(a => {
-
+    let assignedUserId = a.assignedStudents
+    console.log(assignedUserId)
     let parseCourse
     if (typeof a.course === "string") {
       parseCourse = JSON.parse(a.course);
@@ -29,7 +30,12 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
       parseCourse = a.course;
     }
     console.log(parseCourse);
-    return userCourseid.includes(parseCourse.id)
+
+    const currentUser = assignedUserId.filter((id) => id.includes(user?._id))
+    console.log(currentUser)
+
+    return currentUser.length && userCourseid.includes(parseCourse.id)
+
 
   })
   console.log(currentuserAssignment)
@@ -63,7 +69,7 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
       let res = await axios.post("http://localhost:8080/api/v1/submit_assignment", sendData)
       console.log(res)
 
-      if(res.data.success){
+      if (res.data.success) {
         toast.success(res.data.message)
         setclickSubmittingAssignment(false)
       }
@@ -76,7 +82,7 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
 
   return (
     <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
-      <ToastContainer/>
+      <ToastContainer />
 
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
 
