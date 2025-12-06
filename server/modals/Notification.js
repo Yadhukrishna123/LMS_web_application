@@ -1,23 +1,41 @@
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
   type: {
     type: String,
-    enum: ["announcement", "low_attendance"],
     required: true,
+    enum: [
+      "assignment",
+      "submitting",
+      "announcement",
+      "message",
+      "system",
+      "payment",
+      "warning"
+    ]
   },
-  title: { type: String, required: true },
-  message: { type: String, required: true },
-  recipients: {
-    type: [String], // 🔹 accept array of emails or roles
-    default: [],    // default empty array
+  title: {
+    type: String,
+    required: true
   },
-  readBy: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
+  message: {
+    type: String,
+    required: true
+  },
+  data: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
+
+  isRead: {
+    type: Boolean,
+    default: false
+  },
   createdAt: { type: Date, default: Date.now },
 });
 const Notification = mongoose.model("Notification", notificationSchema);

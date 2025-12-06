@@ -5,7 +5,7 @@ const Attendance = require("../modals/Attendence");
 const jwt = require("jsonwebtoken");
 const userModal = require("../modals/users");
 
-//  Send Announcement
+
 exports.createAnnouncement = async (req, res) => {
   try {
     const { title, message, recipients } = req.body;
@@ -37,48 +37,27 @@ exports.createAnnouncement = async (req, res) => {
   }
 };
 
-exports.getAnnouncements = async (req, res) => {
+exports.getAllNotification = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
-    const search = req.query.search || "";
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
+    const notification = await Notification.find().sort({ createdAt: -1 })
 
-    const totalItems = await Notification.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    const announcements = await Notification.find(query)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    // Add recipientCount dynamically
-    const announcementsWithCount = await Promise.all(
-  announcements.map(async (ann) => {
-    let recipientCount = 0;
-    if (ann.recipients === "students") recipientCount = await Student.countDocuments();
-    else if (ann.recipients === "instructors") recipientCount = await Instructor.countDocuments();
-    else if (ann.recipients === "all") {
-      const studentCount = await Student.countDocuments();
-      const instructorCount = await Instructor.countDocuments();
-      recipientCount = studentCount + instructorCount;
+    if (!notification) {
+      return res.status(401).json({
+        success: fasle,
+        message: "Faild to fetch notification"
+      })
     }
-    return { ...ann.toObject(), recipientCount };
-  })
-);
 
     res.status(200).json({
       success: true,
-      data: announcementsWithCount,
-      page,
-      totalPages,
-      totalItems,
+      notification
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
   }
 };
 
@@ -189,6 +168,7 @@ exports.getUserNotifications = async (req, res) => {
       recipients: { $in: [req.user.email, userType] }
     });
 
+
     const notifications = announcements.map(n => ({
       id: n._id,
       type: n.type === "low_attendance" ? "info" : "success",
@@ -197,6 +177,21 @@ exports.getUserNotifications = async (req, res) => {
       read: n.readBy.includes(userId),
       timestamp: n.createdAt.toLocaleDateString(),
     }));
+
+    if (userType === "student") {
+      const announcements = await Notification.find({
+        recipients: { $in: [req.user.email, req.user.role] }
+      });
+      notifications = announcements.map(n => ({
+        id: n._id,
+        type: n.type === "low_attendance" ? "info" : "success",
+        title: n.title,
+        message: n.message,
+        read: n.readBy.includes(userId),
+        timestamp: n.createdAt.toLocaleDateString(),
+      }));
+    }
+
 
     res.json({ success: true, notifications });
   } catch (err) {

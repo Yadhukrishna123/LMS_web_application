@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBell } from "react-icons/fa";
-import { 
-  User, 
-  BookOpen, 
-  Award, 
-  LayoutDashboard, 
+import {
+  User,
+  BookOpen,
+  Award,
+  LayoutDashboard,
   LogOut,
   ChevronDown,
   Settings,
@@ -28,7 +28,7 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [isLogout, setLogout] = useState(false);
-  const token = localStorage.getItem('token');
+
 
   const toggleDropdown = () => setIsDropdownOpen(prev => !prev);
 
@@ -41,13 +41,11 @@ const Header = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/usernotifications", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
           withCredentials: true,
         });
-        
+        console.log(res)
+
         if (res.data.success) {
           setNotifications(res.data.notifications);
         }
@@ -56,38 +54,34 @@ const Header = () => {
       }
     };
     fetchNotifications();
-  }, [token]);
+  }, []);
 
-  // Get user display name with multiple fallbacks
   const getUserDisplayName = () => {
     if (!user) return 'User';
-    
-    // Try different possible name fields
+
     const possibleName = user.name || user.username || user.fullName || user.firstName;
-    
+
     if (possibleName) {
       return possibleName;
     }
-    
-    // If no name, extract from email
+
     if (user.email) {
-      const emailName = user.email.split('@')[0];
-      // Convert meera.pillai to Meera Pillai
+      const emailName = `${user.firstname} ${user.lastname}`.split('@')[0];
       return emailName
         .split('.')
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
     }
-    
+
     return 'User';
   };
 
-  // Get initials for avatar
+
   const getUserInitials = () => {
     const displayName = getUserDisplayName();
-    
+
     if (displayName === 'User') return 'U';
-    
+
     const words = displayName.split(' ');
     if (words.length >= 2) {
       return (words[0][0] + words[words.length - 1][0]).toUpperCase();
@@ -96,11 +90,9 @@ const Header = () => {
   };
 
   const getMainNavigation = () => {
-    const homePath = user?.role === 'instructor' ? '/instructor_landing' : '/';
-
     const commonNav = [
-      { name: 'Home', path: homePath, show: true },
-      { name: 'About', path: '/about', show: user?.role !== 'instructor' }, 
+      { name: 'Home', path: '/', show: true },
+      { name: 'About', path: '/about', show: true },
     ];
 
     if (!user) {
@@ -116,19 +108,17 @@ const Header = () => {
       return [
         ...commonNav,
         { name: 'My Courses', path: '/my_courses', show: true },
-        { name: 'Quiz Manager', path: '/instructor_quiz_manager', show: true },
-        { name: 'Help & Support', path: '/help', show: true },
+        { name: 'Contact', path: '/contact', show: true },
+      ];
+    } else {
+      return [
+        ...commonNav,
+        { name: 'Browse Courses', path: '/allcourses', show: true },
+        { name: 'My Learning', path: '/user_page', show: true },
+        { name: 'Quiz', path: '/quizzes', show: true },
         { name: 'Contact', path: '/contact', show: true },
       ];
     }
-
-    return [
-      ...commonNav,
-      { name: 'Browse Courses', path: '/allcourses', show: true },
-      { name: 'My Learning', path: '/user_page', show: true },
-      { name: 'Quiz', path: '/quizzes', show: true },
-      { name: 'Contact', path: '/contact', show: true },
-    ];
   };
 
   const getDropdownItems = () => {
@@ -141,8 +131,11 @@ const Header = () => {
     }
 
     if (user.role === 'instructor') {
-      return [];
-
+      return [
+        { name: 'Create Course', path: '/create_course', icon: <Plus className="w-4 h-4" />, color: 'blue' },
+        { name: 'Quiz Manager', path: '/instructor_quiz_manager', icon: <FileText className="w-4 h-4" />, color: 'orange' },
+        { name: 'Help & Support', path: '/help', icon: <HelpCircle className="w-4 h-4" />, color: 'green' },
+      ];
     } else {
       return [
         { name: 'Categories', path: '/cateogeries', icon: <Grid className="w-4 h-4" />, color: 'blue' },
@@ -176,7 +169,6 @@ const Header = () => {
   const dropdownItems = getDropdownItems();
   const profileMenuItems = getProfileMenuItems();
 
-  // Get color classes for icons
   const getColorClasses = (color) => {
     const colors = {
       blue: 'bg-blue-100 text-blue-600',
@@ -189,7 +181,6 @@ const Header = () => {
     return colors[color] || colors.blue;
   };
 
-  // Avatar colors based on user name
   const getAvatarGradient = () => {
     const gradients = [
       'from-blue-400 to-blue-600',
@@ -203,7 +194,6 @@ const Header = () => {
     return gradients[index];
   };
 
-  // Get formatted role display
   const getRoleDisplay = () => {
     if (!user?.role) return 'Student';
     return user.role.charAt(0).toUpperCase() + user.role.slice(1);
@@ -214,8 +204,7 @@ const Header = () => {
       {isLogout && <Logout setLogout={setLogout} />}
 
       <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-        {/* Logo */}
-        <div className="text-2xl font-bold text-blue-600 cursor-pointer">
+        <div className="text-2xl font-bold text-blue-600 cursor-pointer" onClick={() => navigate('/')}>
           <img
             className='sm:w-24'
             src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/logo_Asset-7.png"
@@ -223,7 +212,6 @@ const Header = () => {
           />
         </div>
 
-        {/* DESKTOP NAVIGATION */}
         <nav className="hidden lg:flex items-center space-x-1">
           {mainNavigation.map((item, index) => (
             item.show && (
@@ -238,63 +226,51 @@ const Header = () => {
           ))}
 
           {/* Dropdown Menu */}
-          {(!user || user.role !== 'instructor') && (
-            <div className="relative">
-              <button
-                onClick={toggleDropdown}
-                className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 flex items-center space-x-2"
-              >
-                <span>Explore</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    isDropdownOpen ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+          <div className="relative">
+            <button
+              onClick={toggleDropdown}
+              className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 flex items-center space-x-2"
+            >
+              <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-              {isDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsDropdownOpen(false)}
-                  ></div>
-                  <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 p-3">
-                    <div className="grid gap-2">
-                      {dropdownItems.map((item, index) => (
-                        <Link
-                          key={index}
-                          to={item.path}
-                          className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-indigo-50 rounded-xl transition-all group border border-transparent hover:border-indigo-200"
-                          onClick={() => setIsDropdownOpen(false)}
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-lg ${getColorClasses(
-                              item.color
-                            )} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}
-                          >
-                            {item.icon}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-900 text-sm">
-                              {item.name}
-                            </p>
-                            <p className="text-xs text-gray-500">Click to explore</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+            {isDropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setIsDropdownOpen(false)}
+                ></div>
+                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 p-3">
+                  <div className="grid gap-2">
+                    {dropdownItems.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.path}
+                        className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-indigo-50 rounded-xl transition-all group border border-transparent hover:border-indigo-200"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <div className={`w-10 h-10 rounded-lg ${getColorClasses(item.color)} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                          {item.icon}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900 text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-500">Click to explore</p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                </>
-              )}
-            </div>
-          )}
+                </div>
+              </>
+            )}
+          </div>
         </nav>
 
-        {/* DESKTOP PROFILE SECTION */}
+
         <div className='hidden lg:flex items-center space-x-6'>
           {user ? (
             <>
-              {/* Notification Bell */}
+
               <Link to="/notification" className="relative group">
                 <div className="p-3 bg-gray-100 hover:bg-indigo-100 rounded-xl transition-all">
                   <FaBell size={20} className="text-gray-700 group-hover:text-indigo-600" />
@@ -315,17 +291,17 @@ const Header = () => {
                 </Link>
               )}
 
-              {/* Profile Dropdown */}
+
               <div className="relative">
-                <button 
-                  className="flex items-center gap-3 p-2 pr-3 rounded-xl hover:bg-gray-100 transition-all" 
+                <button
+                  className="flex items-center gap-3 p-2 pr-3 rounded-xl hover:bg-gray-100 transition-all"
                   onClick={() => setOpenProfile(!openProfile)}
                 >
                   {/* Avatar */}
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getAvatarGradient()} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
                     {getUserInitials()}
                   </div>
-                  
+
                   {/* User Name & Role */}
                   <div className="hidden xl:block text-left">
                     <p className="text-sm font-semibold text-gray-900 leading-tight">
@@ -335,18 +311,18 @@ const Header = () => {
                       {getRoleDisplay()}
                     </p>
                   </div>
-                  
+
                   <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${openProfile ? 'rotate-180' : ''}`} />
                 </button>
 
                 {openProfile && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-40" 
+                    <div
+                      className="fixed inset-0 z-40"
                       onClick={() => setOpenProfile(false)}
                     ></div>
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
-                      {/* Profile Header */}
+
                       <div className="p-6 bg-gradient-to-br from-gray-50 to-indigo-50 border-b border-gray-100">
                         <div className="flex items-center gap-4">
                           <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${getAvatarGradient()} flex items-center justify-center text-white font-bold text-2xl shadow-lg`}>
@@ -366,14 +342,14 @@ const Header = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Menu Items */}
                       <div className="p-3">
                         <div className="space-y-2">
                           {profileMenuItems.map((item, index) => (
-                            <Link 
+                            <Link
                               key={index}
-                              to={item.path} 
+                              to={item.path}
                               className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-all group"
                               onClick={() => setOpenProfile(false)}
                             >
@@ -384,14 +360,14 @@ const Header = () => {
                             </Link>
                           ))}
                         </div>
-                        
+
                         {/* Logout */}
                         <div className="mt-3 pt-3 border-t border-gray-100">
-                          <button 
+                          <button
                             onClick={() => {
                               setLogout(true);
                               setOpenProfile(false);
-                            }} 
+                            }}
                             className='flex items-center gap-3 w-full p-3 text-red-600 hover:bg-red-50 rounded-xl transition-all group'
                           >
                             <div className="w-9 h-9 rounded-lg bg-red-100 text-red-600 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -452,8 +428,8 @@ const Header = () => {
                       <span className="text-xs font-medium text-gray-700 capitalize">{getRoleDisplay()}</span>
                     </div>
                   </div>
-                  <Link 
-                    to="/notification" 
+                  <Link
+                    to="/notification"
                     className="relative p-2 bg-white rounded-lg shadow-sm"
                     onClick={() => setIsOpen(false)}
                   >
@@ -473,7 +449,7 @@ const Header = () => {
               item.show && (
                 <Link
                   key={index}
-                  to={item.path} 
+                  to={item.path}
                   className="px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium"
                   onClick={() => setIsOpen(false)}
                 >
@@ -483,51 +459,39 @@ const Header = () => {
             ))}
 
             {/* Mobile Dropdown */}
-            {(!user || user.role !== 'instructor') && (
-              <div>
-                <button 
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-                  className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium'
-                >
-                  <span>Explore</span>
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
+            <div>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className='flex justify-between items-center w-full px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors font-medium'
+              >
+                <span>{user?.role === 'instructor' ? 'Tools' : 'Explore'}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-                {isDropdownOpen && (
-                  <div className="grid grid-cols-1 gap-2 mt-2 pl-2">
-                    {dropdownItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        to={item.path}
-                        className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <div
-                          className={`w-9 h-9 rounded-lg ${getColorClasses(
-                            item.color
-                          )} flex items-center justify-center`}
-                        >
-                          {item.icon}
-                        </div>
-                        <span className="font-medium text-gray-700">
-                          {item.name}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+              {isDropdownOpen && (
+                <div className="grid grid-cols-1 gap-2 mt-2 pl-2">
+                  {dropdownItems.map((item, index) => (
+                    <Link
+                      key={index}
+                      to={item.path}
+                      className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-all"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className={`w-9 h-9 rounded-lg ${getColorClasses(item.color)} flex items-center justify-center`}>
+                        {item.icon}
+                      </div>
+                      <span className="font-medium text-gray-700">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* User Actions */}
             {user ? (
               <>
                 {user.role === 'instructor' && (
-                  <Link 
+                  <Link
                     to="/create_course"
                     className="mt-2 w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 font-semibold text-center"
                     onClick={() => setIsOpen(false)}

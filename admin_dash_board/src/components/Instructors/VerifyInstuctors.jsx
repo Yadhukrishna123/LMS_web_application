@@ -9,7 +9,7 @@ const VerifyInstructors = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [action, setAction] = useState('');
+  // const [loading, setLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
@@ -19,6 +19,7 @@ const VerifyInstructors = () => {
 
   const fetchPending = async () => {
     try {
+      setLoading(true)
       const res = await axios.get("http://localhost:8080/api/v1/pending_instructors");
       console.log('Pending instructors response:', res.data);
       if (res.data && res.data.success) {
@@ -36,6 +37,8 @@ const VerifyInstructors = () => {
         autoClose: 4000,
         theme: 'colored',
       });
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -47,7 +50,7 @@ const VerifyInstructors = () => {
       });
       
       if (res.data.success) {
-        toast.success('✅ Instructor approved successfully!', {
+        toast.success('Instructor approved successfully!', {
           position: 'top-center',
           autoClose: 3000,
           theme: 'colored',
@@ -61,7 +64,7 @@ const VerifyInstructors = () => {
         });
       }
     } catch (error) {
-      console.error('❌ Error approving instructor:', error);
+      console.error('Error approving instructor:', error);
       toast.error(
         error.response?.data?.message || 'Failed to approve instructor',
         {
@@ -90,7 +93,7 @@ const VerifyInstructors = () => {
       });
 
       if (res.data.success) {
-        toast.error('❌ Instructor rejected successfully', { 
+        toast.error('Instructor rejected successfully', { 
           position: 'top-center',
           autoClose: 3000,
           theme: 'colored',

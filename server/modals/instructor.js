@@ -3,21 +3,22 @@ const mongoose = require("mongoose");
 const instructorSchema = new mongoose.Schema({
 
   userId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'User',
-  unique: true,
-  sparse: true
- },
-  instructorId: { 
-    type: String, 
-    unique: true 
-  }, 
-  accountRegisteredEmail: { 
-    type: String, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     unique: true,
-    sparse: true  
+    sparse: true
   },
-  name: String,
+  instructorId: {
+    type: String,
+    unique: true
+  },
+  accountRegisteredEmail: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  firstname: String,
+  lastname: String,
   email: String,
   phone: String,
   bio: String,

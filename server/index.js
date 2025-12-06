@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser")
 const dotenv = require("dotenv")
+// const path = require("path")
 
 
 
@@ -29,6 +30,7 @@ const notificationRoutes = require("./Routes/notificationRoutes");
 const ticketRoutes = require("./Routes/ticketRoutes");
 const courseFeedbackRoutes = require("./Routes/courseFeedbackRoutes");
 const lessionRoutes = require("./Routes/lessionRoute");
+const assignmentRoutes = require("./Routes/assignmentRoutes");
 
 
 
@@ -59,6 +61,7 @@ app.use("/api/v1", notificationRoutes);
 app.use("/api/v1/", ticketRoutes);
 app.use("/api/v1", courseFeedbackRoutes);
 app.use("/api/v1", lessionRoutes);
+app.use("/api/v1", assignmentRoutes);
 
 
 

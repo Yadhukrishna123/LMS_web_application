@@ -15,13 +15,14 @@ const {
     getPendingInstructors,
     approveInstructor,
     rejectInstructor,
-    getInstructorsByStatus
+    getInstructorsByStatus,
+    getAllApprovedInstrecters
 } = require("../Controllers/authController");
 const { authToken } = require("../middleware/jwtAuth");
 
 const router = express.Router();
 
-// Existing routes
+
 router.post("/sign_up", signup)
 router.post("/login", login)
 router.get("/get_all_user", getAllUsers)
@@ -31,10 +32,11 @@ router.post("/reset_password/:token", resetPAssword)
 router.get("/me", authToken, getMe);
 router.post("/logout", logout)
 
-// Instructor Approval Routes
+
 router.get("/pending_instructors", getPendingInstructors)
 router.post("/approve_instructor", approveInstructor)
 router.post("/reject_instructor", rejectInstructor)
 router.get("/instructors_by_status", getInstructorsByStatus)
+router.get("/get_all_approved_instrectors", getAllApprovedInstrecters)
 
 module.exports = router

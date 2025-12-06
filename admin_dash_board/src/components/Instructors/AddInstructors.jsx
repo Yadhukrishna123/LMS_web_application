@@ -3,8 +3,10 @@ import axios from "axios";
 
 const AddInstructors = () => {
   const [inputs, setInputs] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     email: "",
+    password: "",
     phone: "",
     bio: "",
     image: null,
@@ -45,8 +47,27 @@ const AddInstructors = () => {
         );
         img_url = imageRes.data.secure_url;
       }
+
+      //  let res = )
       const payload = { ...inputs, image: img_url };
-      await axios.post("http://localhost:8080/api/v1/add_instructor", payload);
+      const signupPayload = {
+        firstname: inputs.firstname,
+        lastname: inputs.lastname,
+        email: inputs.email,
+        expertise: inputs.specialization,
+        phone: inputs.phone,
+        password: inputs.password,
+        role: "instructor",
+
+      }
+      const [signupRes, detailsRes] = await Promise.all([
+        axios.post("http://localhost:8080/api/v1/sign_up", signupPayload),
+        axios.post("http://localhost:8080/api/v1/add_instructor", payload)
+      ])
+
+      console.log("signupRes", signupRes)
+      console.log("detailsRes", detailsRes)
+
       alert("Instructor added successfully!");
       setInputs({
         name: "",
@@ -69,13 +90,15 @@ const AddInstructors = () => {
     }
   };
 
+  console.log(inputs)
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-purple-100 to-pink-50 rounded-3xl">
       <div className="relative bg-white rounded-3xl shadow-2xl p-10 w-full max-w-2xl border border-white border-opacity-30 backdrop-blur-xl ">
         <div className="text-center mb-10">
           <div className="inline-block p-3 bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full mb-4 shadow-lg">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </div>
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 bg-clip-text text-transparent mb-2">
@@ -90,11 +113,23 @@ const AddInstructors = () => {
           {/* Personal Info */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 grid gap-6 mb-3 shadow">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">First name</label>
               <input
                 type="text"
-                name="name"
-                value={inputs.name}
+                name="firstname"
+                // value={inputs.name}
+                onChange={handleChange}
+                required
+                placeholder="Full Name"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Last name</label>
+              <input
+                type="text"
+                name="lastname"
+                // value={inputs.name}
                 onChange={handleChange}
                 required
                 placeholder="Full Name"
@@ -107,6 +142,18 @@ const AddInstructors = () => {
                 type="email"
                 name="email"
                 value={inputs.email}
+                onChange={handleChange}
+                required
+                placeholder="Email"
+                className="w-full px-5 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition duration-300 outline-none hover:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <input
+                type="password"
+                name="password"
+                // value={inputs.email}
                 onChange={handleChange}
                 required
                 placeholder="Email"
@@ -227,9 +274,8 @@ const AddInstructors = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 flex items-center justify-center ${
-              loading ? "bg-blue-400 cursor-not-allowed opacity-70" : ""
-            }`}
+            className={`w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 flex items-center justify-center ${loading ? "bg-blue-400 cursor-not-allowed opacity-70" : ""
+              }`}
           >
             {loading && (
               <span className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin mr-2" />

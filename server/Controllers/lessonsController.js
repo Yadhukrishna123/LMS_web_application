@@ -1,6 +1,7 @@
 const Lessions = require("../modals/lesonsModal")
 const moduleQuizZ = require("../modals/moduleQuizz")
 const userSubmitModal = require("../modals/userSubmitModuleQuiz")
+const courseCompleters = require("../modals/CourseCompleters")
 const { sendCertificatetoStudent } = require("../Utils/sendCertificateMail")
 
 exports.createLesson = async (req, res) => {
@@ -274,5 +275,61 @@ exports.handleCourseCompetion = async (req, res) => {
         });
     } catch (error) {
 
+    }
+}
+
+
+exports.createCourseCompleters = async (req, res) => {
+    try {
+        const { username, userId, userEmail, coursename } = req.body
+
+        if (!username || !userId || !userEmail || !coursename) {
+            return res.status(400).json({
+                success: false,
+                message: "All required fields must be provided",
+            })
+        }
+
+        const allCompleted = await courseCompleters.create({
+            username, userId, userEmail, coursename
+        })
+
+        res.status(200).json({
+            success: true,
+            allCompleted,
+        });
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
+
+exports.getAllCompleters = async (req, res) => {
+    try {
+        const allCourseCompleters = await courseCompleters.find()
+
+         if (!allCourseCompleters) {
+            return res.status(400).json({
+                success: false,
+                messsage: "not found",
+
+            });
+        }
+
+          res.status(200).json({
+            success: true,
+            allCourseCompleters,
+
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 }

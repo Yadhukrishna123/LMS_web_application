@@ -13,7 +13,7 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return; 
+    if (loading) return;
     setLoading(true);
 
     try {
@@ -55,7 +55,7 @@ const Contact = () => {
       </div>
 
       <div className="relative w-full lg:w-[45%] h-[90vh] bg-gradient-to-tr from-[#8168e5] to-[#a38bf3] flex items-center justify-center overflow-hidden rounded-l-[200px] shadow-2xl">
-        
+
         {success && (
           <div className="absolute top-5 left-1/2 -translate-x-1/2 bg-white text-purple-600 font-semibold px-6 py-3 rounded-2xl shadow-lg z-20">
             {success}
@@ -102,9 +102,8 @@ const Contact = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm shadow-sm transition-all ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#edeafc]"
-            }`}
+            className={`bg-white text-[#7a6fee] font-semibold rounded-2xl py-3 text-sm shadow-sm transition-all ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#edeafc]"
+              }`}
           >
             {loading ? "Sending..." : "Send Message Now"}
           </button>

@@ -110,7 +110,7 @@ const ModuleQuizz = ({ currentQuizz, onBack, moduleName, moduleId, currentQuizId
 
   }
 
-  // console.log(userAnswers)
+  console.log(userAnswers)
 
 
 

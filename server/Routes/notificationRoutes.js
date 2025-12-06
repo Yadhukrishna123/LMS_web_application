@@ -6,21 +6,21 @@ const {
   createAnnouncement,
   sendLowAttendance,
   getLowAttendanceStudents,
-  getAnnouncements,
+ 
   getUserNotifications,
   deleteAnnouncement,
   updateAnnouncement,
   markNotificationAsRead,
   deleteUserNotification,
+  getAllNotification,
 } = require("../Controllers/notificationController");
 
 router.post("/announcementscreate", createAnnouncement);
 router.post("/low-attendance", sendLowAttendance);
 router.post("/low-attendance-list", getLowAttendanceStudents);
-router.get("/allannouncements", getAnnouncements);
+router.get("/all_notification", getAllNotification);
 router.delete("/announcements/:id", deleteAnnouncement);
 router.put("/announcements/:id", updateAnnouncement);
-
 router.get("/usernotifications", authToken, getUserNotifications);
 router.patch("/notifications/:id/read", authToken, markNotificationAsRead);
 router.delete("/notifications/:id", authToken, deleteUserNotification);

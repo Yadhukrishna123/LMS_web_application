@@ -9,7 +9,7 @@ const courseModuleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
- 
+
 });
 
 const courseModal = new mongoose.Schema({
@@ -46,23 +46,18 @@ const courseModal = new mongoose.Schema({
     default: null
   },
   courseModules: {
-    type: [courseModuleSchema], 
+    type: [courseModuleSchema],
     default: [],
   },
   instructor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
-    required: true,
-    index: true 
-  },
-  instructorName: {
     type: String,
     required: true
   },
-  instructorBio: {
+  instructoremail: {
     type: String,
-    required: false
+    required: true
   },
+
   hasMonthlyPayment: {
     type: Boolean,
     default: false

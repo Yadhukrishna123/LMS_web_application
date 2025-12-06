@@ -182,7 +182,7 @@ const UserEnquiries = () => {
             </table>
           </div>
 
-          {/* Pagination Footer */}
+       
           <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 flex items-center justify-between border-t border-gray-200">
             <div className="text-sm text-gray-600">
               Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} enquiries

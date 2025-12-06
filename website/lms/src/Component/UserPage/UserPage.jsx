@@ -9,24 +9,43 @@ import {
   FaChartLine, FaBookmark, FaPlay, FaDownload, FaShare,
   FaStar, FaCheckCircle, FaArrowRight, FaFilter
 } from 'react-icons/fa';
+import { MdAssignment } from 'react-icons/md'
+import UserAssignment from './UserAssignment'
+import SubmittingAssignment from './SubmittingAssignment'
+import SubmittedAssignments from './SubmittedAssignments'
 
 const UserPage = () => {
     const [courseFilter, setCourseFilter] = useState('all');
     const { user } = useContext(AllCourseDetail)
     const [showForm, setShowForm] = useState(false)
     const [usercourse, setUserCourse] = useState([])
+    const [assignment, setAssignment] = useState([])
     const [loading, setLoading] = useState(false)
+    const [clickAssignment, setClickAssignment] = useState(false)
+     const [clicksubmittingAssignment, setclickSubmittingAssignment] = useState(false)
+      const [clickSubmittedAssignment, setClickSubmittedAssignment] = useState(false)
     const [email, setEmail] = useState(null)
     const [course, setCourse] = useState([])
+     const [completed, setCompleted] = useState([])
     const studentEnrolledCourse = async () => {
         try {
             setLoading(true)
             let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
             let allCourse = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`)
+            let allCourseComplete = await axios.get("http://localhost:8080/api/v1/get_all_completers")
+            let allAssignment = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
+    
+
             console.log(res)
             console.log(allCourse)
+            console.log(allCourseComplete)
+              console.log(allAssignment)
             setUserCourse(res.data.paymentDetails)
             setCourse(allCourse.data.courses)
+            setCompleted(allCourseComplete.data.allCourseCompleters)
+            setAssignment(allAssignment.data.assignment)
+
+
         } catch (error) {
             console.error(error)
         } finally {
@@ -43,34 +62,14 @@ const UserPage = () => {
     }, [user])
     const userCourses = usercourse.filter((c) => c.userEmail === email)
     const totalCourse = userCourses.length
-    console.log(totalCourse)
+   
 
-  const certificates = [
-    {
-      id: 1,
-      courseName: 'Python for Data Science',
-      completionDate: 'Nov 10, 2025',
-      certificateId: 'CERT-2025-001234',
-      instructor: 'Sarah Johnson',
-      score: 95
-    },
-    {
-      id: 2,
-      courseName: 'Web Development Bootcamp',
-      completionDate: 'Oct 28, 2025',
-      certificateId: 'CERT-2025-001189',
-      instructor: 'Alex Turner',
-      score: 92
-    },
-    {
-      id: 3,
-      courseName: 'JavaScript ES6+',
-      completionDate: 'Oct 15, 2025',
-      certificateId: 'CERT-2025-001156',
-      instructor: 'Mike Stevens',
-      score: 88
-    }
-  ];
+    const userCompletedWithcertificate = completed.filter((c)=>c.userEmail === user?.email && c.userId === user._id)
+
+
+    console.log(userCompletedWithcertificate)
+
+
 
   const stats = {
     totalHours: 127,
@@ -89,13 +88,22 @@ const UserPage = () => {
   ];
 
     
-    console.log(email)
-    console.log(usercourse)
+    console.log(completed)
+    console.log(assignment)
     return (
         <div className="px-4 sm:px-6 lg:px-20 py-10 bg-gray-50 min-h-screen">
-            {showForm && <AddStudent setShowForm={setShowForm} emailll={email} />}
-
-          
+            {showForm && <AddStudent setShowForm = {setShowForm} emailll={email} />}
+            {clickAssignment && <UserAssignment
+             setClickAssignment = {setClickAssignment} 
+             assignment={assignment}
+             userCourses={userCourses}
+             />}
+            {clicksubmittingAssignment && <SubmittingAssignment
+             setclickSubmittingAssignment={setclickSubmittingAssignment}
+             assignment={assignment}
+             userCourses={userCourses}
+             />}
+            {clickSubmittedAssignment && <SubmittedAssignments setClickSubmittedAssignment={setClickSubmittedAssignment}/>}
               <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
  
        
@@ -192,7 +200,7 @@ const UserPage = () => {
 
  <div className="space-y-8 px-4 sm:px-6 lg:px-20 py-10 bg-gray-50">
       
-      {/* Learning Statistics */}
+   
       <section className="bg-white rounded-3xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           <FaChartLine className="text-blue-600" />
@@ -218,15 +226,11 @@ const UserPage = () => {
             <div className="text-sm text-gray-600 mt-1">Enrolled</div>
           </div>
           
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaFire className="text-orange-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-orange-600">{stats.currentStreak}</div>
-            <div className="text-sm text-gray-600 mt-1">Day Streak</div>
-          </div>
+         
           
           <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 hover:shadow-lg transition-all">
             <FaCertificate className="text-yellow-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-yellow-600">{stats.certificates}</div>
+            <div className="text-3xl font-bold text-yellow-600">{userCompletedWithcertificate.length}</div>
             <div className="text-sm text-gray-600 mt-1">Certificates</div>
           </div>
           
@@ -237,6 +241,37 @@ const UserPage = () => {
           </div>
         </div>
       </section>
+
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Assignments</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button
+                     onClick={()=>setClickAssignment(true)}
+                      className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-sm hover:shadow-md"
+                    >
+                      <MdAssignment className="text-xl" />
+                      <span className="font-semibold text-sm">Assignment</span>
+                    </button>
+
+                    <button
+                     onClick={()=>setclickSubmittingAssignment(true)}
+                      className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-sm hover:shadow-md"
+                    >
+                      <MdAssignment className="text-xl" />
+                      <span className="font-semibold text-sm">Upload assignment</span>
+                    </button>
+
+                      <button
+                      onClick={()=>setClickSubmittedAssignment(true)}
+                      className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition shadow-sm hover:shadow-md"
+                    >
+                      <MdAssignment className="text-xl" />
+                      <span className="font-semibold text-sm">Submitted assignment</span>
+                    </button>
+      
+                    
+                  </div>
+                </div>
 
       {/* My Courses */}
       <section className="bg-white rounded-3xl shadow-lg p-8">
@@ -344,10 +379,12 @@ const UserPage = () => {
           My Certificates
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {certificates.map((cert) => (
+            {userCompletedWithcertificate && userCompletedWithcertificate.map((c, i)=>{
+              return(
+                <div key={i} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+         
             <div
-              key={cert.id}
+             
               className="relative bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-yellow-200 group overflow-hidden"
             >
               {/* Decorative elements */}
@@ -358,14 +395,14 @@ const UserPage = () => {
                 <div className="flex items-start justify-between mb-4">
                   <FaTrophy className="text-yellow-600 text-4xl" />
                   <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    {cert.score}%
+                    score%
                   </span>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{cert.courseName}</h3>
-                <p className="text-gray-600 text-sm mb-1">by {cert.instructor}</p>
-                <p className="text-gray-500 text-xs mb-4">Completed: {cert.completionDate}</p>
-                <p className="text-gray-400 text-xs mb-6 font-mono">ID: {cert.certificateId}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{c.coursename}</h3>
+                {/* <p className="text-gray-600 text-sm mb-1">by {cert.instructor}</p> */}
+                <p className="text-gray-500 text-xs mb-4">Completed: 10/101/2025</p>
+                {/* <p className="text-gray-400 text-xs mb-6 font-mono">ID: {cert.certificateId}</p> */}
 
                 <div className="flex gap-2">
                   <button className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
@@ -377,44 +414,14 @@ const UserPage = () => {
                 </div>
               </div>
             </div>
-          ))}
+         
         </div>
+              )
+            })}
+
+        
       </section>
 
-      {/* Recent Activity */}
-      <section className="bg-white rounded-3xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-          <FaClock className="text-green-600" />
-          Recent Activity
-        </h2>
-
-        <div className="space-y-4">
-          {activities.map((activity, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all border border-gray-100"
-            >
-              <div className={`p-3 rounded-full ${
-                activity.type === 'lesson' ? 'bg-blue-100' :
-                activity.type === 'certificate' ? 'bg-yellow-100' :
-                activity.type === 'quiz' ? 'bg-green-100' :
-                'bg-purple-100'
-              }`}>
-                {activity.type === 'lesson' && <FaPlay className="text-blue-600" />}
-                {activity.type === 'certificate' && <FaCertificate className="text-yellow-600" />}
-                {activity.type === 'quiz' && <FaCheckCircle className="text-green-600" />}
-                {activity.type === 'enrollment' && <FaBook className="text-purple-600" />}
-              </div>
-              
-              <div className="flex-1">
-                <p className="font-semibold text-gray-900">{activity.title}</p>
-                <p className="text-sm text-gray-600">{activity.course}</p>
-                <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
     </div>
 

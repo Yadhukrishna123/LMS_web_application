@@ -9,6 +9,7 @@ const ViewStudents = () => {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [id, setId] = useState("")
   const [showEditPopop, setShowEditPopup] = useState(false)
   const [deleteClick, setDeleteClick] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -19,11 +20,22 @@ const ViewStudents = () => {
     { label: "Phone", name: "phone", type: "text", placeholder: "Phone" },
     { label: "Age", name: "age", type: "number", placeholder: "Age" },
     { label: "Gender", name: "gender", type: "select", options: ["Male", "Female", "Other"], placeholder: "Select Gender" },
-    { label: "Profile Image", name: "profileImage", type: "file", accept: "image/*" },
+    { label: "Profile Image", name: "profileImage", type: "file" },
     { label: "Course Enrolled", name: "courseEnrolled", type: "text", placeholder: "Course Enrolled" },
     { label: "Address", name: "address", type: "textarea", placeholder: "Address", rows: 3 },
 
   ];
+
+  const studentUpdateInput = {
+    name: "",
+    email: "",
+    phone: "",
+    age: "",
+    gender: "",
+    profileImage: null,
+    address: "",
+    batch: "",
+  }
 
   const getStudents = async () => {
     setLoading(true);
@@ -46,12 +58,22 @@ const ViewStudents = () => {
   }, [search]);
 
 
+  const handleEdit = (id) => {
+    setId(id)
+    console.log(id)
+  }
+
 
 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      {showEditPopop && <Edit field={studentFields} setShowEditPopup={setShowEditPopup} />}
+      {showEditPopop && <Edit
+        field={studentFields}
+        setShowEditPopup={setShowEditPopup}
+        updateInput={studentUpdateInput}
+        id={id}
+      />}
       <div className="w-full max-w-7xl mx-auto">
 
         <div className="mb-8 flex items-center gap-3">
@@ -146,7 +168,10 @@ const ViewStudents = () => {
                         </button>
 
                         <button
-                          onClick={() => setShowEditPopup(true)}
+                          onClick={() => {
+                            setShowEditPopup(true);
+                            handleEdit(student._id);
+                          }}
                           className="bg-green-50 hover:bg-green-100 text-green-600 p-2 rounded-lg transition"
                         >
                           <FaEdit />

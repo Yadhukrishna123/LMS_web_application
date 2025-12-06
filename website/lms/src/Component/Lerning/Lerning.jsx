@@ -369,22 +369,36 @@ const Lerning = () => {
     ),
   };
 
-  const handleCertificate = async (email, userName, course) => {
-    try {
-      let res = await axios.post("http://localhost:8080/api/v1/course_completation_certificate", {
+const handleCertificate = async (email, userName, course, userId) => {
+  try {
+    const [certificateRes, courseCompleteRes] = await Promise.all([
+      axios.post("http://localhost:8080/api/v1/course_completation_certificate", {
         email: email,
         studentName: userName,
         courseName: course
+      }),
 
+      axios.post("http://localhost:8080/api/v1/course_completers", {
+        username: userName,
+        userId: userId,
+        userEmail: email,
+        coursename: course
       })
-      if (res.data.success) {
-        toast.success(res.data.message || "Certificate sent to your email!")
-      }
-      console.log(res)
-    } catch (error) {
+    ]);
 
+    console.log("Certificate Response:", certificateRes);
+    console.log("Course Complete Response:", courseCompleteRes);
+
+    if(certificateRes.data.success && courseCompleteRes.data.success){
+      toast.success("We will mail your certificate shortly!")
     }
+
+  } catch (error) {
+    console.error(error);
+   
   }
+};
+
 
   console.log(currentQuizId)
 
@@ -605,7 +619,7 @@ const Lerning = () => {
                             </p>
 
                             <button
-                              onClick={() => handleCertificate(user.email, `${user.firstname} ${user.lastname}`, course?.title)}
+                              onClick={() => handleCertificate(user.email, `${user.firstname} ${user.lastname}`, course?.title, user._id)}
                               className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-xl font-semibold shadow-lg hover:scale-105 transition-all duration-300"
                             >
                               <FiDownload className="text-2xl" />

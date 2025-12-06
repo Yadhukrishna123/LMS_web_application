@@ -25,7 +25,7 @@ exports.signup = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+
         const user = await userModal.create({
             firstname,
             lastname,
@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
             phone,
             password: hashedPassword,
             role,
-            expertise 
+            expertise
 
         });
 
@@ -43,7 +43,7 @@ exports.signup = async (req, res) => {
                 message: "Failed to register"
             });
         }
-        const message = role === 'instructor' 
+        const message = role === 'instructor'
             ? "Registration successful! Your account is pending admin approval."
             : "Successfully registered! You can now login.";
 
@@ -56,7 +56,7 @@ exports.signup = async (req, res) => {
                 lastname: user.lastname,
                 email: user.email,
                 role: user.role,
-                verificationStatus: user.verificationStatus 
+                verificationStatus: user.verificationStatus
             }
         });
 
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
         const user = await userModal.findOne({
             $or: [{ email: email }]
         })
-        
+
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -92,11 +92,11 @@ exports.login = async (req, res) => {
             })
         }
 
-        // Check if instructor is approved
+
         if (user.role === 'instructor' && !user.isApproved) {
             return res.status(403).json({
                 success: false,
-                message: user.verificationStatus === 'rejected' 
+                message: user.verificationStatus === 'rejected'
                     ? `Your instructor application was rejected. Reason: ${user.rejectionReason || 'Not specified'}`
                     : "Your account is pending admin approval. Please wait for verification.",
                 verificationStatus: user.verificationStatus
@@ -373,7 +373,7 @@ exports.logout = async (req, res) => {
 }
 exports.getPendingInstructors = async (req, res) => {
     try {
-        const instructors = await userModal.find({ 
+        const instructors = await userModal.find({
             role: 'instructor',
             verificationStatus: 'pending'
         }).select('-password').sort({ createdAt: -1 });
@@ -391,12 +391,12 @@ exports.getPendingInstructors = async (req, res) => {
     }
 };
 
-// Approve Instructor
+
 exports.approveInstructor = async (req, res) => {
     try {
         const { userId, adminId } = req.body;
 
-        console.log('📥 Approve request received:', { userId, adminId });
+        console.log('Approve request received:', { userId, adminId });
 
         if (!userId) {
             return res.status(400).json({
@@ -405,7 +405,7 @@ exports.approveInstructor = async (req, res) => {
             });
         }
 
-        // Find and update instructor (MongoDB will handle invalid ID format)
+
         const instructor = await userModal.findByIdAndUpdate(
             userId,
             {
@@ -424,7 +424,7 @@ exports.approveInstructor = async (req, res) => {
             });
         }
 
-        console.log('✅ Instructor approved:', instructor.email);
+        console.log('Instructor approved:', instructor.email);
 
         res.status(200).json({
             success: true,
@@ -433,14 +433,14 @@ exports.approveInstructor = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Approve instructor error:', error.message);
+        console.error('Approve instructor error:', error.message);
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
                 message: "Invalid user ID format"
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: error.message || "Failed to approve instructor"
@@ -448,7 +448,7 @@ exports.approveInstructor = async (req, res) => {
     }
 };
 
-// Reject Instructor
+
 exports.rejectInstructor = async (req, res) => {
     try {
         const { userId, reason } = req.body;
@@ -484,7 +484,7 @@ exports.rejectInstructor = async (req, res) => {
             });
         }
 
-        console.log('❌ Instructor rejected:', instructor.email);
+        console.log('Instructor rejected:', instructor.email);
 
         res.status(200).json({
             success: true,
@@ -494,14 +494,14 @@ exports.rejectInstructor = async (req, res) => {
 
     } catch (error) {
         console.error('Error rejecting instructor:', error.message);
-        
+
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
                 message: "Invalid user ID format"
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: error.message
@@ -509,10 +509,10 @@ exports.rejectInstructor = async (req, res) => {
     }
 };
 
-// Get Instructors by Status (for Admin)
+
 exports.getInstructorsByStatus = async (req, res) => {
     try {
-        const { status } = req.query; // 'pending', 'approved', 'rejected'
+        const { status } = req.query;
 
         let query = { role: 'instructor' };
         if (status) {
@@ -535,3 +535,24 @@ exports.getInstructorsByStatus = async (req, res) => {
         });
     }
 };
+
+
+exports.getAllApprovedInstrecters = async (req, res) => {
+    try {
+        const instrecters = await userModal.find({
+            role: "instructor",
+            isApproved: true
+        })
+        res.status(200).json({
+            success: true,
+            message: "Successfullt fetch approved instrectors",
+            length: instrecters.length,
+            instrecters
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
