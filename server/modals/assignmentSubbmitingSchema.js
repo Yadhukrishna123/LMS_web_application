@@ -6,13 +6,29 @@ const assignmentSubbmitinSchema = new mongoose.Schema({
         required: true,
     },
     assignmentFile: {
-        type: String,   
+        type: String,
         required: true
     },
     comment: {
         type: String,
         default: ""
     },
+    isChecked: {
+        type: Boolean,
+        default: false
+    },
+    score: [
+        {
+            score: {
+                type: String,
+                required: true
+            },
+            comment: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true

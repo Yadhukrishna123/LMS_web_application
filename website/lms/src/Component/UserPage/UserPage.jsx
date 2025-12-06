@@ -230,7 +230,7 @@ const UserPage = () => {
           
           <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 hover:shadow-lg transition-all">
             <FaCertificate className="text-yellow-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-yellow-600">{stats.certificates}</div>
+            <div className="text-3xl font-bold text-yellow-600">{userCompletedWithcertificate.length}</div>
             <div className="text-sm text-gray-600 mt-1">Certificates</div>
           </div>
           

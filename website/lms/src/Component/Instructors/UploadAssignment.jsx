@@ -1,14 +1,25 @@
 import axios from 'axios';
-import React, { useState } from 'react'
-import { FaTimes, FaUpload, FaCalendarAlt, FaClock, FaBook, FaUsers, FaStar } from 'react-icons/fa';
+import React, { useContext, useEffect, useState } from 'react'
+import { FaTimes, FaUpload, FaCalendarAlt, FaClock, FaBook, FaUsers, FaStar, FaCheckCircle } from 'react-icons/fa';
 import Swal from "sweetalert2";
+import { AllCourseDetail } from '../AllCourseContext/Context';
 
-const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, course }) => {
+const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, course, students }) => {
+    console.log(students)
+
     console.log(course)
+    const { user } = useContext(AllCourseDetail);
+
+    const [assignmentMode, setAssignmentMode] = useState('all');
+    const [enrolledStudents, setEnrolledStudents] = useState([]);
+    const [selectedStudents, setSelectedStudents] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [payments, setPayments] = useState([]);
+
+
     const [inputs, setInputs] = useState({
         course: "",
         title: '',
-
         description: '',
         dueDate: '',
         totalMarks: '',
@@ -33,16 +44,78 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
     //    
     //  
 
+    const getAllPayment = async () => {
+        try {
+            setLoading(true)
+            let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            console.log(res)
+            setPayments(res.data.paymentDetails)
+
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getAllPayment()
+    }, [])
+
+    const handleStudentSelection = (sid) => {
+        setSelectedStudents((pre) => {
+            if (pre.includes(sid)) {
+                return pre.filter((id) => id !== sid)
+            } else {
+                return [...pre, sid]
+            }
+        })
+    }
+
+    const handleSelectAll = () => {
+        if (selectedStudents.length === enrolledStudents.length) {
+            setSelectedStudents([]);
+        } else {
+            setSelectedStudents(enrolledStudents.map((s) => s.studentId))
+        }
+    }
+
+    useEffect(() => {
+         let takeCourse 
+        if (inputs.course && payments?.length && students?.length) {
+            takeCourse = typeof inputs.course === "string"
+                ? JSON.parse(inputs.course)
+                : inputs.course;
+            let coursePurchassedUsers = payments?.filter((p) => p.courseId?.toString() === takeCourse.id?.toString())
+            console.log(coursePurchassedUsers)
+            let takeUserId = coursePurchassedUsers.map((c) => c.userId)
+            // let studentsId = students.map((s)=>s.userId)
+            let courseBuyedStudents = students.filter((s) => takeUserId.includes(s.userId))
+            console.log("number", courseBuyedStudents)
+            setEnrolledStudents(courseBuyedStudents)
+        }
+    }, [inputs.course, payments, students])
+
+
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (assignmentMode === 'selected' && selectedStudents.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Students Selected',
+                text: 'Please select at least one student or choose "All Enrolled Students"'
+            });
+            return;
+        }
         try {
             let payload = {
-                courseId: 44,
+                instructorId: user?._id,
                 title: inputs.title,
                 course: inputs.course,
                 description: inputs.description,
                 deadline: inputs.dueDate,
-                maxMarks: inputs.totalMarks
+                maxMarks: inputs.totalMarks,
+                selectedStudents: assignmentMode === 'selected' ? selectedStudents : null
 
             }
 
@@ -60,7 +133,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
         } catch (error) {
             console.error(error)
         } finally {
-            setClickCreateAssignment(false)
+            // setClickCreateAssignment(false)
         }
     };
 
@@ -126,10 +199,10 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
              focus:ring-4 focus:ring-purple-200 focus:border-purple-500
              outline-none hover:border-purple-400 transition"
                                 >
-                                    <option value="">Select course</option>
+                                    <option >Select course</option>
                                     {course && course.map((c, i) => {
                                         return (
-                                            <option key={i}  value={JSON.stringify({ id: c._id, name: c.title })}>{c.title}</option>
+                                            <option key={i} value={JSON.stringify({ id: c._id, name: c.title })}>{c.title}</option>
 
                                         )
                                     })}
@@ -262,6 +335,90 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
                                 )} */}
                                 </div>
                             </div>
+                            {inputs.course && (
+                                <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 shadow-sm space-y-4">
+                                    <h3 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                                        <span className="w-1 h-5 bg-gradient-to-b from-green-600 to-blue-600 rounded-full"></span>
+                                        Assign To
+                                    </h3>
+
+                                    <div className="space-y-3">
+                                        <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition">
+                                            <input
+                                                type="radio"
+                                                name="assignmentMode"
+                                                value="all"
+                                                checked={assignmentMode === 'all'}
+                                                onChange={(e) => setAssignmentMode(e.target.value)}
+                                                className="w-4 h-4 text-blue-600"
+                                            />
+                                            <span className="font-medium text-gray-700">All Enrolled Students</span>
+                                        </label>
+
+                                        <label className="flex items-center gap-3 p-3 bg-white rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-400 transition">
+                                            <input
+                                                type="radio"
+                                                name="assignmentMode"
+                                                value="selected"
+                                                checked={assignmentMode === 'selected'}
+                                                onChange={(e) => setAssignmentMode(e.target.value)}
+                                                className="w-4 h-4 text-blue-600"
+                                            />
+                                            <span className="font-medium text-gray-700">Selected Students</span>
+                                        </label>
+                                    </div>
+
+                                    {assignmentMode === 'selected' && (
+                                        <div className="mt-4 space-y-3">
+                                            {enrolledStudents.length > 0 ? (
+                                                <>
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-sm font-semibold text-gray-600">
+                                                            {selectedStudents.length} of {enrolledStudents.length} selected
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleSelectAll}
+                                                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                                        >
+                                                            {selectedStudents.length === enrolledStudents.length ? 'Deselect All' : 'Select All'}
+                                                        </button>
+                                                    </div>
+                                                    <div className="max-h-60 overflow-y-auto space-y-2 p-2 bg-white rounded-xl border-2 border-gray-200">
+                                                        {enrolledStudents.map((s) => {
+                                                            return (
+                                                                <label
+                                                                    key={s.userId}
+                                                                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 cursor-pointer transition"
+                                                                >
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={selectedStudents.includes(s.userId)}
+                                                                        onChange={() => handleStudentSelection(s.userId)}
+                                                                        className="w-4 h-4 text-blue-600 rounded"
+                                                                    />
+                                                                    <div className="flex-1">
+                                                                        <div className="font-medium text-gray-800">{s.studentName}</div>
+                                                                        <div className="font-medium text-gray-800">{s.userEmail}</div>
+
+                                                                    </div>
+                                                                    {selectedStudents.includes(s._id) && (
+                                                                        <FaCheckCircle className="text-green-500" />
+                                                                    )}
+                                                                </label>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="text-center py-4 text-gray-500">
+                                                    No enrolled students found for this course
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Form Actions */}
@@ -291,3 +448,23 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
 }
 
 export default UploadAssignment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

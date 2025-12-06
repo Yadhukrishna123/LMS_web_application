@@ -24,6 +24,7 @@ import axios from 'axios';
 import AddInstructors from '../Instructors/AddInstructors'
 import UploadAssignment from './UploadAssignment';
 import { AllCourseDetail } from '../AllCourseContext/Context';
+import UserSubmittedAssignments from './UserSubmittedAssignments';
 
 const InstructorPage = () => {
   const { user } = useContext(AllCourseDetail);
@@ -36,6 +37,7 @@ const InstructorPage = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [clickCreateAssignMent, setClickCreateAssignment] = useState(false)
+   const [clickUserAssignMent, setClickUserAssignment] = useState(false)
   const [course, setCourse] = useState([])
 
   const [stats, setStats] = useState({
@@ -162,7 +164,9 @@ console.log(students)
         setClickCreateAssignment={setClickCreateAssignment}
         clickCreateAssignMent={clickCreateAssignMent}
         course={filtered}
+        students={students}
       />}
+      { clickUserAssignMent && <UserSubmittedAssignments setClickUserAssignment={setClickUserAssignment}/>}
 
       {/* Main Page Content */}
       <div className="min-h-screen bg-gray-50 p-6">
@@ -400,13 +404,13 @@ console.log(students)
                 <span className="font-semibold text-sm">Upload Assignment</span>
               </button>
 
-              <Link
-                to="/instructor/schedule"
+              <button
+              onClick={()=>setClickUserAssignment(true)}
                 className="flex items-center gap-3 p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-sm hover:shadow-md"
               >
                 <FaCalendarAlt className="text-xl" />
-                <span className="font-semibold text-sm">Schedule Session</span>
-              </Link>
+                <span className="font-semibold text-sm">User Assignments</span>
+              </button>
             </div>
           </div>
 

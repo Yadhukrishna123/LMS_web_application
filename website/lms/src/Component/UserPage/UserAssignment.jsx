@@ -9,7 +9,7 @@ import { AllCourseDetail } from '../AllCourseContext/Context'
 
 const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
   console.log(userCourses)
-  const { assignmentSubmitting } = useContext(AllCourseDetail);
+  const { user } = useContext(AllCourseDetail)
 
 
   let [loading, setLoading] = useState(false)
@@ -37,16 +37,25 @@ const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
   console.log(userCourseid)
 
   const currentuserAssignment = assignment.filter(a => {
+    let assignedUserId = a.assignedStudents
+    console.log(assignedUserId)
+    let parseCourse
+    if (typeof a.course === "string") {
+      parseCourse = JSON.parse(a.course);
+    } else {
+      parseCourse = a.course;
+    }
+    console.log(parseCourse);
 
-    const parsedCourse = JSON.parse(a.course);
-    console.log(parsedCourse)
-    return userCourseid.includes(parsedCourse.id);
+    const currentUser = assignedUserId.filter((id) => id.includes(user?._id))
+    console.log(currentUser)
 
-
+    return currentUser.length && userCourseid.includes(parseCourse.id)
+     
 
   })
   console.log(currentuserAssignment)
- 
+
 
   return (
     <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
@@ -94,9 +103,9 @@ const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
                       </span>
                     </div>
                     <p className="text-gray-600 text-sm mb-2">
-                      {JSON.parse(a.course).name}
+                      {a.course?.name}
                     </p>
-                    <p className="text-gray-500 text-sm">{a.deadline}</p>
+                    <p className="text-gray-500 text-sm"><span className='f-bold'>Deadline:</span> {a.deadline}</p>
                     <p className="text-gray-700 text-sm mt-2">
                       {a.description}
                     </p>

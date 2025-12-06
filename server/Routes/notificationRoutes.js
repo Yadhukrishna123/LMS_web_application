@@ -12,12 +12,13 @@ const {
   updateAnnouncement,
   markNotificationAsRead,
   deleteUserNotification,
+  getAllNotification,
 } = require("../Controllers/notificationController");
 
 router.post("/announcementscreate", createAnnouncement);
 router.post("/low-attendance", sendLowAttendance);
 router.post("/low-attendance-list", getLowAttendanceStudents);
-router.get("/allannouncements", getAnnouncements);
+router.get("/all_notification", getAllNotification);
 router.delete("/announcements/:id", deleteAnnouncement);
 router.put("/announcements/:id", updateAnnouncement);
 

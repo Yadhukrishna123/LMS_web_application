@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
 const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCourses }) => {
+  console.log(userCourses)
   const { user } = useContext(AllCourseDetail);
 
   const [formData, setFormData] = useState({
@@ -16,16 +17,19 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
   })
   console.log(assignment, userCourses)
 
-  const userCourseid = userCourses.map((c) => c.courseId)
+ const userCourseid = userCourses.map((c) => c.courseId)
   console.log(userCourseid)
 
   const currentuserAssignment = assignment.filter(a => {
 
-    const parsedCourse = JSON.parse(a.course);
-    console.log(parsedCourse)
-    return userCourseid.includes(parsedCourse.id);
-
-
+    let parseCourse
+    if (typeof a.course === "string") {
+      parseCourse = JSON.parse(a.course);
+    } else {
+      parseCourse = a.course;
+    }
+    console.log(parseCourse);
+    return userCourseid.includes(parseCourse.id)
 
   })
   console.log(currentuserAssignment)
@@ -43,6 +47,7 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
     if (!formData.assignmentFile) return toast.warning("Please upload a file");
 
     let sendData = new FormData()
+    sendData.append("instructorId", formData.assignmentName);
     sendData.append("assignmentName", formData.assignmentName);
     sendData.append("comment", formData.comment);
     sendData.append("userId", user._id);
@@ -111,7 +116,7 @@ const SubmittingAssignment = ({ setclickSubmittingAssignment, assignment, userCo
                 <option>Select assignment</option>
                 {currentuserAssignment && currentuserAssignment.map((a, i) => {
                   return (
-                    <option key={i}>{a.title}</option>
+                    <option key={i} value={JSON.stringify({ instructorId: a.instructorId, title: a.title })}>{a.title}</option>
                   )
                 })}
 

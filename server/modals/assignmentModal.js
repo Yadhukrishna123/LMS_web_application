@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const assignmentModal = new mongoose.Schema({
 
-    courseId: {
-        type: String,
+    instructorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     title: {
@@ -11,21 +12,31 @@ const assignmentModal = new mongoose.Schema({
         required: true,
     },
     course: {
-        type: String,
-        required: true,
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        }
     },
     description: {
         type: String,
         required: true,
     },
     deadline: {
-        type: String,
+        type: Date,
         required: true,
     },
     maxMarks: {
-        type: String,
+        type: Number,
         required: true,
     },
+    assignedStudents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 
 });

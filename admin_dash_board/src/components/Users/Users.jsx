@@ -58,6 +58,9 @@ const Users = () => {
         getAllUsers(1);
     }, [search]);
 
+    const take = users.filter((u)=>u._id === "6903372f021e220c903d247a")
+    console.log(take)
+
     let showusers = users.slice(indexOfFirstnumber, indexOfLastProduct)
 
 
