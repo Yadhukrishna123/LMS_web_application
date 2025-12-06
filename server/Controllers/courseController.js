@@ -152,40 +152,73 @@ exports.deleteCourse = async (req, res) => {
 };
 
 // Get Courses for Logged-in Instructor
+// Get Paginated Courses for Logged-in Instructor
 exports.getInstructorCourses = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const instructor = await Instructor.findOne({ userId });
+    // Pagination inputs
+    let page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 8;
+    const skip = (page - 1) * limit;
 
+    // Optional Filters
+    const search = req.query.search || "";
+    const status = req.query.status || "all";
+    const sortBy = req.query.sortBy || "createdAt"; // createdAt, students, revenue
+    const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+
+    const instructor = await Instructor.findOne({ userId });
     if (!instructor) {
       return res.status(404).json({
+        success: false,
         message: "Instructor profile not found",
-        success: false
       });
     }
 
-    const courses = await courseModal.find({ instructor: instructor._id });
+    // ---------- Build Query ----------
+    let query = { instructor: instructor._id };
 
-    // Attach students count for each course
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    if (status !== "all") {
+      query.status = status;
+    }
+
+    // Total items count
+    const totalCourses = await courseModal.countDocuments(query);
+
+    // ---------- Fetch Paginated Courses ----------
+    let courses = await courseModal
+      .find(query)
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limit);
+
+    // Add enrolled students count to each course
     const finalCourses = await Promise.all(
       courses.map(async (course) => {
-        const enrolledStudents = await Payment.countDocuments({
+        const enrolled = await Payment.countDocuments({
           courseId: course._id.toString(),
-          status: "success"
+          status: "success",
         });
 
-        return {
-          ...course._doc,
-          enrolledStudents
-        };
+        return { ...course._doc, students_count: enrolled };
       })
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      instructor,
-      courses: finalCourses
+      page,
+      limit,
+      totalCourses,
+      totalPages: Math.ceil(totalCourses / limit),
+      courses: finalCourses,
     });
 
   } catch (error) {
@@ -193,10 +226,11 @@ exports.getInstructorCourses = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 
 // Update Course

@@ -115,7 +115,6 @@ const Header = () => {
     if (user.role === 'instructor') {
       return [
         ...commonNav,
-        { name: 'Create Course', path: '/create_course', show: true },
         { name: 'My Courses', path: '/my_courses', show: true },
         { name: 'Quiz Manager', path: '/instructor_quiz_manager', show: true },
         { name: 'Help & Support', path: '/help', show: true },

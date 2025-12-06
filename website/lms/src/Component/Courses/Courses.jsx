@@ -21,7 +21,7 @@ const CoursesPage = () => {
     totalCourses: 0,
     hasNextPage: false,
     hasPrevPage: false,
-    limit: 6
+    limit: 8
   });
 
   // Debounce search
@@ -44,7 +44,7 @@ const CoursesPage = () => {
       if (price) params.append('price', price);
       if (duration) params.append('duration', duration);
       params.append('page', page);
-      params.append('limit', 6);
+      params.append('limit', 8);
       params.append('sortBy', sortBy);
       params.append('sortOrder', sortOrder);
 
