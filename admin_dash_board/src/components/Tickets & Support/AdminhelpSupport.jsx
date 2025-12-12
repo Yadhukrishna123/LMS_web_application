@@ -30,9 +30,9 @@ const formatPriority = (p) => {
   return v ? v.charAt(0).toUpperCase() + v.slice(1) : "Medium";
 };
 const displayName = (u) => {
-  if (!u) return "N/A";
+  if (!u) return ;
   const full = [u.firstname, u.lastname].filter(Boolean).join(" ").trim();
-  return u.name || full || "N/A";
+  return u.name || full ;
 };
 
 const AdminHelpSupport = () => {
