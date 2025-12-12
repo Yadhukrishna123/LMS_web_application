@@ -1,21 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const { authToken } = require("../middleware/jwtAuth");
+const { instiAuthToken } = require("../middleware/jwtInstitutionAuth");
 const ticketCtrl = require("../Controllers/ticketController");
 
-// ✅ USER ROUTES (already correct)
+// ✅ USER ROUTES
 router.post("/createticket", authToken, ticketCtrl.createTicket);
 router.get("/getusertickets", authToken, ticketCtrl.getUserTickets);
 router.post("/userticket/:id/message", authToken, ticketCtrl.addMessage);
-router.get("/userticket/:id", authToken, ticketCtrl.getTicketWithMessages);  // ← ADD authToken
+router.get("/userticket/:id", authToken, ticketCtrl.getTicketWithMessages);
 
-// ✅ ADMIN/INSTITUTION ROUTES - ADD authToken TO ALL
-router.get("/admin", authToken, ticketCtrl.getAdminTickets);              // ← ADD
-router.get("/ticket/:id", authToken, ticketCtrl.getTicketWithMessages);   // ← ADD
-router.post("/ticket/:id/message",  ticketCtrl.addMessage);     // ← ADD (CRITICAL)
-router.patch("/ticket/:id/status", authToken, ticketCtrl.updateStatus);   // ← ADD
-router.delete("/ticket/:id", authToken, ticketCtrl.deleteTicket);         // ← ADD
-router.get("/solved", authToken, ticketCtrl.getSolvedTickets);            // ← ADD
-router.patch("/ticket/:id/solved", authToken, ticketCtrl.markAsSolved); 
+// ✅ ADMIN/INSTITUTION ROUTES - ALL PROTECTED
+router.get("/admin", instiAuthToken, ticketCtrl.getAdminTickets);
+router.get("/ticket/:id", instiAuthToken, ticketCtrl.getTicketWithMessages);
+router.post("/ticket/:id/message", instiAuthToken, ticketCtrl.addMessage);     
+router.patch("/ticket/:id/status", instiAuthToken, ticketCtrl.updateStatus);
+router.delete("/ticket/:id", instiAuthToken, ticketCtrl.deleteTicket);
+router.get("/solved", instiAuthToken, ticketCtrl.getSolvedTickets);
+router.patch("/ticket/:id/solved", instiAuthToken, ticketCtrl.markAsSolved);
 
 module.exports = router;

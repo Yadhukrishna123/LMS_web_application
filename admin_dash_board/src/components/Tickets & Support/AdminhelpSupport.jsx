@@ -48,75 +48,78 @@ const AdminHelpSupport = () => {
   const [ticketThread, setTicketThread] = useState(null);
 
   // Fetch admin tickets (backend excludes closed by default when status=all)
-  useEffect(() => {
-    const fetchTickets = async () => {
-      setLoading(true);
-      try {
-        const params = {
-          search: searchQuery,
-          page: 1,
-          limit: 10,
-          status: filterStatus,     // send to backend
-          priority: filterPriority, // send to backend
-        };
-        const res = await axios.get(`${API_BASE}/admin`, { params });
-        setTickets(res.data.data || []);
-      } catch (err) {
-        console.error("Error fetching admin tickets:", err.response?.data || err.message);
-        setTickets([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTickets();
-  }, [searchQuery, filterStatus, filterPriority]);
-
-  // Auto-open thread if ?open=:id is present
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const openId = params.get('open');
-    if (openId) {
-      setSelectedTicket(openId);
-      fetchTicketThread(openId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // To get ticket thread
-  const fetchTicketThread = async (ticketId) => {
+// Fetch admin tickets (backend excludes closed by default when status=all)
+useEffect(() => {
+  const fetchTickets = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/ticket/${ticketId}`);
-      setTicketThread(res.data.data);
-    } catch (e) {
-      console.error("Fetch ticket thread error:", e.response?.data || e.message);
-      setTicketThread(null);
-    }
-  };
-
-  const handleStatusChange = async (ticketId, newStatus) => {
-    try {
-      await axios.patch(`${API_BASE}/ticket/${ticketId}/status`, { status: newStatus });
-      setTickets((ts) => ts.map(t => t._id === ticketId ? { ...t, status: newStatus } : t));
-      if (selectedTicket === ticketId) fetchTicketThread(ticketId);
+      const params = {
+        search: searchQuery,
+        page: 1,
+        limit: 10,
+        status: filterStatus,
+        priority: filterPriority,
+      };
+      const res = await axios.get(`${API_BASE}/admin`, { 
+        params, 
+        withCredentials: true 
+      });
+      setTickets(res.data.data || []);
     } catch (err) {
-      console.error("Update status error:", err.response?.data || err.message);
-      alert("Failed to update status.");
+      console.error("Error fetching admin tickets:", err.response?.data || err.message);
+      setTickets([]);
+    } finally {
+      setLoading(false);
     }
   };
+  fetchTickets();
+}, [searchQuery, filterStatus, filterPriority]);
 
-  const handleSendReply = async (ticketId) => {
-    if (replyMessage.trim()) {
-      try {
-        await axios.post(`${API_BASE}/ticket/${ticketId}/message`, { message: replyMessage });
-        setReplyMessage('');
-        setShowReplyBox(null);
-        fetchTicketThread(ticketId);
-      } catch (err) {
-        console.error("Reply send error:", err.response?.data || err.message);
-        alert("Failed to send message. Please check your login session.");
-      }
+// To get ticket thread
+const fetchTicketThread = async (ticketId) => {
+  try {
+    const res = await axios.get(`${API_BASE}/ticket/${ticketId}`, {
+      withCredentials: true
+    });
+    setTicketThread(res.data.data);
+  } catch (e) {
+    console.error("Fetch ticket thread error:", e.response?.data || e.message);
+    setTicketThread(null);
+  }
+};
+
+const handleStatusChange = async (ticketId, newStatus) => {
+  try {
+    await axios.patch(
+      `${API_BASE}/ticket/${ticketId}/status`, 
+      { status: newStatus }, 
+      { withCredentials: true }
+    );
+    setTickets((ts) => ts.map(t => t._id === ticketId ? { ...t, status: newStatus } : t));
+    if (selectedTicket === ticketId) fetchTicketThread(ticketId);
+  } catch (err) {
+    console.error("Update status error:", err.response?.data || err.message);
+    alert("Failed to update status.");
+  }
+};
+
+const handleSendReply = async (ticketId) => {
+  if (replyMessage.trim()) {
+    try {
+      await axios.post(
+        `${API_BASE}/ticket/${ticketId}/message`,
+        { message: replyMessage.trim() },  // ← DATA as 2nd arg
+        { withCredentials: true }          // ← CONFIG as 3rd arg
+      );
+      setReplyMessage('');
+      setShowReplyBox(null);
+      fetchTicketThread(ticketId);
+    } catch (err) {
+      console.error("Reply send error:", err.response?.data || err.message);
+      alert("Failed to send message. Please check your login session.");
     }
-  };
+  }
+};
 
   // Additional client-side filtering: hide closed when "All Status" is selected
   const displayTickets = tickets.filter(ticket => {
