@@ -153,62 +153,53 @@ const TicketChatPage = () => {
               </p>
             </div>
           ) : (
+            // In messages.map, REPLACE the rendering logic:
             messages.map((msg, i) => {
-              const isAdmin = msg.sender?.role === "admin";
-              const showDateDivider =
-                i === 0 ||
-                new Date(messages[i - 1].createdAt).toDateString() !== new Date(msg.createdAt).toDateString();
-
+              const senderRole = msg.sender_role || msg.sender?.role || "user";
+              const isAdminMessage = ['admin', 'institution'].includes(senderRole);
+              const showDateDivider = i === 0 || new Date(messages[i - 1].createdAt).toDateString() !== new Date(msg.createdAt).toDateString();
               return (
                 <React.Fragment key={i}>
                   {showDateDivider && (
                     <div className="flex justify-center my-8">
                       <span className="px-4 py-1.5 bg-white/60 backdrop-blur-sm text-xs font-medium text-slate-600 rounded-full border border-emerald-200/60 shadow-sm">
                         {new Date(msg.createdAt).toLocaleDateString("en-US", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
+                          weekday: "short", month: "short", day: "numeric", year: "numeric",
                         })}
                       </span>
                     </div>
                   )}
 
-                  <div className={`flex items-end gap-3 ${isAdmin ? "flex-row-reverse" : "flex-row"}`}>
-                    {/* Avatar */}
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg ${
-                        isAdmin
-                          ? "bg-gradient-to-br from-emerald-600 to-teal-700 text-white"
-                          : "bg-gradient-to-br from-slate-600 to-slate-700 text-white"
-                      }`}
-                    >
-                      {isAdmin ? "AD" : (msg.sender?.name?.[0]?.toUpperCase() || "U")}
+                  <div className={`flex items-end gap-3 ${isAdminMessage ? "flex-row-reverse" : "flex-row"}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg ${
+                      isAdminMessage ? "bg-gradient-to-br from-emerald-600 to-teal-700 text-white" :
+                      senderRole === 'student' ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white" :
+                      senderRole === 'instructor' ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white" :
+                      "bg-gradient-to-br from-slate-600 to-slate-700 text-white"
+                    }`}>
+                      {isAdminMessage ? "AD" : (msg.sender?.name?.[0]?.toUpperCase() || senderRole.charAt(0).toUpperCase() || "U")}
                     </div>
 
-                    {/* Message Bubble */}
-                    <div className={`flex flex-col max-w-[65%] ${isAdmin ? "items-end" : "items-start"}`}>
-                      <div
-                        className={`px-4 py-3 rounded-2xl shadow-sm ${
-                          isAdmin
-                            ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-br-md"
-                            : "bg-white text-slate-800 border border-slate-200/60 rounded-bl-md"
-                        }`}
-                      >
-                        <div className={`text-xs font-semibold mb-1 ${isAdmin ? "text-emerald-100" : "text-slate-600"}`}>
-                          {isAdmin ? "Admin Support" : msg.sender?.name || "User"}
+                    <div className={`flex flex-col max-w-[65%] ${isAdminMessage ? "items-end" : "items-start"}`}>
+                      <div className={`px-4 py-3 rounded-2xl shadow-sm ${
+                        isAdminMessage ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-br-md" :
+                        "bg-white text-slate-800 border border-slate-200/60 rounded-bl-md"
+                      }`}>
+                        <div className={`text-xs font-semibold mb-1 ${isAdminMessage ? "text-emerald-100" : "text-slate-600"}`}>
+                          {isAdminMessage ? "Admin Support" :
+                          senderRole === 'student' ? `${msg.sender?.name || 'Student'} (Student)` :
+                          senderRole === 'instructor' ? `${msg.sender?.name || 'Instructor'} (Instructor)` :
+                          msg.sender?.name || "User"}
                         </div>
                         <p className="text-[15px] leading-relaxed">{msg.message}</p>
                       </div>
-                      <div className={`flex items-center gap-1 mt-1 px-1 ${isAdmin ? "flex-row-reverse" : "flex-row"}`}>
+                      <div className={`flex items-center gap-1 mt-1 px-1 ${isAdminMessage ? "flex-row-reverse" : "flex-row"}`}>
                         <span className="text-xs text-slate-500">
                           {new Date(msg.createdAt).toLocaleTimeString("en-US", {
-                            hour: "numeric",
-                            minute: "2-digit",
-                            hour12: true,
+                            hour: "numeric", minute: "2-digit", hour12: true,
                           })}
                         </span>
-                        {isAdmin && <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />}
+                        {isAdminMessage && <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />}
                       </div>
                     </div>
                   </div>

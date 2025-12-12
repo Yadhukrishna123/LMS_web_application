@@ -356,41 +356,36 @@ const AdminHelpSupport = () => {
                                   <h4 className="text-base sm:text-lg font-bold text-gray-800">Conversation Thread</h4>
                                 </div>
                                 <div className="space-y-3 sm:space-y-4">
-                                  {ticketThread.messages && ticketThread.messages.map((msg, idx) => {
-                                    const senderRole = msg.sender?.role || "institution";
-                                    const name = displayName(msg.sender);
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className={`p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-md border-l-4 transition-all duration-200 hover:shadow-lg ${
+                                {ticketThread.messages && ticketThread.messages.map((msg, idx) => {
+                                  const senderRole = msg.sender_role || msg.sender?.role || "user";
+                                  const name = displayName(msg.sender);
+                                  
+                                  return (
+                                    <div key={idx} className={`p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-md border-l-4 transition-all duration-200 hover:shadow-lg ${
+                                      ['admin','institution'].includes(senderRole)
+                                        ? "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500"
+                                        : "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500"
+                                    }`}>
+                                      <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                                        <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                                           ['admin','institution'].includes(senderRole)
-                                            ? "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500"
-                                            : "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500"
-                                        }`}
-                                      >
-                                        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                                          <div
-                                            className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
-                                              ['admin','institution'].includes(senderRole)
-                                                ? "bg-gradient-to-br from-emerald-400 to-teal-400"
-                                                : "bg-gradient-to-br from-blue-400 to-indigo-400"
-                                            }`}
-                                          >
-                                            <FiUsers className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                                          </div>
-                                          <span className="font-bold text-gray-800 text-sm sm:text-base">
-                                            {name}
-                                          </span>
-                                          {['admin','institution'].includes(senderRole) && (
-                                            <span className="text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full font-bold shadow-sm">
-                                              {senderRole === "institution" ? "Institution" : "Admin"}
-                                            </span>
-                                          )}
+                                            ? "bg-gradient-to-br from-emerald-400 to-teal-400"
+                                            : senderRole === 'student' ? "bg-gradient-to-br from-blue-400 to-blue-500"
+                                            : "bg-gradient-to-br from-purple-400 to-purple-500"
+                                        }`}>
+                                          <FiUsers className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                                         </div>
-                                        <p className="text-gray-700 leading-relaxed ml-8 sm:ml-11 text-xs sm:text-sm md:text-base">
-                                          {msg.message}
-                                        </p>
+                                        <span className="font-bold text-gray-800 text-sm sm:text-base">{name}</span>
+                                        <span className="text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full font-bold shadow-sm">
+                                          {senderRole === 'student' ? 'Student' : 
+                                          senderRole === 'instructor' ? 'Instructor' : 
+                                          senderRole.charAt(0).toUpperCase() + senderRole.slice(1)}
+                                        </span>
                                       </div>
+                                      <p className="text-gray-700 leading-relaxed ml-8 sm:ml-11 text-xs sm:text-sm md:text-base">
+                                        {msg.message}
+                                      </p>
+                                    </div>
                                     );
                                   })}
                                 </div>

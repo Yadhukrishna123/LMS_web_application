@@ -1,18 +1,31 @@
 const jwt = require("jsonwebtoken")
 
 exports.instiAuthToken = (req, res, next) => {
-    console.log("Cookies received:", req.cookies);
-    const { token } = req.cookies
+  const { token } = req.cookies;
 
-    jwt.verify(token, process.env.JWT_secret_key, (err, decode) => {
-        if (err) {
-            return res.status(401).json({
-                success: false,
-                message: "Faild to generate token",
-                isAuthentication: false
-            })
-        }
-        console.log(decode);
-        next()
-    })
-}
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "No token provided",
+      isAuthentication: false,
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_secret_key, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token",
+        isAuthentication: false,
+      });
+    }
+
+    req.user = {
+      _id: decoded.id,        
+      role: decoded.role,     
+      email: decoded.email,   
+    };
+
+    next();
+  });
+};
