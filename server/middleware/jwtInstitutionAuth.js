@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Institution = require("../modals/Institution");  // ← YOUR MODEL
+const Institution = require("../modals/Institution"); 
 
 exports.instiAuthToken = async (req, res, next) => {
   try {

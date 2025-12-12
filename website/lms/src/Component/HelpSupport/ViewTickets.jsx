@@ -12,7 +12,6 @@ const TicketChatPage = () => {
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
 
-  // ✅ FIXED: Fetch ticket with messages
   const fetchTicket = async () => {
     try {
       setLoading(true);
@@ -31,7 +30,6 @@ const TicketChatPage = () => {
     }
   };
 
-  // ✅ FIXED: Send message + refresh ticket
   const handleSendMessage = async () => {
     if (newMessage.trim()) {
       try {
@@ -41,19 +39,18 @@ const TicketChatPage = () => {
           { withCredentials: true }
         );
         setNewMessage('');
-        fetchTicket(); // Refresh full ticket
+        fetchTicket();
       } catch (err) {
         console.error("Failed to send message:", err.response?.data || err.message);
       }
     }
   };
 
-  // Auto-scroll to bottom
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [ticket?.messages]);
 
-  // Fetch ticket on mount
   useEffect(() => {
     fetchTicket();
   }, [ticketId]);
@@ -76,7 +73,7 @@ const TicketChatPage = () => {
           <h2 className="text-2xl font-bold text-slate-800 mb-2">Ticket Not Found</h2>
           <p className="text-slate-600 mb-6">The ticket you're looking for doesn't exist</p>
           <Link
-            to="/user/tickets" // ✅ FIXED: User route, not admin
+            to="/user/tickets" 
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition font-medium shadow-lg"
           >
             <ArrowLeft className="w-4 h-4" /> Back to My Tickets
@@ -94,7 +91,7 @@ const TicketChatPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
-                to="/user/tickets" // ✅ FIXED: User tickets page
+                to="/user/tickets"
                 className="p-2 hover:bg-emerald-50 rounded-xl transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-slate-700" />

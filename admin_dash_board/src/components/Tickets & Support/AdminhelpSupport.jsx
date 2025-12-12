@@ -47,8 +47,6 @@ const AdminHelpSupport = () => {
   const [showReplyBox, setShowReplyBox] = useState(null);
   const [ticketThread, setTicketThread] = useState(null);
 
-  // Fetch admin tickets (backend excludes closed by default when status=all)
-// Fetch admin tickets (backend excludes closed by default when status=all)
 useEffect(() => {
   const fetchTickets = async () => {
     setLoading(true);
@@ -75,7 +73,7 @@ useEffect(() => {
   fetchTickets();
 }, [searchQuery, filterStatus, filterPriority]);
 
-// To get ticket thread
+
 const fetchTicketThread = async (ticketId) => {
   try {
     const res = await axios.get(`${API_BASE}/ticket/${ticketId}`, {
@@ -108,8 +106,8 @@ const handleSendReply = async (ticketId) => {
     try {
       await axios.post(
         `${API_BASE}/ticket/${ticketId}/message`,
-        { message: replyMessage.trim() },  // ← DATA as 2nd arg
-        { withCredentials: true }          // ← CONFIG as 3rd arg
+        { message: replyMessage.trim() },  
+        { withCredentials: true }         
       );
       setReplyMessage('');
       setShowReplyBox(null);
@@ -121,7 +119,6 @@ const handleSendReply = async (ticketId) => {
   }
 };
 
-  // Additional client-side filtering: hide closed when "All Status" is selected
   const displayTickets = tickets.filter(ticket => {
     const statusOk = filterStatus === "all" ? ticket.status !== "closed" : ticket.status === filterStatus;
     const priorityOk = filterPriority === "all" || normalizePriority(ticket.priority) === normalizePriority(filterPriority);

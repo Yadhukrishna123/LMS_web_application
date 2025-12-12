@@ -4,13 +4,13 @@ const { authToken } = require("../middleware/jwtAuth");
 const { instiAuthToken } = require("../middleware/jwtInstitutionAuth");
 const ticketCtrl = require("../Controllers/ticketController");
 
-// ✅ USER ROUTES
+// USER ROUTES
 router.post("/createticket", authToken, ticketCtrl.createTicket);
 router.get("/getusertickets", authToken, ticketCtrl.getUserTickets);
 router.post("/userticket/:id/message", authToken, ticketCtrl.addMessage);
 router.get("/userticket/:id", authToken, ticketCtrl.getTicketWithMessages);
 
-// ✅ ADMIN/INSTITUTION ROUTES - ALL PROTECTED
+// ADMIN/INSTITUTION ROUTES 
 router.get("/admin", instiAuthToken, ticketCtrl.getAdminTickets);
 router.get("/ticket/:id", instiAuthToken, ticketCtrl.getTicketWithMessages);
 router.post("/ticket/:id/message", instiAuthToken, ticketCtrl.addMessage);     

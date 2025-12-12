@@ -111,7 +111,6 @@ exports.addMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Message is required" });
     }
 
-    // CRITICAL: Use authenticated user ONLY
     if (!req.user?._id) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
@@ -124,7 +123,7 @@ exports.addMessage = async (req, res) => {
     const msg = await Message.create({
       ticket: id,
       sender: req.user._id,
-      sender_role: req.user.role,  // ← FIXES EVERYTHING
+      sender_role: req.user.role, 
       message: message.trim(),
     });
 

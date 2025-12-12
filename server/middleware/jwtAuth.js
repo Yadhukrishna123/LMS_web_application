@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../modals/users"); // make sure you have your User model
+const User = require("../modals/users"); 
 
 exports.authToken = async (req, res, next) => {
     try {
@@ -15,7 +15,6 @@ exports.authToken = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_secret_key);
-        // Attach user to request
         const user = await User.findById(decoded.id); 
         if (!user) {
             return res.status(401).json({
