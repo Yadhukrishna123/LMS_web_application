@@ -9,12 +9,12 @@ const UserQuiz = () => {
   const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/v1/view_quiz/${quizId}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/view_quiz/${quizId}`)
       .then(res => {
         const quizData = res.data.data;
         setQuiz(quizData);
 
-        // Initialize answers with questionId
+      
         setAnswers(quizData.questions.map(q => ({
           questionId: q._id,
           selectedOption: -1
@@ -30,7 +30,7 @@ const UserQuiz = () => {
   };
 
   const handleSubmit = () => {
-    axios.post("http://localhost:8080/api/v1/submit_quiz", { quizId, answers })
+    axios.post(`${import.meta.env.VITE_API_URL}/submit_quiz`, { quizId, answers })
       .then(res => alert(`Quiz submitted! Score: ${res.data.data.score}`))
     navigate("/quizzes")
       .catch(err => {

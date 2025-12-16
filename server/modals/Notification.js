@@ -11,7 +11,7 @@ const notificationSchema = new mongoose.Schema({
     required: true,
     enum: [
       "assignment",
-      "submitting",
+      "submitting assignment",
       "announcement",
       "message",
       "system",

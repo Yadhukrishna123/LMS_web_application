@@ -15,7 +15,7 @@ const Logout = ({ setLogout }) => {
     try {
       setLoading(true);
       const res = await axios.post(
-        'http://localhost:8080/api/v1/logout',
+        `${import.meta.env.VITE_API_URL}/logout`,
         {},
         { withCredentials: true }
       );
@@ -45,10 +45,10 @@ const Logout = ({ setLogout }) => {
         onClick={() => !loading && setLogout(false)}
       />
 
-      {/* Modal */}
+     
       <div className="relative z-10 w-full max-w-sm mx-4">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          {/* Header */}
+         
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
@@ -70,7 +70,7 @@ const Logout = ({ setLogout }) => {
             </button>
           </div>
 
-          {/* Body */}
+       
           <div className="px-4 py-4">
             <p className="text-sm text-gray-700">
               Are you sure you want to log out of your account?
@@ -80,7 +80,7 @@ const Logout = ({ setLogout }) => {
             </p>
           </div>
 
-          {/* Footer / Actions */}
+       
           <div className="px-4 py-3 flex justify-end gap-2 border-t border-gray-100 bg-gray-50/60">
             <button
               onClick={() => setLogout(false)}

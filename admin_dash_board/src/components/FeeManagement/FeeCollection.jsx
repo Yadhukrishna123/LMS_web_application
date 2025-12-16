@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaSearch, FaMoneyBillWave, FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import Delete from '../TableActions/Delete';
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 
 const FeeCollection = () => {
@@ -56,40 +56,39 @@ const FeeCollection = () => {
     }
 
     const handleDownload = (c) => {
-        const doc = new jsPDF()
-        doc.setFontSize(18);
-        doc.text("Student Fee Receipt", 70, 15);
+  const doc = new jsPDF();
 
-        doc.setFontSize(12);
-        doc.text(`Receipt No: ${c.receiptNo}`, 14, 30);
-        doc.text(`Date: ${c.date}`, 150, 30);
+  doc.setFontSize(18);
+  doc.text("Student Fee Receipt", 70, 15);
 
-        doc.text("Student Information", 14, 45);
-        doc.setFontSize(12);
-        doc.text(`Student Name: ${c.studentName}`, 14, 55);
-        doc.text(`Course / Semester: ${c.courseName}`, 14, 65);
-        doc.text(`Mode of Payment: ${c.paymentMethod}`, 14, 75);
-        doc.text(`Collected By: ${c.monthlyAmount}`, 14, 85);
-        doc.text(`Remarks: ${c.remarks || "-"}`, 14, 95);
+  doc.setFontSize(12);
+  doc.text(`Receipt No: ${c.receiptNo}`, 14, 30);
+  doc.text(`Date: ${c.date}`, 150, 30);
 
-        doc.autoTable({
-            startY: 110,
-            head: [["Description", "Amount (₹)"]],
-            body: [
-                ["Total Fee", c.amount],
-                ["Amount Paid", c.monthlyAmount],
-                ["Balance", c.amount - c.monthlyAmount],
-            ],
-        });
+  doc.text("Student Information", 14, 45);
+  doc.text(`Student Name: ${c.studentName}`, 14, 55);
+  doc.text(`Course / Semester: ${c.courseName}`, 14, 65);
+  doc.text(`Mode of Payment: ${c.paymentMethod}`, 14, 75);
+  doc.text(`Collected By: ${c.monthlyAmount}`, 14, 85);
+  doc.text(`Remarks: ${c.remarks || "-"}`, 14, 95);
 
+  autoTable(doc, {
+    startY: 110,
+    head: [["Description", "Amount (₹)"]],
+    body: [
+      ["Total Fee", c.amount],
+      ["Amount Paid", c.monthlyAmount],
+      ["Balance", c.amount - c.monthlyAmount],
+    ],
+  });
 
-        const finalY = doc.lastAutoTable.finalY || 130;
-        doc.text("Thank you for your payment!", 70, finalY + 20);
-        doc.text("This is a computer-generated receipt.", 55, finalY + 30);
+  const finalY = doc.lastAutoTable.finalY;
+  doc.text("Thank you for your payment!", 70, finalY + 20);
+  doc.text("This is a computer-generated receipt.", 55, finalY + 30);
 
-        doc.save(`Receipt_${c.receiptNo}.pdf`);
+  doc.save(`Receipt_${c.receiptNo}.pdf`);
+};
 
-    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">

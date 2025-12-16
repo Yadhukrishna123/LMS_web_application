@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 
 
-const API_BASE = "http://localhost:8080/api/v1";
+// const API_BASE = "http://localhost:8080/api/v1";
 
 const QuizSubmissions = () => {
   const { quizId } = useParams();
@@ -32,11 +32,11 @@ const QuizSubmissions = () => {
   const fetchSubmissions = async () => {
     try {
       // Fetch quiz info
-      const quizRes = await axios.get(`${API_BASE}/get_quiz/${quizId}`);
+      const quizRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_quiz/${quizId}`);
       setQuizTitle(quizRes.data.quizName || "Quiz");
 
       // Fetch submissions
-      const subRes = await axios.get(`${API_BASE}/get_all_user_quiz_answer/${quizId}`);
+      const subRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_user_quiz_answer/${quizId}`);
       setSubmissions(subRes.data || []);
     } catch (err) {
       console.error("Error fetching quiz submissions:", err);

@@ -37,6 +37,7 @@ const ScheduleBatch = () => {
     const getAllCourses = async () => {
       try {
         const res = await axios.get("http://localhost:8080/api/v1/get_all_courses");
+        console.log(resizeBy)
         setCourses(res.data.data);
       } catch (error) {
         console.error("Error fetching courses:", error);

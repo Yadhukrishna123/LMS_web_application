@@ -10,123 +10,7 @@ const mongoose = require("mongoose")
 
 
 
-// exports.uploadAssignment = async (req, res) => {
-//   try {
-//     const { instructorId, course, title, description, deadline, maxMarks, selectedStudents } = req.body
 
-//     if (!instructorId || !title || !course || !description || !deadline || !maxMarks) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "All fields are required"
-//       })
-//     }
-
-//     const parseData = typeof course === 'string' ? JSON.parse(course) : course;
-//     const courseId = new mongoose.Types.ObjectId(parseData.id);
-//     const courseName = parseData.name;
-
-//     const assignment = await Assignments.create({
-//       instructorId, 
-//       title, 
-//       course, 
-//       description, 
-//       deadline, 
-//       maxMarks,
-//       assignedStudents: selectedStudents || [] // Store which students this is assigned to
-//     })
-
-//     console.log("Assignment created:", assignment._id);
-
-//     let targetStudentIds;
-
-//     // If specific students are selected, use them
-//     if (selectedStudents && selectedStudents.length > 0) {
-//       targetStudentIds = selectedStudents;
-//       console.log("✅ Assigning to selected students:", selectedStudents.length);
-//     } else {
-//       // Otherwise, get all enrolled students (existing logic)
-//       const payments = await payment.find({
-//         courseId: new mongoose.Types.ObjectId(courseId),
-//       }).select("userId")
-
-//       console.log("✅ Payments found:", payments.length);
-
-//       if (!payments.length) {
-//         return res.status(200).json({
-//           success: true,
-//           message: "Assignment created but no enrolled students found",
-//           assignment,
-//           notificationsSent: 0
-//         });
-//       }
-
-//       targetStudentIds = [
-//         ...new Set(payments.map(p => p.userId.toString()))
-//       ];
-//     }
-
-//     const students = await User.find({
-//       _id: { $in: targetStudentIds },
-//       role: "student"
-//     });
-
-//     console.log("✅ Students found:", students.length);
-
-//     if (!students.length) {
-//       return res.status(200).json({
-//         success: true,
-//         message: "Assignment created but no valid student accounts found",
-//         assignment,
-//         notificationsSent: 0
-//       });
-//     }
-
-//     const notificationss = students.map(student => ({
-//       userId: student._id,
-//       type: "assignment",
-//       title: `New Assignment: ${title}`,
-//       message: `New assignment "${title}" posted in ${courseName}. Due: ${new Date(deadline).toLocaleDateString()}`,
-//       data: {
-//         assignmentId: assignment._id,
-//         courseId,
-//         courseName,
-//         dueDate: deadline,
-//         maxMarks,
-//         instructorId
-//       },
-//       isRead: false
-//     }));
-
-//     const uniqueNotifications = [
-//       ...new Map(
-//         notificationss.map(n => [
-//           n.userId.toString() + "-" + n.data.assignmentId.toString(),
-//           n
-//         ])
-//       ).values()
-//     ];
-
-//     const insertedNotifications = await Notification.insertMany(uniqueNotifications);
-//     console.log("✅ Notifications sent:", insertedNotifications.length);
-
-//     res.status(200).json({
-//       success: true,
-//       message: selectedStudents && selectedStudents.length > 0 
-//         ? `Assignment created & notifications sent to ${insertedNotifications.length} selected student(s)`
-//         : "Assignment created & notifications sent to all enrolled students",
-//       assignment,
-//       notificationsSent: insertedNotifications.length
-//     })
-
-//   } catch (error) {
-//     console.error("Error in uploadAssignment:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//       error: error.toString()
-//     });
-//   }
-// }
 
 exports.uploadAssignment = async (req, res) => {
   try {
@@ -290,9 +174,53 @@ exports.submitingAssignment = async (req, res) => {
       })
     }
 
+    let parseAssignmentname
+
+    try {
+      if (typeof assignmentName === "string" && assignmentName.trim().startsWith("{")) {
+        parseAssignmentname = JSON.parse(assignmentName);
+      } else {
+        parseAssignmentname = assignmentName
+      }
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid assignmentName format"
+      });
+    }
+
+    const {instructorId: parsedInstructorId, title } = parseAssignmentname;
+
+
     const submiting = await SubmitAssign.create({
-      assignmentName, comment, userId, assignmentFile
+      assignmentName: title,
+      instructorId:parsedInstructorId,
+      comment,
+      userId,
+      assignmentFile
     })
+
+    const instructors = await User.findOne({
+      _id: parsedInstructorId,
+      role: "instructor",
+      isApproved: true
+    });
+
+    // console.log(instructors)
+
+    if (instructors) {
+      await Notification.create({
+        userId: instructors._id,
+        instructorId: instructors._id,
+        type: "submitting assignment",
+        title: "New Assignment Submitted",
+        message: `A student submitted the assignment: ${title}`,
+        data: {
+          assignmentId: submiting._id,
+          studentId: userId
+        }
+      })
+    }
 
     res.status(200).json({
       success: true,

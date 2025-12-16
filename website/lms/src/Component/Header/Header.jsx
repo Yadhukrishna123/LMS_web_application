@@ -22,7 +22,7 @@ import axios from 'axios';
 
 const Header = () => {
   const { user } = useContext(AllCourseDetail);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState("");
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -36,25 +36,25 @@ const Header = () => {
     return user?.role === 'instructor' ? '/instructor_page' : '/user_page';
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = 10
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
+
+   const fetchNotifications = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/usernotifications', {
-          withCredentials: true,
-        });
-        console.log(res)
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_notification/${user?._id}`);
+        console.log(res.data.count)
 
         if (res.data.success) {
-          setNotifications(res.data.notifications);
+          setNotifications(res.data.count);
         }
       } catch (err) {
         console.error(err);
       }
     };
+  useEffect(() => {
+   
     fetchNotifications();
-  }, []);
+  }, [user?._id]);
 
   const getUserDisplayName = () => {
     if (!user) return 'User';
@@ -120,6 +120,8 @@ const Header = () => {
       ];
     }
   };
+
+  console.log(notifications)
 
   const getDropdownItems = () => {
     if (!user) {
@@ -206,7 +208,8 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="text-2xl font-bold text-blue-600 cursor-pointer" onClick={() => navigate('/')}>
           <img
-            className='sm:w-24'
+
+            className='w-16 sm:w-20 md:w-24 lg:w-28 h-auto object-contain'
             src="https://askproject.net/studdy/wp-content/uploads/sites/43/2021/12/logo_Asset-7.png"
             alt="Logo"
           />
@@ -274,11 +277,11 @@ const Header = () => {
               <Link to="/notification" className="relative group">
                 <div className="p-3 bg-gray-100 hover:bg-indigo-100 rounded-xl transition-all">
                   <FaBell size={20} className="text-gray-700 group-hover:text-indigo-600" />
-                  {unreadCount > 0 && (
+                  {/* {notifications > 0 && ( */}
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {notifications }
                     </span>
-                  )}
+                  {/* )} */}
                 </div>
               </Link>
 

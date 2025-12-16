@@ -70,9 +70,9 @@ const InstructorPage = () => {
   const fetchInstructorDetails = async () => {
     try {
       setLoading(true)
-      const res = await axios.get('http://localhost:8080/api/v1/get_all_courses');
-      const instrectors = await axios.get("http://localhost:8080/api/v1/get_all_approved_instrectors")
-      let paymentRes = await axios.get('http://localhost:8080/api/v1/get_all_payment_details')
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`);
+      const instrectors = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_approved_instrectors`)
+      let paymentRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_payment_details`)
    
       setCourse(res.data.courses)
       setInstructors(instrectors.data.instrecters)
@@ -168,10 +168,10 @@ console.log(students)
       />}
       { clickUserAssignMent && <UserSubmittedAssignments setClickUserAssignment={setClickUserAssignment}/>}
 
-      {/* Main Page Content */}
+     
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Welcome Header - Cleaner Version */}
+         
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 mb-6 text-white">
             <div className="flex items-center justify-between flex-wrap gap-6">
               <div className="flex-1 min-w-[300px]">
@@ -185,7 +185,7 @@ console.log(students)
                 </p>
               </div>
 
-              {/* Profile Image */}
+           
               <div className="flex-shrink-0">
                 {instructorDetails?.image ? (
                   <img
@@ -204,7 +204,7 @@ console.log(students)
             </div>
           </div>
 
-          {/* Complete Profile Alert */}
+          
           {!instructorDetails && (
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-6 rounded-lg shadow">
               <div className="flex items-center justify-between flex-wrap gap-4">
@@ -225,7 +225,7 @@ console.log(students)
             </div>
           )}
 
-          {/* Profile Details Card - Only show if details exist */}
+         
           {instructorDetails && (
             <div className="bg-white rounded-xl shadow-md p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
@@ -239,7 +239,7 @@ console.log(students)
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Contact Info */}
+               
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-gray-500 uppercase">Contact Information</h3>
                   <div className="flex items-center gap-2 text-gray-700">
@@ -254,7 +254,7 @@ console.log(students)
                   )}
                 </div>
 
-                {/* Qualifications */}
+               
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-gray-500 uppercase">Qualifications</h3>
                   {instructorDetails.qualification && (
@@ -269,7 +269,7 @@ console.log(students)
                   )}
                 </div>
 
-                {/* Social Links */}
+                
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold text-gray-500 uppercase">Social Links</h3>
                   <div className="flex gap-3">
