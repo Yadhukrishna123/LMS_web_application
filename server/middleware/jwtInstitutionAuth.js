@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const Institution = require("../modals/Institution"); 
 
+// In middleware/jwtInstitutionAuth.js
 exports.instiAuthToken = async (req, res, next) => {
   try {
-    const { token } = req.cookies;
+    const token = req.cookies.institutionToken;
 
     if (!token) {
       return res.status(401).json({
@@ -33,7 +34,6 @@ exports.instiAuthToken = async (req, res, next) => {
       institutionName: institution.institutionName
     };
 
-    console.log("Institution authenticated:", req.user.role, req.user.name);
     next();
   } catch (err) {
     console.error("Institution auth error:", err);
