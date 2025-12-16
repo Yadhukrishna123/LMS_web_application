@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-git branch -d new-brancg
 import {
   FiSearch,
   FiFilter,
