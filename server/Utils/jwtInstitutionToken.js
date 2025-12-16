@@ -16,7 +16,7 @@ exports.getnstitutionToken = async (req, res) => {
             isAuthentication: false
         })
     }
-
+// working check
     res.status(200).cookie("institutionToken", token, {
         httpOnly: true,
         sameSite: "lax",
