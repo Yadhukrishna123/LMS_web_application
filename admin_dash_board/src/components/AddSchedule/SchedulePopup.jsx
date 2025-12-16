@@ -11,7 +11,7 @@ const SchedulePopup = () => {
     return (
         <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
             <div className="bg-white/95 rounded-2xl shadow-2xl p-8 w-[95%] max-w-lg text-center transform transition-all scale-100 animate-fadeIn border border-gray-100n">
-                {/* ✅ Success Icon */}
+              
                 <div className="mb-4 flex justify-center">
                     <div className="bg-green-100 text-green-600 p-3 rounded-full">
                         ✅

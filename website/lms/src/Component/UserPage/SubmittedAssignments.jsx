@@ -14,7 +14,7 @@ const SubmittedAssignments = ({ setClickSubmittedAssignment }) => {
     const getAllSubmittedAssignment = async () => {
         try {
             setLoading(true)
-            let res = await axios.get("http://localhost:8080/api/v1/get_all_user_submitted_assignment")
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_user_submitted_assignment`)
             console.log(res)
             let correntUserAssignment = res.data.userAssignment.filter((a) => a.userId === user?._id)
             console.log(correntUserAssignment)
@@ -32,7 +32,7 @@ const SubmittedAssignments = ({ setClickSubmittedAssignment }) => {
         getAllSubmittedAssignment()
     }, [])
     return (
-        <div className="fixed inset-0 bg-white bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
 
                 {/* HEADER */}
@@ -56,7 +56,7 @@ const SubmittedAssignments = ({ setClickSubmittedAssignment }) => {
                 <div className="p-6 space-y-4">
                     {
                         assignment && assignment.map((a, i) => {
-                            console.log("Score data:", a.score);
+                            console.log("Score data:", a);
                             // console.log(score)
                             return (
                                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-l-4 border-green-500">
@@ -64,7 +64,7 @@ const SubmittedAssignments = ({ setClickSubmittedAssignment }) => {
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <h4 className="text-lg font-bold text-gray-900">
-                                                    {JSON.parse(a.assignmentName).title}
+                                                    {a.title}
                                                 </h4>
                                                 <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full flex items-center gap-1">
                                                     {a.isChecked ? (

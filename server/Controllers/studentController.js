@@ -13,7 +13,7 @@ const generateStudentId = async () => {
 
 exports.addStudent = async (req, res) => {
   try {
-    const { name, email, phone, age, gender, accoutRegisterdEmail, profileImage, courseEnrolled, address, batch } = req.body;
+    const {isExist, name, email, phone, age, gender, accoutRegisterdEmail, profileImage, courseEnrolled, address, batch } = req.body;
 
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, message: "Name, Email and Phone are required" });
@@ -22,6 +22,7 @@ exports.addStudent = async (req, res) => {
     const studentId = await generateStudentId();
 
     const student = await Student.create({
+      isExist:true,
       studentId,
       name,
       email,
@@ -79,7 +80,8 @@ exports.getStudent = async (req, res) => {
     if (student) {
       res.status(200).json({
         success: true,
-        message: "student fatched successfully"
+        message: "student fatched successfully",
+        student
       })
     }
 
@@ -87,6 +89,37 @@ exports.getStudent = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
+}
+
+exports.updateStudent = async (req, res) => {
+   try {
+         const { id } = req.params
+         const student = await Student.findByIdAndUpdate(
+             id,
+             { $set: req.body },
+             { new: true, runValidators: true }
+         )
+ 
+         if (!student) {
+             return res.status(404).json({
+                 success: false,
+                 message: "User not found"
+             })
+         }
+ 
+         res.status(200).json({
+             success: true,
+             message: "User updated successfully",
+             student,
+             
+         });
+ 
+     } catch (error) {
+         res.status(500).json({
+             success: false,
+             message: error.message
+         });
+     }
 }
 
 exports.deleteStudent = async (req, res) => {
@@ -112,7 +145,7 @@ exports.deleteStudent = async (req, res) => {
   }
 }
 
-// 🔹 Assign student to a batch
+
 exports.assignStudentToBatch = async (req, res) => {
   try {
     const { studentId, batchId } = req.body;
@@ -142,7 +175,7 @@ exports.assignStudentToBatch = async (req, res) => {
   }
 };
 
-// Get students by batch
+
 
 exports.getStudentsByBatch = async (req, res) => {
   try {

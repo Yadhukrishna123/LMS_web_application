@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
+  isExist: {
+    type: Boolean,
+    default: false
+  },
   studentId: {
     type: String,
     unique: true,
@@ -38,7 +42,7 @@ const studentSchema = new mongoose.Schema({
     type: String,
   },
   profileImage: {
-    type: [String], 
+    type: [String],
   },
   status: {
     type: String,

@@ -47,7 +47,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
     const getAllPayment = async () => {
         try {
             setLoading(true)
-            let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_payment_details`)
             console.log(res)
             setPayments(res.data.paymentDetails)
 
@@ -80,6 +80,8 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
         }
     }
 
+    console.log(selectedStudents)
+
     useEffect(() => {
          let takeCourse 
         if (inputs.course && payments?.length && students?.length) {
@@ -90,9 +92,9 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
             console.log(coursePurchassedUsers)
             let takeUserId = coursePurchassedUsers.map((c) => c.userId)
             // let studentsId = students.map((s)=>s.userId)
-            let courseBuyedStudents = students.filter((s) => takeUserId.includes(s.userId))
-            console.log("number", courseBuyedStudents)
-            setEnrolledStudents(courseBuyedStudents)
+            // let courseBuyedStudents = students.filter((s) => takeUserId.includes(s.userId))
+            // console.log("number", courseBuyedStudents)
+            setEnrolledStudents(coursePurchassedUsers)
         }
     }, [inputs.course, payments, students])
 
@@ -119,7 +121,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
 
             }
 
-            let res = await axios.post("http://localhost:8080/api/v1/create_assignment", payload)
+            let res = await axios.post(`${import.meta.env.VITE_API_URL}/create_assignment`, payload)
             if (res.data.success) {
                 Swal.fire({
                     icon: "success",
@@ -129,6 +131,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
                     timer: 1800,
                 });
             }
+            setClickCreateAssignment(false)
             console.log(res)
         } catch (error) {
             console.error(error)
@@ -153,7 +156,7 @@ const UploadAssignment = ({ setClickCreateAssignment, clickCreateAssignMent, cou
     }
 
     return (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0  backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="sticky top-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 rounded-t-3xl z-10">

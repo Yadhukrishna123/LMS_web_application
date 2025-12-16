@@ -12,7 +12,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
     const [loading, setLoadintg] = useState(false)
     const [assignment, setAssigment] = useState([])
     const [allAssignment, setAllAssignment] = useState([])
-    
+
     const [scoreForm, setScoreForm] = useState({
         score: "",
         comment: ""
@@ -21,18 +21,43 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
     const getAllSubmittedAssignment = async () => {
         try {
             setLoadintg(true)
-            let res = await axios.get("http://localhost:8080/api/v1/get_all_user_submitted_assignment")
-            let allAssignmentRes = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_user_submitted_assignment`)
+            let allAssignmentRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_assignments`)
             console.log(res)
             console.log(allAssignmentRes)
             setAllAssignment(allAssignmentRes.data.assignment)
 
             if (res.data.success) {
                 const filterAssignment = res.data.userAssignment.filter((a) => {
-                    const parsed = JSON.parse(a.assignmentName)
-                    return parsed.instructorId === user?._id
+                    let parsed
+
+                    try {
+                        if (typeof a.assignmentName === "string" && a.assignmentName.trim().startsWith("{")) {
+                            parsed = JSON.parse(a.assignmentName);
+                        } else {
+                            parsed = {
+                                title: a.instructorId,
+                                instructorId: a.instructorId
+
+                            };
+                            console.log(parsed)
+                        }
+                    } catch (error) {
+                        console.error("Invalid JSON in assignmentName:", a.assignmentName);
+
+                        parsed = {
+                            title: a.assignmentName,
+                            instructorId: a.instructorId
+                        };
+                    }
+                    return (
+                        parsed?.instructorId?.toString() ===
+                        user?._id?.toString()
+                    );
                 })
                 setAssigment(filterAssignment)
+
+
             }
 
 
@@ -57,7 +82,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
     const handleDownload = async (file) => {
         const fileName = file.split("\\").pop();
         console.log(fileName)
-        window.open(`http://localhost:8080/api/v1/download_assignment/${fileName}`, "_blank")
+        window.open(`${import.meta.env.VITE_API_URL}/download_assignment/${fileName}`, "_blank")
 
     }
 
@@ -73,7 +98,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                 score: scoreForm.score,
                 comment: scoreForm.comment
             }
-            let res = await axios.put(`http://localhost:8080/api/v1/update_score/${id}`, payload)
+            let res = await axios.put(`${import.meta.env.VITE_API_URL}/update_score/${id}`, payload)
             console.log(res)
             if (res.data.success) {
                 Swal.fire({
@@ -86,9 +111,24 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
             }
         } catch (error) {
 
-        } finally{
+        } finally {
             setClickUserAssignment(false)
         }
+    }
+    const parseAssignmentName =(assignmentName) => {
+        if(!assignmentName) {
+            return { title: "Untitled Assignment" };
+        }
+
+        if (typeof assignmentName === "string" && assignmentName.trim().startsWith("{")) {
+            try {
+                return JSON.parse(assignmentName);
+            } catch (error) {
+                console.error("Failed to parse JSON:", assignmentName);
+                return { title: assignmentName };
+            }
+        }
+         return { title: assignmentName };
     }
 
 
@@ -114,11 +154,9 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                         </button>
                     </div>
                 </div>
-
-                {/* CONTENT */}
                 <div className="p-6 space-y-4">
                     {assignment && assignment.map((a, i) => {
-                        const parsed = JSON.parse(a.assignmentName);
+                        const parsed = parseAssignmentName(a.assignmentName);
                         const submittedDate = a.submittedAt.split("T")[0];
                         console.log(submittedDate)
                         const currentAssignment = allAssignment.find((s) => s.title === parsed.title)

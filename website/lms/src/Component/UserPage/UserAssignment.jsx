@@ -18,7 +18,7 @@ const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
   const getAllAssignments = async () => {
     try {
       setLoading(true)
-      let res = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
+      let res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_assignments`)
       console.log(res)
     } catch (error) {
 
@@ -58,7 +58,7 @@ const UserAssignment = ({ setClickAssignment, assignment, userCourses }) => {
 
 
   return (
-    <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0  backdrop-blur-sm bg-opacity-40 flex items-center justify-center z-50 p-4">
 
       {/* Popup Box */}
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">

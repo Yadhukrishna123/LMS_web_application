@@ -5,8 +5,9 @@ import { AllCourseDetail } from "../AllCourseContext/Context";
 import { toast, ToastContainer } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 
-const AddStudent = ({ setShowForm, emailll }) => {
-    // const { user } = useContext(AllCourseDetail)
+const AddStudent = ({ setShowForm, emailll, editMode, editStudent }) => {
+
+    const { user } = useContext(AllCourseDetail)
     const navigate = useNavigate()
     const [batches, setBatches] = useState([]);
     const [loading, setLoading] = useState(false)
@@ -53,6 +54,22 @@ const AddStudent = ({ setShowForm, emailll }) => {
             .catch((err) => console.error(err));
     }, []);
 
+    useEffect(() => {
+        if (editMode && editStudent) {
+            setInputs({
+                name: editStudent.name || "",
+                email: editStudent.email || "",
+                phone: editStudent.phone || "",
+                age: editStudent.age || "",
+                gender: editStudent.gender || "",
+                profileImage: null,
+                courseEnrolled: editStudent.courseEnrolled || "",
+                address: editStudent.address || "",
+                batch: editStudent.batch || "",
+            })
+        }
+    }, [editMode, editStudent])
+
 
     const handleChange = (e) => {
         const { name, files, value } = e.target;
@@ -87,8 +104,12 @@ const AddStudent = ({ setShowForm, emailll }) => {
                 address: inputs.address,
                 batch: inputs.batch || null,
             }
+            let res
 
-            let res = await axios.post("http://localhost:8080/api/v1/add_student", payload)
+            if(editMode){
+                 res = await axios.put(`http://localhost:8080/api/v1/get_student${editStudent._id}`, payload)
+            } else {
+                res = await axios.post("http://localhost:8080/api/v1/add_student", payload)
             console.log(res)
             if (res.data.success) {
                 toast.success(res.data.messsage)
@@ -96,10 +117,8 @@ const AddStudent = ({ setShowForm, emailll }) => {
                 await new Promise((back) => setTimeout(back, 2000))
                 navigate("/user_page")
             }
-
-
-            console.log(res);
-
+            }
+          
         } catch (error) {
             console.error(error);
             alert("Error adding student");
@@ -131,7 +150,7 @@ const AddStudent = ({ setShowForm, emailll }) => {
                                 </svg>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold">Add Student</h2>
+                                <h2 className="text-2xl font-bold"> {editMode ? "Update Student" : "Add Student"}</h2>
                                 <p className="text-blue-100 text-sm">Enter student details below</p>
                             </div>
                         </div>
@@ -162,6 +181,7 @@ const AddStudent = ({ setShowForm, emailll }) => {
                                     type="text"
                                     name="name"
                                     placeholder="Enter full name"
+                                    // defaultValue={`${user?.firstname} ${user?.lastname}`}
                                     value={inputs.name}
                                     onChange={handleChange}
                                     required
@@ -324,7 +344,7 @@ const AddStudent = ({ setShowForm, emailll }) => {
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Student
+                            {editMode ? "Update Student" : "Add Student"}
                         </button>
                     </div>
                 </form>

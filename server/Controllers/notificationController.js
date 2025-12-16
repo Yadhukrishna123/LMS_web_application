@@ -61,6 +61,53 @@ exports.getAllNotification = async (req, res) => {
   }
 };
 
+exports.deleteNotification = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const deltNotification = await Notification.findByIdAndDelete(id)
+
+    if (!deltNotification) {
+      return res.status(404).json({
+        success: false,
+        message: "Notification not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Notification deleted successfully",
+      // deltNotification
+    });
+  } catch (error) {
+    console.error("Delete Notification Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting notification",
+    });
+  }
+}
+
+exports.getNotification = async (req, res) => {
+  try {
+    let { userId } = req.params
+
+    const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: notifications.length,
+      notifications,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 // Show students below attendance threshold
 exports.getLowAttendanceStudents = async (req, res) => {
   try {
@@ -158,47 +205,47 @@ exports.sendLowAttendance = async (req, res) => {
 
 // notificationsController.js
 
-exports.getUserNotifications = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const userType = req.user.role;
+// exports.getUserNotifications = async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+//     const userType = req.user.role;
 
-    // Fetch notifications where the user is a recipient
-    const announcements = await Notification.find({
-      recipients: { $in: [req.user.email, userType] }
-    });
-
-
-    const notifications = announcements.map(n => ({
-      id: n._id,
-      type: n.type === "low_attendance" ? "info" : "success",
-      title: n.title,
-      message: n.message,
-      read: n.readBy.includes(userId),
-      timestamp: n.createdAt.toLocaleDateString(),
-    }));
-
-    if (userType === "student") {
-      const announcements = await Notification.find({
-        recipients: { $in: [req.user.email, req.user.role] }
-      });
-      notifications = announcements.map(n => ({
-        id: n._id,
-        type: n.type === "low_attendance" ? "info" : "success",
-        title: n.title,
-        message: n.message,
-        read: n.readBy.includes(userId),
-        timestamp: n.createdAt.toLocaleDateString(),
-      }));
-    }
+//     // Fetch notifications where the user is a recipient
+//     const announcements = await Notification.find({
+//       recipients: { $in: [req.user.email, userType] }
+//     });
 
 
-    res.json({ success: true, notifications });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
+//     const notifications = announcements.map(n => ({
+//       id: n._id,
+//       type: n.type === "low_attendance" ? "info" : "success",
+//       title: n.title,
+//       message: n.message,
+//       read: n.readBy.includes(userId),
+//       timestamp: n.createdAt.toLocaleDateString(),
+//     }));
+
+//     if (userType === "student") {
+//       const announcements = await Notification.find({
+//         recipients: { $in: [req.user.email, req.user.role] }
+//       });
+//       notifications = announcements.map(n => ({
+//         id: n._id,
+//         type: n.type === "low_attendance" ? "info" : "success",
+//         title: n.title,
+//         message: n.message,
+//         read: n.readBy.includes(userId),
+//         timestamp: n.createdAt.toLocaleDateString(),
+//       }));
+//     }
+
+
+//     res.json({ success: true, notifications });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: err.message });
+//   }
+// };
 
 
 
@@ -259,23 +306,23 @@ exports.markNotificationAsRead = async (req, res) => {
   }
 };
 
-// ✅ DELETE Notification (Student/Instructor)
-exports.deleteUserNotification = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userEmail = req.user.email;
+// // ✅ DELETE Notification (Student/Instructor)
+// exports.deleteUserNotification = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const userEmail = req.user.email;
 
-    const notification = await Notification.findById(id);
-    if (!notification) {
-      return res.status(404).json({ success: false, message: "Notification not found" });
-    }
+//     const notification = await Notification.findById(id);
+//     if (!notification) {
+//       return res.status(404).json({ success: false, message: "Notification not found" });
+//     }
 
-    // Remove this user from recipients array (soft delete)
-    notification.recipients = notification.recipients.filter(r => r !== userEmail);
-    await notification.save();
+//     // Remove this user from recipients array (soft delete)
+//     notification.recipients = notification.recipients.filter(r => r !== userEmail);
+//     await notification.save();
 
-    res.json({ success: true, message: "Notification removed for this user" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
+//     res.json({ success: true, message: "Notification removed for this user" });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
+//   }
+// };

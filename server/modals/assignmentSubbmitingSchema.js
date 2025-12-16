@@ -5,6 +5,10 @@ const assignmentSubbmitinSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    instructorId: {
+        type: String,
+        required: true,
+    },
     assignmentFile: {
         type: String,
         required: true

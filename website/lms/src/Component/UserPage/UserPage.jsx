@@ -20,6 +20,7 @@ const UserPage = () => {
     const [showForm, setShowForm] = useState(false)
     const [usercourse, setUserCourse] = useState([])
     const [assignment, setAssignment] = useState([])
+    const [students, setStudents] = useState([])
     const [loading, setLoading] = useState(false)
     const [clickAssignment, setClickAssignment] = useState(false)
      const [clicksubmittingAssignment, setclickSubmittingAssignment] = useState(false)
@@ -27,15 +28,19 @@ const UserPage = () => {
     const [email, setEmail] = useState(null)
     const [course, setCourse] = useState([])
      const [completed, setCompleted] = useState([])
+     const [editMode, setEditMode] = useState(false);
+const [editStudent, setEditStudent] = useState(null);
+
+
     const studentEnrolledCourse = async () => {
         try {
             setLoading(true)
-            let res = await axios.get("http://localhost:8080/api/v1/get_all_payment_details")
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_payment_details`)
             let allCourse = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_courses`)
-            let allCourseComplete = await axios.get("http://localhost:8080/api/v1/get_all_completers")
-            let allAssignment = await axios.get("http://localhost:8080/api/v1/get_all_assignments")
-    
-
+            let allCourseComplete = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_completers`)
+            let allAssignment = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_assignments`)
+            let allStudent = await axios.get(`${import.meta.env.VITE_API_URL}/view_students`)
+            console.log(allStudent)
             console.log(res)
             console.log(allCourse)
             console.log(allCourseComplete)
@@ -44,7 +49,7 @@ const UserPage = () => {
             setCourse(allCourse.data.courses)
             setCompleted(allCourseComplete.data.allCourseCompleters)
             setAssignment(allAssignment.data.assignment)
-
+            setStudents(allStudent.data.students)
 
         } catch (error) {
             console.error(error)
@@ -69,8 +74,11 @@ const UserPage = () => {
 
     console.log(userCompletedWithcertificate)
 
+    const currentStudent = students.filter((s)=>s.accoutRegisterdEmail ===user?.email )
+    console.log(currentStudent)
 
-
+    const isRegistDstudent = currentStudent.some((s)=>s.isExist === true)
+    console.log(isRegistDstudent)
   const stats = {
     totalHours: 127,
     coursesCompleted: 8,
@@ -87,16 +95,24 @@ const UserPage = () => {
     { type: 'enrollment', title: 'Enrolled in Machine Learning', time: '3 days ago', course: 'ML Fundamentals' }
   ];
 
+
+
+
     
     console.log(completed)
     console.log(assignment)
     return (
         <div className="px-4 sm:px-6 lg:px-20 py-10 bg-gray-50 min-h-screen">
-            {showForm && <AddStudent setShowForm = {setShowForm} emailll={email} />}
+            {showForm && <AddStudent 
+             setShowForm = {setShowForm}
+             emailll={email} 
+             editMode = {editMode}
+            editStudent = {editStudent}/>}
             {clickAssignment && <UserAssignment
              setClickAssignment = {setClickAssignment} 
              assignment={assignment}
              userCourses={userCourses}
+             
              />}
             {clicksubmittingAssignment && <SubmittingAssignment
              setclickSubmittingAssignment={setclickSubmittingAssignment}
@@ -142,7 +158,11 @@ const UserPage = () => {
                        {`${user?.firstname} ${user?.lastname}`}
                     </h1>
                     <button
-                      onClick={() => {/* Add edit handler */}}
+                      onClick={() =>{
+                        setShowForm(true)
+                         setEditMode(true)
+                          setEditStudent(currentStudent)
+                      }}
                       className="group/btn p-2.5 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:shadow-md"
                       aria-label="Edit profile"
                     >
@@ -178,9 +198,10 @@ const UserPage = () => {
 
                
                 <div className="pt-6">
-                  <button 
+                  {isRegistDstudent === true ? (null):(<button 
                     className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-2xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 relative overflow-hidden group/btn"
                     onClick={() => setShowForm(true)}
+                    // disabled={isRegistDstudent === true}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       Add Student Details
@@ -189,7 +210,8 @@ const UserPage = () => {
                       </svg>
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
-                  </button>
+                  </button>)}
+                  
                 </div>
               </div>
             </div>
@@ -207,39 +229,59 @@ const UserPage = () => {
           Learning Statistics
         </h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaClock className="text-blue-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-blue-600">{stats.totalHours}</div>
-            <div className="text-sm text-gray-600 mt-1">Learning Hours</div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaCheckCircle className="text-green-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-green-600">{stats.coursesCompleted}</div>
-            <div className="text-sm text-gray-600 mt-1">Completed</div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaBook className="text-purple-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-purple-600">{totalCourse}</div>
-            <div className="text-sm text-gray-600 mt-1">Enrolled</div>
-          </div>
-          
-         
-          
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaCertificate className="text-yellow-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-yellow-600">{userCompletedWithcertificate.length}</div>
-            <div className="text-sm text-gray-600 mt-1">Certificates</div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-            <FaStar className="text-pink-600 text-2xl mb-2" />
-            <div className="text-3xl font-bold text-pink-600">{stats.averageScore}%</div>
-            <div className="text-sm text-gray-600 mt-1">Avg Score</div>
-          </div>
-        </div>
+       <div className="flex justify-center">
+  <div
+    className="
+      grid
+      grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      gap-6
+      place-items-center
+      w-full
+      max-w-6xl
+    "
+  >
+   
+
+    {/* Completed */}
+    <div className="w-full max-w-xs bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 hover:shadow-lg transition-all text-center">
+      <FaCheckCircle className="text-green-600 text-2xl mb-2 mx-auto" />
+      <div className="text-3xl font-bold text-green-600">
+        {stats.coursesCompleted}
+      </div>
+      <div className="text-sm text-gray-600 mt-1">
+        Completed
+      </div>
+    </div>
+
+    
+    <div className="w-full max-w-xs bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 hover:shadow-lg transition-all text-center">
+      <FaBook className="text-purple-600 text-2xl mb-2 mx-auto" />
+      <div className="text-3xl font-bold text-purple-600">
+        {totalCourse}
+      </div>
+      <div className="text-sm text-gray-600 mt-1">
+        Enrolled
+      </div>
+    </div>
+
+    
+    <div className="w-full max-w-xs bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 hover:shadow-lg transition-all text-center">
+      <FaCertificate className="text-yellow-600 text-2xl mb-2 mx-auto" />
+      <div className="text-3xl font-bold text-yellow-600">
+        {userCompletedWithcertificate.length}
+      </div>
+      <div className="text-sm text-gray-600 mt-1">
+        Certificates
+      </div>
+    </div>
+
+  
+    
+  </div>
+</div>
+
       </section>
 
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
@@ -281,38 +323,7 @@ const UserPage = () => {
             My Courses
           </h2>
           
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setCourseFilter('all')}
-              className={`px-4 py-2 rounded-xl font-semibold transition-all ${
-                courseFilter === 'all'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setCourseFilter('in-progress')}
-              className={`px-4 py-2 rounded-xl font-semibold transition-all ${
-                courseFilter === 'in-progress'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              In Progress
-            </button>
-            <button
-              onClick={() => setCourseFilter('completed')}
-              className={`px-4 py-2 rounded-xl font-semibold transition-all ${
-                courseFilter === 'completed'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              Completed
-            </button>
-          </div>
+         
         </div>
 
          <div  className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
