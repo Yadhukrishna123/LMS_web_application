@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
-const User = require("../modals/users"); // make sure you have your User model
+const User = require("../modals/users"); 
 
+// In middleware/jwtAuth.js
 exports.authToken = async (req, res, next) => {
     try {
-        console.log("Cookies received:", req.cookies);
-        const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+        const token = req.cookies.userToken || req.headers.authorization?.split(" ")[1];
 
         if (!token) {
             return res.status(401).json({
@@ -15,7 +15,6 @@ exports.authToken = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_secret_key);
-        // Attach user to request
         const user = await User.findById(decoded.id); 
         if (!user) {
             return res.status(401).json({

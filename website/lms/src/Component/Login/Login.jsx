@@ -38,8 +38,16 @@ const Login = () => {
                 toast.success(res.data.message);
                 setMessage(res.data.message);
                 await new Promise((r) => setTimeout(r, 2000));
-                navigate("/");
-                window.location.reload()
+                
+                const role = res.data?.user?.role; // <-- Get user role
+
+                if (role === "instructor") {
+                    navigate("/instructor_landing");
+                } else {
+                    navigate("/");
+                }
+
+                window.location.reload();
                 
 
             } else {

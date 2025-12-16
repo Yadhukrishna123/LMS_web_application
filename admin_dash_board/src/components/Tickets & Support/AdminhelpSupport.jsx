@@ -28,9 +28,9 @@ const formatPriority = (p) => {
   return v ? v.charAt(0).toUpperCase() + v.slice(1) : "Medium";
 };
 const displayName = (u) => {
-  if (!u) return "N/A";
+  if (!u) return ;
   const full = [u.firstname, u.lastname].filter(Boolean).join(" ").trim();
-  return u.name || full || "N/A";
+  return u.name || full ;
 };
 
 const AdminHelpSupport = () => {
@@ -45,78 +45,78 @@ const AdminHelpSupport = () => {
   const [showReplyBox, setShowReplyBox] = useState(null);
   const [ticketThread, setTicketThread] = useState(null);
 
-  // Fetch admin tickets (backend excludes closed by default when status=all)
-  useEffect(() => {
-    const fetchTickets = async () => {
-      setLoading(true);
-      try {
-        const params = {
-          search: searchQuery,
-          page: 1,
-          limit: 10,
-          status: filterStatus,     // send to backend
-          priority: filterPriority, // send to backend
-        };
-        const res = await axios.get(`${API_BASE}/admin`, { params });
-        setTickets(res.data.data || []);
-      } catch (err) {
-        console.error("Error fetching admin tickets:", err.response?.data || err.message);
-        setTickets([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTickets();
-  }, [searchQuery, filterStatus, filterPriority]);
-
-  // Auto-open thread if ?open=:id is present
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const openId = params.get('open');
-    if (openId) {
-      setSelectedTicket(openId);
-      fetchTicketThread(openId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // To get ticket thread
-  const fetchTicketThread = async (ticketId) => {
+useEffect(() => {
+  const fetchTickets = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/ticket/${ticketId}`);
-      setTicketThread(res.data.data);
-    } catch (e) {
-      console.error("Fetch ticket thread error:", e.response?.data || e.message);
-      setTicketThread(null);
-    }
-  };
-
-  const handleStatusChange = async (ticketId, newStatus) => {
-    try {
-      await axios.patch(`${API_BASE}/ticket/${ticketId}/status`, { status: newStatus });
-      setTickets((ts) => ts.map(t => t._id === ticketId ? { ...t, status: newStatus } : t));
-      if (selectedTicket === ticketId) fetchTicketThread(ticketId);
+      const params = {
+        search: searchQuery,
+        page: 1,
+        limit: 10,
+        status: filterStatus,
+        priority: filterPriority,
+      };
+      const res = await axios.get(`${API_BASE}/admin`, { 
+        params, 
+        withCredentials: true 
+      });
+      setTickets(res.data.data || []);
     } catch (err) {
-      console.error("Update status error:", err.response?.data || err.message);
-      alert("Failed to update status.");
+      console.error("Error fetching admin tickets:", err.response?.data || err.message);
+      setTickets([]);
+    } finally {
+      setLoading(false);
     }
   };
+  fetchTickets();
+}, [searchQuery, filterStatus, filterPriority]);
 
-  const handleSendReply = async (ticketId) => {
-    if (replyMessage.trim()) {
-      try {
-        await axios.post(`${API_BASE}/ticket/${ticketId}/message`, { message: replyMessage });
-        setReplyMessage('');
-        setShowReplyBox(null);
-        fetchTicketThread(ticketId);
-      } catch (err) {
-        console.error("Reply send error:", err.response?.data || err.message);
-        alert("Failed to send message. Please check your login session.");
-      }
+
+const fetchTicketThread = async (ticketId) => {
+  try {
+    const res = await axios.get(`${API_BASE}/ticket/${ticketId}`, {
+      withCredentials: true
+    });
+    setTicketThread(res.data.data);
+  } catch (e) {
+    console.error("Fetch ticket thread error:", e.response?.data || e.message);
+    setTicketThread(null);
+  }
+};
+
+const handleStatusChange = async (ticketId, newStatus) => {
+  try {
+    await axios.patch(
+      `${API_BASE}/ticket/${ticketId}/status`, 
+      { status: newStatus }, 
+      { withCredentials: true }
+    );
+    setTickets((ts) => ts.map(t => t._id === ticketId ? { ...t, status: newStatus } : t));
+    if (selectedTicket === ticketId) fetchTicketThread(ticketId);
+  } catch (err) {
+    console.error("Update status error:", err.response?.data || err.message);
+    alert("Failed to update status.");
+  }
+};
+
+const handleSendReply = async (ticketId) => {
+  if (replyMessage.trim()) {
+    try {
+      await axios.post(
+        `${API_BASE}/ticket/${ticketId}/message`,
+        { message: replyMessage.trim() },  
+        { withCredentials: true }         
+      );
+      setReplyMessage('');
+      setShowReplyBox(null);
+      fetchTicketThread(ticketId);
+    } catch (err) {
+      console.error("Reply send error:", err.response?.data || err.message);
+      alert("Failed to send message. Please check your login session.");
     }
-  };
+  }
+};
 
-  // Additional client-side filtering: hide closed when "All Status" is selected
   const displayTickets = tickets.filter(ticket => {
     const statusOk = filterStatus === "all" ? ticket.status !== "closed" : ticket.status === filterStatus;
     const priorityOk = filterPriority === "all" || normalizePriority(ticket.priority) === normalizePriority(filterPriority);
@@ -354,41 +354,36 @@ const AdminHelpSupport = () => {
                                   <h4 className="text-base sm:text-lg font-bold text-gray-800">Conversation Thread</h4>
                                 </div>
                                 <div className="space-y-3 sm:space-y-4">
-                                  {ticketThread.messages && ticketThread.messages.map((msg, idx) => {
-                                    const senderRole = msg.sender?.role || "institution";
-                                    const name = displayName(msg.sender);
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className={`p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-md border-l-4 transition-all duration-200 hover:shadow-lg ${
+                                {ticketThread.messages && ticketThread.messages.map((msg, idx) => {
+                                  const senderRole = msg.sender_role || msg.sender?.role || "user";
+                                  const name = displayName(msg.sender);
+                                  
+                                  return (
+                                    <div key={idx} className={`p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-md border-l-4 transition-all duration-200 hover:shadow-lg ${
+                                      ['admin','institution'].includes(senderRole)
+                                        ? "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500"
+                                        : "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500"
+                                    }`}>
+                                      <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                                        <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                                           ['admin','institution'].includes(senderRole)
-                                            ? "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-500"
-                                            : "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500"
-                                        }`}
-                                      >
-                                        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                                          <div
-                                            className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
-                                              ['admin','institution'].includes(senderRole)
-                                                ? "bg-gradient-to-br from-emerald-400 to-teal-400"
-                                                : "bg-gradient-to-br from-blue-400 to-indigo-400"
-                                            }`}
-                                          >
-                                            <FiUsers className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                                          </div>
-                                          <span className="font-bold text-gray-800 text-sm sm:text-base">
-                                            {name}
-                                          </span>
-                                          {['admin','institution'].includes(senderRole) && (
-                                            <span className="text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full font-bold shadow-sm">
-                                              {senderRole === "institution" ? "Institution" : "Admin"}
-                                            </span>
-                                          )}
+                                            ? "bg-gradient-to-br from-emerald-400 to-teal-400"
+                                            : senderRole === 'student' ? "bg-gradient-to-br from-blue-400 to-blue-500"
+                                            : "bg-gradient-to-br from-purple-400 to-purple-500"
+                                        }`}>
+                                          <FiUsers className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                                         </div>
-                                        <p className="text-gray-700 leading-relaxed ml-8 sm:ml-11 text-xs sm:text-sm md:text-base">
-                                          {msg.message}
-                                        </p>
+                                        <span className="font-bold text-gray-800 text-sm sm:text-base">{name}</span>
+                                        <span className="text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full font-bold shadow-sm">
+                                          {senderRole === 'student' ? 'Student' : 
+                                          senderRole === 'instructor' ? 'Instructor' : 
+                                          senderRole.charAt(0).toUpperCase() + senderRole.slice(1)}
+                                        </span>
                                       </div>
+                                      <p className="text-gray-700 leading-relaxed ml-8 sm:ml-11 text-xs sm:text-sm md:text-base">
+                                        {msg.message}
+                                      </p>
+                                    </div>
                                     );
                                   })}
                                 </div>

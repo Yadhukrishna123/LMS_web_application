@@ -105,10 +105,14 @@ exports.getAdminTickets = async (req, res) => {
 exports.addMessage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { message, senderId } = req.body;
+    const { message } = req.body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, message: "Message is required" });
+    }
+
+    if (!req.user?._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
     const ticket = await Ticket.findById(id);
@@ -116,25 +120,22 @@ exports.addMessage = async (req, res) => {
       return res.status(404).json({ success: false, message: "Ticket not found" });
     }
 
-    let sender = req.user?._id || senderId || null;
-
-    if (!sender) {
-      const systemUser = await User.findOne({ role: "institution" }).select("_id");
-      if (systemUser) sender = systemUser._id;
-    
-    }
-
     const msg = await Message.create({
       ticket: id,
-      sender,
+      sender: req.user._id,
+      sender_role: req.user.role, 
       message: message.trim(),
     });
 
     await Ticket.findByIdAndUpdate(id, { $push: { messages: msg._id } });
 
+    const populatedMsg = await Message.findById(msg._id)
+      .populate('sender', 'name firstname lastname email role')
+      .lean();
+
     return res.status(201).json({
       success: true,
-      data: msg,
+      data: populatedMsg,
     });
   } catch (err) {
     console.error("Add message error:", err);

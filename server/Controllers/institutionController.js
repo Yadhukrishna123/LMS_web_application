@@ -338,9 +338,7 @@ exports.updataeInstitutionDetails = async (req, res) => {
 
 exports.getInstituteAdmin = async (req, res) => {
     try {
-        const token = req.cookies?.token;
-        console.log(token)
-
+        const token = req.cookies.institutionToken;
         if (!token) {
             return res.status(401).json({
                 success: false,
@@ -349,18 +347,9 @@ exports.getInstituteAdmin = async (req, res) => {
             });
         }
 
-        let decoded;
-
-        decoded = jwt.verify(token, process.env.JWT_secret_key);
-        if (!decoded) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid or expired token",
-                instituteAdmin: null
-            });
-        }
-
+        const decoded = jwt.verify(token, process.env.JWT_secret_key);
         const instituteAdmin = await institutionModal.findById(decoded.id).select("-password");
+        
         if (!instituteAdmin) {
             return res.status(404).json({
                 success: false,
@@ -373,7 +362,6 @@ exports.getInstituteAdmin = async (req, res) => {
             success: true,
             instituteAdmin
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
