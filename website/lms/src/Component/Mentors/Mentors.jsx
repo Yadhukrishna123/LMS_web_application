@@ -68,7 +68,7 @@ const Mentors = () => {
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/view_instructor', {
+        const res = await axios.get('https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_instructor', {
           params: { page: 1, limit: 1000 },
         });
         setInstructors(res.data.data || []);

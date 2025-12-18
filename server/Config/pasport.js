@@ -8,7 +8,7 @@
 //     new googleStrategy({
 //         clientID: process.env.GOOGLE_CLIENT_ID,
 //         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//         callbackURL: "http://localhost:8080/auth/google/callback",
+//         callbackURL: "https://lms-web-application-backend-e6yj.onrender.com/auth/google/callback",
 //         passReqToCallback: true
 //     },
 //         async (req, accessToken, refreshToken, profile, done) => {

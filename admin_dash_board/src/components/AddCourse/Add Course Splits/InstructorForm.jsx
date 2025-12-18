@@ -7,7 +7,7 @@ const InstructorForm = ({ data, updateData }) => {
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/view_instructor");
+        const res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_instructor");
         setInstructors(res.data.data); 
       } catch (error) {
         console.error("Error fetching instructors:", error);

@@ -3,7 +3,7 @@ import { FaFilePdf, FaPrint, FaSearch } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_BASE = "http://localhost:8080/api/v1";
+const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
 const AttendanceTracking = () => {
   const [records, setRecords] = useState([]);

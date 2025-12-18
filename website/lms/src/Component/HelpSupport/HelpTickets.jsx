@@ -28,7 +28,7 @@ const HelpTickets = () => {
     const fetchTickets = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:8080/api/v1/getusertickets",
+          "https://lms-web-application-backend-e6yj.onrender.com/api/v1/getusertickets",
           {
             headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
@@ -38,7 +38,7 @@ const HelpTickets = () => {
       } catch (err) {
         console.error("Error fetching tickets:", err);
       }
-    };
+    }; 
     fetchTickets();
   }, [token]);
 
@@ -73,7 +73,7 @@ const HelpTickets = () => {
       };
 
       const res = await axios.post(
-        "http://localhost:8080/api/v1/createticket",
+        "https://lms-web-application-backend-e6yj.onrender.com/api/v1/createticket",
         payload,
           {
             headers: { Authorization: `Bearer ${token}` },

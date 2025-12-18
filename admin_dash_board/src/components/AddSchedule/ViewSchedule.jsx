@@ -40,7 +40,7 @@ const ViewSchedule = () => {
   const getAllSchedule = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8080/api/v1/get_all_schedule");
+      const res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_all_schedule");
       setSchedules(res.data.schedules || []);
     } catch (err) {
       console.error("Error fetching schedules:", err);
