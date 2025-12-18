@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-// In Utils/jwtToken.js
+
 exports.getToken = async (req, res) => {
     const userId = req.user._id
     const options = {
@@ -16,9 +16,11 @@ exports.getToken = async (req, res) => {
             isAuthentication: false
         })
     }
-    
+
     res.status(200).cookie("userToken", token, {
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production"
     }).json({

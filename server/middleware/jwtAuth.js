@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../modals/users"); 
 
-// In middleware/jwtAuth.js
+
 exports.authToken = async (req, res, next) => {
     try {
         const token = req.cookies.userToken || req.headers.authorization?.split(" ")[1];

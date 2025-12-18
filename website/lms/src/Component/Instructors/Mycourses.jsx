@@ -60,7 +60,7 @@ const MyCourses = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/my-courses`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/my-courses`, {
         params: {
           page,
           limit,
@@ -79,11 +79,11 @@ const MyCourses = () => {
         setTotalPages(res.data.totalPages || 1);
         setTotalCourses(res.data.totalCourses || res.data.courses?.length || 0);
         
-        // Set stats if available from API
+      
         if (res.data.stats) {
           setStats(res.data.stats);
         } else {
-          // Calculate stats from courses
+       
           calculateStats(res.data.courses || []);
         }
       }

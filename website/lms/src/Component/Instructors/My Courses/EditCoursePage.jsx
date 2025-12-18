@@ -46,7 +46,7 @@ const EditCoursePage = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Handle image upload logic here
+    
       console.log('Image uploaded:', file.name);
     }
   };

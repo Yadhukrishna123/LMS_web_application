@@ -23,16 +23,16 @@ const CourseCategories = () => {
   useEffect(() => {
     const getAllCategories = async () => {
       try {
-        // Replace with your actual API endpoint
+        
         const response = await fetch("http://localhost:8080/api/v1/view_All_course_categories?page=1&limit=1000");
         const data = await response.json();
         
         if (data.data) {
-          setCategories(data.data.slice(0, 7)); // Show first 7 categories
+          setCategories(data.data.slice(0, 7)); 
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
-        // Fallback demo data if API fails
+      
         setCategories([
           {
             _id: '1',

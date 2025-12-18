@@ -17,7 +17,7 @@ const FoegetPasswordOne = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot_password`, {
+            let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/forgot_password`, {
                 email
             });
             console.log('Password reset requested for:', email);

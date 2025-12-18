@@ -7,7 +7,7 @@ const UpcomingEvents = () => {
   useEffect(() => {
     const fetchRandomCourses = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/get_all_courses?page=1&limit=100`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/get_all_courses?page=1&limit=100`);
 
         // Check if the response is actually JSON
         const contentType = response.headers.get("content-type");

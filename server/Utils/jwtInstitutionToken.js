@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-// In Utils/jwtInstitutionToken.js
+
 exports.getnstitutionToken = async (req, res) => {
     const institutionId = req.institute._id
     const options = {
@@ -16,9 +16,11 @@ exports.getnstitutionToken = async (req, res) => {
             isAuthentication: false
         })
     }
-// working check
+
     res.status(200).cookie("institutionToken", token, {
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production"
     }).json({
