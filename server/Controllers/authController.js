@@ -306,7 +306,10 @@ exports.resetPAssword = async (req, res) => {
 
 exports.getMe = async (req, res) => {
     try {
-        const token = req.cookies.userToken;
+        console.log("qqqqqqwwww", req.cookies)
+        const token = req.cookies?.userToken;
+        console.log("cccc", req.cookies?.userToken)
+        console.log(token)
         if (!token) {
             return res.status(401).json({
                 success: false,
@@ -315,9 +318,18 @@ exports.getMe = async (req, res) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_secret_key);
+
+        let decoded;
+
+        decoded = jwt.verify(token, process.env.JWT_secret_key);
+        if (!decoded) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token",
+                user: null
+            });
+        }
         const user = await userModal.findById(decoded.id).select("-password");
-        
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -325,6 +337,7 @@ exports.getMe = async (req, res) => {
                 user: null
             });
         }
+
 
         res.status(200).json({
             success: true,
@@ -341,19 +354,11 @@ exports.getMe = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        // Clear both cookies to be safe
-        res.cookie("userToken", "", {
+        res.cookie("token", "", {
             httpOnly: true,
             expires: new Date(0),
             sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
-        });
-        
-        res.cookie("institutionToken", "", {
-            httpOnly: true,
-            expires: new Date(0),
-            sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
         });
 
         res.status(200).json({

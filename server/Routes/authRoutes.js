@@ -29,7 +29,7 @@ router.get("/get_all_user", getAllUsers)
 router.route("/get_user/:id").get(getUser).delete(deleteUser).put(updateUsers)
 router.post("/forgot_password", forgotPassword)
 router.post("/reset_password/:token", resetPAssword)
-router.get("/me", authToken, getMe);
+router.get("/me", getMe);
 router.post("/logout", logout)
 
 

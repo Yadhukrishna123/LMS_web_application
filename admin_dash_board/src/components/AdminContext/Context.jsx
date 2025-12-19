@@ -30,7 +30,7 @@ export const Context = (props) => {
     }
     useEffect(() => {
         getAllSchedule()
-        const token = document.cookie.includes("token=")
+        const token = document.cookie.includes("instituteToken=")
         if (!token) return;
         const geAdmin = async () => {
             let res = await axios.get("http://localhost:8080/api/v1/getInstitutionAdmin", {

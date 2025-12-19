@@ -338,7 +338,9 @@ exports.updataeInstitutionDetails = async (req, res) => {
 
 exports.getInstituteAdmin = async (req, res) => {
     try {
-        const token = req.cookies.institutionToken;
+        console.log("qqq", req.cookies)
+        const token = req.cookies?.instituteToken;
+        console.log("qqqttt", req.cookies?.instituteToken)
         if (!token) {
             return res.status(401).json({
                 success: false,
@@ -348,6 +350,7 @@ exports.getInstituteAdmin = async (req, res) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_secret_key);
+        
         const instituteAdmin = await institutionModal.findById(decoded.id).select("-password");
         
         if (!instituteAdmin) {
