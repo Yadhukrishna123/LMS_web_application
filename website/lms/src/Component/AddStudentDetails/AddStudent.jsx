@@ -107,9 +107,9 @@ const AddStudent = ({ setShowForm, emailll, editMode, editStudent }) => {
             let res
 
             if(editMode){
-                 res = await axios.put(`https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_student${editStudent._id}`, payload)
+                 res = await axios.put(`${import.meta.env.VITE_API_URL}api/v1/get_student${editStudent._id}`, payload)
             } else {
-                res = await axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/add_student", payload)
+                res = await axios.post(`${import.meta.env.VITE_API_URL}api/v1/add_student`, payload)
             console.log(res)
             if (res.data.success) {
                 toast.success(res.data.messsage)

@@ -20,7 +20,7 @@ import {
   FiUsers,
 } from 'react-icons/fi';
 
-const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+// const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
 const normalizePriority = (p) => String(p || "").toLowerCase();
 const formatPriority = (p) => {
@@ -56,7 +56,7 @@ useEffect(() => {
         status: filterStatus,
         priority: filterPriority,
       };
-      const res = await axios.get(`${API_BASE}/admin`, { 
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/admin`, { 
         params, 
         withCredentials: true 
       });
@@ -74,7 +74,7 @@ useEffect(() => {
 
 const fetchTicketThread = async (ticketId) => {
   try {
-    const res = await axios.get(`${API_BASE}/ticket/${ticketId}`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/ticket/${ticketId}`, {
       withCredentials: true
     });
     setTicketThread(res.data.data);
@@ -87,7 +87,7 @@ const fetchTicketThread = async (ticketId) => {
 const handleStatusChange = async (ticketId, newStatus) => {
   try {
     await axios.patch(
-      `${API_BASE}/ticket/${ticketId}/status`, 
+      `${import.meta.env.VITE_API_URL}api/v1/ticket/${ticketId}/status`, 
       { status: newStatus }, 
       { withCredentials: true }
     );
@@ -103,7 +103,7 @@ const handleSendReply = async (ticketId) => {
   if (replyMessage.trim()) {
     try {
       await axios.post(
-        `${API_BASE}/ticket/${ticketId}/message`,
+        `$${import.meta.env.VITE_API_URL}api/v1/ticket/${ticketId}/message`,
         { message: replyMessage.trim() },  
         { withCredentials: true }         
       );

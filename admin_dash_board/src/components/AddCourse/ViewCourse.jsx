@@ -68,7 +68,7 @@ const ViewCourses = () => {
   const getCourses = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_all_courses?title=${search}&category=${search}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_courses?title=${search}&category=${search}`, {
         withCredentials: true
       });
       console.log(res)

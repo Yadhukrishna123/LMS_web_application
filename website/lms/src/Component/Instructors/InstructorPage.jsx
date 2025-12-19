@@ -29,7 +29,7 @@ import UserSubmittedAssignments from './UserSubmittedAssignments';
 const InstructorPage = () => {
   const { user } = useContext(AllCourseDetail);
 
-  const [instructorData, setInstructorData] = useState(null);
+  // const [instructorData, setInstructorData] = useState(null);
   const [instructors, setInstructors] = useState(false)
   const [feeDetail, setFeeDetail] = useState([])
   const [email, setEmail] = useState(null);
@@ -49,30 +49,30 @@ const InstructorPage = () => {
 
 
 
-  const fetchInstructorData = async () => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/me`, {
-        withCredentials: true
-      });
+  // const fetchInstructorData = async () => {
+  //   try {
+  //     const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/me`, {
+  //       withCredentials: true
+  //     });
 
-      if (res.data.success) {
-        setInstructorData(res.data.user);
-        setEmail(res.data.user.email);
-        console.log('Instructor Data (User):', res.data.user);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching instructor data:', error);
-      setLoading(false);
-    }
-  };
+  //     if (res.data.success) {
+  //       setInstructorData(res.data.user);
+  //       setEmail(res.data.user.email);
+  //       console.log('Instructor Data (User):', res.data.user);
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching instructor data:', error);
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchInstructorDetails = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_courses`);
-      const instrectors = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_approved_instrectors`)
-      let paymentRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_payment_details`)
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_courses`);
+      const instrectors = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_approved_instrectors`)
+      let paymentRes = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_payment_details`)
    
       setCourse(res.data.courses)
       setInstructors(instrectors.data.instrecters)
@@ -92,12 +92,12 @@ const InstructorPage = () => {
 
 
   useEffect(() => {
-    fetchInstructorData();
+    // fetchInstructorData();
     fetchInstructorDetails();
   }, []);
 
   const filtered = course.filter(
-    (item) => item.instructoremail === instructorData?.email
+    (item) => item.instructoremail === user?.email
   );
 
   const totalCourse = filtered.length
@@ -126,7 +126,7 @@ console.log(students)
     { id: 3, title: 'Course Review Meeting', time: '4:00 PM', date: 'Jan 15' },
   ];
 
-  console.log("Instructor Email:", instructorData?.email);
+  console.log("Instructor Email:", user?.email);
   console.log("Courses:", course);
 
 
@@ -140,7 +140,7 @@ console.log(students)
     );
   }
 
-  if (!instructorData) {
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -176,7 +176,7 @@ console.log(students)
             <div className="flex items-center justify-between flex-wrap gap-6">
               <div className="flex-1 min-w-[300px]">
                 <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                  Welcome back, {instructorData.firstname} {instructorData.lastname}! 👋
+                  Welcome back, {user.firstname} {user.lastname}! 👋
                 </h1>
                 <p className="text-blue-100 text-lg">
                   {instructorDetails?.specialization
@@ -190,13 +190,13 @@ console.log(students)
                 {instructorDetails?.image ? (
                   <img
                     src={instructorDetails.image}
-                    alt={instructorData.firstname}
+                    alt={user.firstname}
                     className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4  shadow-lg"
                   />
                 ) : (
                   <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white bg-opacity-30 flex items-center justify-center border-4 border-white shadow-lg">
                     <span className="text-4xl md:text-5xl font-bold">
-                      {instructorData.firstname?.[0]}{instructorData.lastname?.[0]}
+                      {user.firstname?.[0]}{user.lastname?.[0]}
                     </span>
                   </div>
                 )}
@@ -244,12 +244,12 @@ console.log(students)
                   <h3 className="text-sm font-semibold text-gray-500 uppercase">Contact Information</h3>
                   <div className="flex items-center gap-2 text-gray-700">
                     <FaEnvelope className="text-blue-600" />
-                    <span className="text-sm">{instructorDetails.email || instructorData.email}</span>
+                    <span className="text-sm">{instructorDetails.email || user.email}</span>
                   </div>
-                  {(instructorDetails?.phone || instructorData.phone) && (
+                  {(instructorDetails?.phone || user.phone) && (
                     <div className="flex items-center gap-2 text-gray-700">
                       <FaPhone className="text-blue-600" />
-                      <span className="text-sm">{instructorDetails.phone || instructorData.phone}</span>
+                      <span className="text-sm">{instructorDetails.phone || user.phone}</span>
                     </div>
                   )}
                 </div>
@@ -514,16 +514,16 @@ console.log(students)
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Verification</span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${instructorData.verificationStatus === 'approved'
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${user.verificationStatus === 'approved'
                       ? 'bg-green-500'
-                      : instructorData.verificationStatus === 'pending'
+                      : user.verificationStatus === 'pending'
                         ? 'bg-yellow-500'
                         : 'bg-red-500'
                       }`}>
-                      {instructorData.verificationStatus?.toUpperCase()}
+                      {user.verificationStatus?.toUpperCase()}
                     </span>
                   </div>
-                  {instructorData.isApproved && (
+                  {user.isApproved && (
                     <p className="text-xs text-blue-100">✓ Verified Instructor</p>
                   )}
                 </div>

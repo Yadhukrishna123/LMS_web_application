@@ -4,7 +4,7 @@ import { FaSearch, FaPlus, FaEdit, FaTrash, FaFilePdf, FaPrint } from "react-ico
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+// const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
 const EnrollmentsPage = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -18,7 +18,7 @@ const EnrollmentsPage = () => {
   const fetchEnrollments = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/get_all_payment_details`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_payment_details`);
       const data = res.data?.paymentDetails || [];
 
       console.log("Raw API Response:", data); // Debug log

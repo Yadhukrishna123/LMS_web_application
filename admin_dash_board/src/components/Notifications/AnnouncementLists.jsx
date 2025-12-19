@@ -11,7 +11,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+// const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -29,11 +29,10 @@ const AnnouncementsPage = () => {
 
   const itemsPerPage = 5;
 
-  // Fetch Announcements
   const fetchAnnouncements = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/allannouncements`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/allannouncements`, {
         params: { page, limit: itemsPerPage, search },
       });
       setAnnouncements(res.data.data || []);
@@ -50,7 +49,6 @@ const AnnouncementsPage = () => {
     fetchAnnouncements(currentPage);
   }, [search, currentPage]);
 
-  // Open Modal
   const handleOpenModal = (data = null) => {
     setEditData(data);
     setFormData(
@@ -61,13 +59,11 @@ const AnnouncementsPage = () => {
     setIsModalOpen(true);
   };
 
-  // Close Modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditData(null);
   };
 
-  // Save or Update
   const handleSave = async () => {
     try {
       if (!formData.title.trim() || !formData.message.trim()) {
@@ -76,9 +72,9 @@ const AnnouncementsPage = () => {
       }
 
       if (editData) {
-        await axios.put(`${API_BASE}/announcements/${editData._id}`, formData);
+        await axios.put(`${import.meta.env.VITE_API_URL}api/v1/announcements/${editData._id}`, formData);
       } else {
-        await axios.post(`${API_BASE}/announcementscreate`, formData);
+        await axios.post(`${import.meta.env.VITE_API_URL}api/v1/announcementscreate`, formData);
       }
 
       handleCloseModal();
@@ -88,22 +84,19 @@ const AnnouncementsPage = () => {
     }
   };
 
-  // Delete Announcement
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this announcement?")) return;
     try {
-      await axios.delete(`${API_BASE}/announcements/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}api/v1/announcements/${id}`);
       fetchAnnouncements(currentPage);
     } catch (error) {
       console.error("Error deleting announcement:", error);
     }
   };
 
-  // Pagination
   const goPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
 
-  // Export PDF
   const handleExportPDF = () => {
     if (!announcements.length) return alert("No announcements to export.");
 

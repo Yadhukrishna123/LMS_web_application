@@ -5,9 +5,9 @@ export const AdminContext = React.createContext()
 export const Context = (props) => {
     let [auth, setAuth] = useState(false)
     const [showPopup, setShowPopup] = useState(false)
-    const [schedules, setSchedules] = useState([])
+const [schedules, setSchedules] = useState([])
     const [scheduleId, setScheduleId] = useState("")
-    const [admin, setAdmin] = useState(null)
+const [admin, setAdmin] = useState(null)
 
     const isAdminLogedIn = (isAuthenticated) => {
         console.log(isAuthenticated);
@@ -33,7 +33,7 @@ export const Context = (props) => {
         // const token = document.cookie.includes("instituteToken=")
         // if (!token) return;
         const geAdmin = async () => {
-            let res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/getInstitutionAdmin", {
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/getInstitutionAdmin`, {
                 withCredentials: true
             })
             console.log(res);

@@ -93,7 +93,7 @@ const Detailpage = () => {
         firstname: user?.firstname,
         lastname: user?.lastname,
       }
-      let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/send_feedback`, payload)
+      let res = await axios.post(`${import.meta.env.VITE_API_URL}api/v1/send_feedback`, payload)
 
       console.log(res)
 

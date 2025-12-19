@@ -3,7 +3,7 @@ import { FaFilePdf, FaPrint, FaSearch } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+// const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
 const AttendanceTracking = () => {
   const [records, setRecords] = useState([]);
@@ -33,8 +33,8 @@ const AttendanceTracking = () => {
     const fetchFilters = async () => {
       try {
         const [batchRes, courseRes] = await Promise.all([
-          fetch(`${API_BASE}/view_all_batches`),
-          fetch(`${API_BASE}/get_all_courses`),
+          fetch(`${import.meta.env.VITE_API_URL}api/v1/view_all_batches`),
+          fetch(`${import.meta.env.VITE_API_URL}api/v1/get_all_courses`),
         ]);
         const batchData = await batchRes.json();
         const courseData = await courseRes.json();
@@ -59,7 +59,7 @@ const AttendanceTracking = () => {
         status: statusFilter,
         search: searchTerm,
       });
-      const res = await fetch(`${API_BASE}/get_attendance_reports?${params.toString()}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/get_attendance_reports?${params.toString()}`);
       const data = await res.json();
       if (data.success) setRecords(data.data || []);
     } catch (err) {

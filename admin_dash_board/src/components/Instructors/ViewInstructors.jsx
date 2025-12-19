@@ -101,10 +101,9 @@ const ViewInstructors = () => {
 ];
 
 
-  // ✅ Fetch all instructors
   const getAllInstructors = async (page = 1) => {
     try {
-      const res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_instructor", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/view_instructor`, {
         params: { page, limit: itemsPerPage, search },
       });
       setInstructors(res.data.data || []);
@@ -116,7 +115,6 @@ const ViewInstructors = () => {
     }
   };
 
-  // ✅ Refetch when search changes
   useEffect(() => {
     setCurrentPage(1);
     getAllInstructors(1);
@@ -127,14 +125,13 @@ const ViewInstructors = () => {
     setDeleteId(id);
   };
 
-  // ✅ Refresh list after deletion
   const onTimeDelete = () => {
     setInstructors((prev) => prev.filter((i) => i._id !== deleteId));
   };
 
   const getAllInstructorsForExport = async () => {
     try {
-      const res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_instructor", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/view_instructor`, {
         params: { page: 1, limit: 1000, search },
       });
       return res.data.data || []; 
@@ -144,7 +141,6 @@ const ViewInstructors = () => {
     }
   };
 
-  // PDF Export
   const handleExportPDF = async () => {
     const allInstructors = await getAllInstructorsForExport();
     if (!allInstructors.length) return alert("No instructors to export");
@@ -176,7 +172,6 @@ const ViewInstructors = () => {
     doc.save("Instructor_List.pdf");
   };
 
-  // Print all instructors
   const handlePrint = async () => {
     const allInstructors = await getAllInstructorsForExport();
     if (!allInstructors.length) return alert("No instructors to print");
@@ -241,7 +236,7 @@ const ViewInstructors = () => {
           setDeleteClick={setDeleteClick}
           deleteCont={deleteCont}
           id={deleteId}
-          api_end_point="https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_instructor"
+          api_end_point={`${import.meta.env.VITE_API_URL}api/v1/get_instructor`}
           onTimeDelete={onTimeDelete}
         />
       )}

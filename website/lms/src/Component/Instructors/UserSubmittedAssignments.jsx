@@ -21,8 +21,8 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
     const getAllSubmittedAssignment = async () => {
         try {
             setLoadintg(true)
-            let res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_user_submitted_assignment`)
-            let allAssignmentRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_assignments`)
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_user_submitted_assignment`)
+            let allAssignmentRes = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_assignments`)
             console.log(res)
             console.log(allAssignmentRes)
             setAllAssignment(allAssignmentRes.data.assignment)
@@ -98,7 +98,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                 score: scoreForm.score,
                 comment: scoreForm.comment
             }
-            let res = await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/update_score/${id}`, payload)
+            let res = await axios.put(`${import.meta.env.VITE_API_URL}api/v1/update_score/${id}`, payload)
             console.log(res)
             if (res.data.success) {
                 Swal.fire({

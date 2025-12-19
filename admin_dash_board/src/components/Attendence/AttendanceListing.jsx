@@ -19,7 +19,7 @@ const AttendanceListing = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const sessions = ["Morning (9:00 AM)", "Afternoon (2:00 PM)", "Evening (6:00 PM)"];
-  const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+  // const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 
   const getInitials = (name) =>
     name
@@ -33,7 +33,7 @@ const AttendanceListing = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch(`${API_BASE}/get_all_courses`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/get_all_courses`);
         const data = await res.json();
         if (data.success) setCourses(data.data);
       } catch {
@@ -47,7 +47,7 @@ const AttendanceListing = () => {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const res = await fetch(`${API_BASE}/get_all_batches`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/get_all_batches`);
         const data = await res.json();
         if (data.success) setBatches(data.data);
       } catch {
@@ -62,13 +62,12 @@ useEffect(() => {
   const fetchAllStudents = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/view_students`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/view_students`);
       const data = await res.json();
       if (data.success) {
         const uniqueStudents = Array.from(new Map(data.data.map((s) => [s._id, s])).values());
         setAllStudents(uniqueStudents);
 
-        // ✅ Show all students by default
         setStudents(
           uniqueStudents.map((s) => ({
             id: s._id,
@@ -115,7 +114,7 @@ useEffect(() => {
   const fetchBatchStudents = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/students_by_batch/${batch}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/students_by_batch/${batch}`);
       const data = await res.json();
       if (data.success) {
         setStudents(
@@ -147,7 +146,7 @@ useEffect(() => {
     try {
       setLoading(true);
       const params = new URLSearchParams({ batchId: batch, date, session });
-      const res = await fetch(`${API_BASE}/get_attendance?${params.toString()}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/get_attendance?${params.toString()}`);
       const data = await res.json();
       if (data.success && data.data) {
         const attendance = data.data;
@@ -176,10 +175,10 @@ useEffect(() => {
     fetchOrCreateAttendance();
   }, [batch, date, session]);
 
-  // Create new attendance session
+  
   const createAttendanceSession = async () => {
     try {
-      const res = await fetch(`${API_BASE}/create_session`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/create_session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batchId: batch, date, session, subject, room }),
@@ -198,7 +197,7 @@ useEffect(() => {
       let currentAttendanceId = attendanceId || (await createAttendanceSession());
       if (!currentAttendanceId) return;
 
-      const res = await fetch(`${API_BASE}/mark_attendance`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/mark_attendance`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ attendanceId: currentAttendanceId, studentId, status }),
@@ -223,7 +222,7 @@ useEffect(() => {
       let currentAttendanceId = attendanceId || (await createAttendanceSession());
       if (!currentAttendanceId) return;
 
-      const res = await fetch(`${API_BASE}/mark_bulk`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}api/v1/mark_bulk`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ attendanceId: currentAttendanceId, status }),

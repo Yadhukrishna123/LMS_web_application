@@ -26,7 +26,7 @@ const ViewCategory = () => {
   ]
   const getCategories = async () => {
     try {
-      const res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_All_categories");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/view_All_categories`);
       setCategories(res.data.allCoursecategory || []);
 
     } catch (error) {
@@ -72,7 +72,7 @@ const ViewCategory = () => {
     doc.save("Course_Categories.pdf");
   };
 
-  // Print
+ 
   const handlePrint = async () => {
     const allCategories = await getAllCategories();
     if (!allCategories.length) return alert("No categories to print");

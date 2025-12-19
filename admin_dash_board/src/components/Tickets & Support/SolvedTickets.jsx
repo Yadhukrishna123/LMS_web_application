@@ -4,7 +4,7 @@ import { FaSearch, FaEye, FaTrash, FaFilePdf, FaPrint, FaPlus, FaCheckCircle } f
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
+// const API_BASE = "https://lms-web-application-backend-e6yj.onrender.com/api/v1";
 const itemsPerPage = 5;
 
 const displayName = (u) => {
@@ -29,7 +29,7 @@ const TicketsSolved = () => {
   const fetchTickets = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/solved`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/solved`, {
         params: { page, limit: itemsPerPage, search },
       });
       setTickets(res.data.data || []);
@@ -61,7 +61,7 @@ const TicketsSolved = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this ticket record?")) return;
     try {
-      await axios.delete(`${API_BASE}/ticket/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}api/v1/ticket/${id}`);
       const isLastItemOnPage = tickets.length === 1 && currentPage > 1;
       const nextPage = isLastItemOnPage ? currentPage - 1 : currentPage;
       setCurrentPage(nextPage);
