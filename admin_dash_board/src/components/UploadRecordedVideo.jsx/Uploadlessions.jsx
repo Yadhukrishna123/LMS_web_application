@@ -22,7 +22,7 @@ const Uploadlessions = () => {
   const getAllCourseDetail = async () => {
     try {
       setLoading(true)
-      let res = await axios.get("http://localhost:8080/api/v1/get_all_courses")
+      let res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_all_courses")
       setCourse(res.data.courses)
     } catch (error) {
       console.error("Error fetching courses:", error)
@@ -91,7 +91,7 @@ const Uploadlessions = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:8080/api/v1/create_lession", {
+      const res = await axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/create_lession", {
         course: input.course,
         courseId: id,
         lessons: input.lessons

@@ -61,8 +61,8 @@ const AddInstructors = () => {
 
       }
       const [signupRes, detailsRes] = await Promise.all([
-        axios.post("http://localhost:8080/api/v1/sign_up", signupPayload),
-        axios.post("http://localhost:8080/api/v1/add_instructor", payload)
+        axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/sign_up", signupPayload),
+        axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/add_instructor", payload)
       ])
 
       console.log("signupRes", signupRes)

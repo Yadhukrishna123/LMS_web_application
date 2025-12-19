@@ -39,7 +39,7 @@ const AddQuizzes = () => {
         options: quiz.options,
         rightAnswer: quiz.rightAnswer
       }
-      const res = await axios.post("http://localhost:8080/api/v1/create_quiz", payload)
+      const res = await axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/create_quiz", payload)
       console.log(res)
       if (res.data.success) {
         Swal.fire({

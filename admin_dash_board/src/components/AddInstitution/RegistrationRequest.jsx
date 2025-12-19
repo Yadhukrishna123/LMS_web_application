@@ -9,7 +9,7 @@ const RegistrationRequest = () => {
     const [isApprovedOrRejected, setAprovedOrRejected] = useState(false)
 
     const getAllRequest = async () => {
-        let res = await axios.get("http://localhost:8080/api/v1/get_all_institution")
+        let res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_all_institution")
         console.log(res);
         setInstitute(res.data.institutions)
     }
@@ -20,7 +20,7 @@ const RegistrationRequest = () => {
 
 
     const handleApprove = async (id, s) => {
-        let res = await axios.put(`http://localhost:8080/api/v1/update_status/${id}`,
+        let res = await axios.put(`https://lms-web-application-backend-e6yj.onrender.com/api/v1/update_status/${id}`,
             { status: s })
         console.log(res);
         setAprovedOrRejected(s)
@@ -28,12 +28,12 @@ const RegistrationRequest = () => {
     };
 
     const handleReject = async (id, s) => {
-        let res = await axios.put(`http://localhost:8080/api/v1/update_status/${id}`,
+        let res = await axios.put(`https://lms-web-application-backend-e6yj.onrender.com/api/v1/update_status/${id}`,
             { status: s })
         console.log(res);
         setAprovedOrRejected(s)
 
-    };
+    }; 
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">

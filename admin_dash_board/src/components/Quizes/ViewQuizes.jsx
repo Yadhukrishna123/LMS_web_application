@@ -8,7 +8,7 @@ const ViewQuizes = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/view_all_quizzes');
+        const res = await axios.get('https://lms-web-application-backend-e6yj.onrender.com/api/v1/view_all_quizzes');
         setQuizzes(res.data.data); 
         setLoading(false);
       } catch (error) {

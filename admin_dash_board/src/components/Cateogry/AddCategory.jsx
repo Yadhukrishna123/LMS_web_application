@@ -33,7 +33,7 @@ const AddCategory = () => {
         img_url = imageRes.data.secure_url;
       }
 
-      await axios.post("http://localhost:8080/api/v1/add_course_cateogry", {
+      await axios.post("https://lms-web-application-backend-e6yj.onrender.com/api/v1/add_course_cateogry", {
         title: inputs.title,
         description: inputs.desc,
         image: img_url,
