@@ -13,12 +13,16 @@ export const Context = (props) => {
     // const [result, setResult] = useState([])
    
     // const [userAnswer, setUserAnswer ]= useState()
-
+    console.log(document.cookie)
     useEffect(() => {
-        const token = document.cookie.includes("userToken=")
-        if (!token) return;
+        // const token = document.cookie.includes("userToken=")
+        // if (!token) {
+        //     return
+        // } else {
+        //     console.log("aaa")
+        // };
         const getMe = async () => {
-            let res = await axios.get("http://localhost:8080/api/v1/me", {
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/me`, {
                 withCredentials: true
             })
             console.log("res", res);

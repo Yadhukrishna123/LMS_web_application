@@ -30,8 +30,8 @@ export const Context = (props) => {
     }
     useEffect(() => {
         getAllSchedule()
-        const token = document.cookie.includes("instituteToken=")
-        if (!token) return;
+        // const token = document.cookie.includes("instituteToken=")
+        // if (!token) return;
         const geAdmin = async () => {
             let res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/getInstitutionAdmin", {
                 withCredentials: true
