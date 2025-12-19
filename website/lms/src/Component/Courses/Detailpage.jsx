@@ -26,14 +26,14 @@ const Detailpage = () => {
   const getCourseDetails = async () => {
     try {
       setLoading(true)
-      let res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_course/${id}`)
+      let res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_course/${id}`)
       console.log(res)
       setCourse(res.data.data)
-      let getAllFeedbacks = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/get_all_feedback`)
+      let getAllFeedbacks = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/get_all_feedback`)
       setFeedbacks(getAllFeedbacks.data.feedbacks)
 
 
-      let checkEnrollment = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/check_enrollment`, {
+      let checkEnrollment = await axios.post(`${import.meta.env.VITE_API_URL}api/v1/check_enrollment`, {
         userEmail: user?.email,
         courseId: id
       })
