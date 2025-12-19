@@ -82,7 +82,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
     const handleDownload = async (file) => {
         const fileName = file.split("\\").pop();
         console.log(fileName)
-        window.open(`${import.meta.env.VITE_API_URL}/api/v1/download_assignment/${fileName}`, "_blank")
+        window.open(`${import.meta.env.VITE_API_URL}api/v1/download_assignment/${fileName}`, "_blank")
 
     }
 
