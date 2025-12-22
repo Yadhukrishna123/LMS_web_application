@@ -35,7 +35,7 @@ const Home1 = () => {
                             </svg>
                         </button>
                     </div>
-                    {/* Features */}
+                   
                     <div className="flex gap-8 mt-2 text-[#2563eb] font-semibold text-lg">
                         <div className="flex items-center gap-2">
                             <svg width="20" height="20" fill="none"><circle cx="10" cy="10" r="9" stroke="#0ea5e9" strokeWidth="2" /><path d="M8.5 11.5l2 2 5-5" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" /></svg>

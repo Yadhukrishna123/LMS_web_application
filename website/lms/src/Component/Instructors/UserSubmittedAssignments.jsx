@@ -115,8 +115,8 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
             setClickUserAssignment(false)
         }
     }
-    const parseAssignmentName =(assignmentName) => {
-        if(!assignmentName) {
+    const parseAssignmentName = (assignmentName) => {
+        if (!assignmentName) {
             return { title: "Untitled Assignment" };
         }
 
@@ -128,7 +128,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                 return { title: assignmentName };
             }
         }
-         return { title: assignmentName };
+        return { title: assignmentName };
     }
 
 
@@ -154,7 +154,11 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                         </button>
                     </div>
                 </div>
-                <div className="p-6 space-y-4">
+                {loading ? (
+                    <div className="flex justify-center items-center py-20">
+                        <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : <div className="p-6 space-y-4">
                     {assignment && assignment.map((a, i) => {
                         const parsed = parseAssignmentName(a.assignmentName);
                         const submittedDate = a.submittedAt.split("T")[0];
@@ -240,6 +244,7 @@ const UserSubmittedAssignments = ({ setClickUserAssignment }) => {
                         );
                     })}
                 </div>
+                }
 
             </div>
         </div>
