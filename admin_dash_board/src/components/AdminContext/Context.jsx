@@ -1,56 +1,49 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-export const AdminContext = React.createContext()
-export const Context = (props) => {
-    let [auth, setAuth] = useState(false)
-    const [showPopup, setShowPopup] = useState(false)
-const [schedules, setSchedules] = useState([])
-    const [scheduleId, setScheduleId] = useState("")
-const [admin, setAdmin] = useState(null)
+export const AdminContext = React.createContext();
 
-    const isAdminLogedIn = (isAuthenticated) => {
-        console.log(isAuthenticated);
-        setAuth(isAuthenticated)
+const Context = ({ children }) => {
+  const [auth, setAuth] = useState({
+    isAuthenticated: false,
+    loading: true
+  });
 
+  const [admin, setAdmin] = useState(null);
+
+  const isAdminLogedIn = (value) => {
+    setAuth({ isAuthenticated: value, loading: false });
+  };
+
+  const getAdmin = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}api/v1/getInstitutionAdmin`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setAdmin(res.data.instituteAdmin);
+        setAuth({ isAuthenticated: true, loading: false });
+      } else {
+        setAuth({ isAuthenticated: false, loading: false });
+      }
+    } catch (err) {
+      setAuth({ isAuthenticated: false, loading: false });
     }
+  };
 
-    const handleShowPopup = (v, id) => {
-        setShowPopup(v)
-        console.log(id);
-        setScheduleId(id)
-    }
+  useEffect(() => {
+    getAdmin(); // check login on refresh
+  }, []);
 
+  return (
+    <AdminContext.Provider
+      value={{ auth, admin, isAdminLogedIn }}
+    >
+      {children}
+    </AdminContext.Provider>
+  );
+};
 
-
-    const getAllSchedule = async () => {
-        let res = await axios.get("https://lms-web-application-backend-e6yj.onrender.com/api/v1/get_all_schedule")
-        setSchedules(res.data.schedules)
-
-    }
-    useEffect(() => {
-        getAllSchedule()
-        // const token = document.cookie.includes("instituteToken=")
-        // if (!token) return;
-        const geAdmin = async () => {
-            let res = await axios.get(`${import.meta.env.VITE_API_URL}api/v1/getInstitutionAdmin`, {
-                withCredentials: true
-            })
-            console.log(res);
-            if (res.data.success) {
-                setAdmin(res.data.instituteAdmin)
-            }
-
-        }
-        geAdmin()
-    }, [])
-    console.log(admin)
-
-    return (
-        <AdminContext.Provider value={{ isAdminLogedIn, auth, admin, handleShowPopup, showPopup, setShowPopup, schedules, scheduleId }}>
-            {props.children}
-        </AdminContext.Provider>
-    )
-}
-
-export default Context
+export default Context;

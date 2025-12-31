@@ -96,6 +96,7 @@ function App() {
         {<ProtectedRoutes isAuthentication={user}><QuizList /> </ProtectedRoutes>} />
         {/* <Route path="/take_quiz/:quizId" element={<UserQuiz userId={user?._id} />} /> */}
 
+
         {/* All Instructor Routes Are here */}
 
         <Route path="/instructor_landing" element={<InstructorLanding />} />

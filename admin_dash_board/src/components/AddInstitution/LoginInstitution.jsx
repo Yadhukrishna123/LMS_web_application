@@ -9,6 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 
 const LoginInstitution = () => {
+    const { isAdminLogedIn } = useContext(AdminContext);
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
     const [inputs, setInputs] = useState({
@@ -20,44 +21,41 @@ const LoginInstitution = () => {
         setInputs({ ...inputs, [e.target.name]: e.target.value })
     }
     const handleSubmit = async (e) => {
-        e.preventDefault()
+    e.preventDefault();
 
-        try {
-            let res = await axios.post(`${import.meta.env.VITE_API_URL}api/v1/login_institute`, {
-                email: inputs.email,
-                adminPassword: inputs.password
-            }, {
-                withCredentials: true
-            })
-            console.log(res);
-            if (res.data.success) {
-                const institutionStatus = res.data.institute?.status
-                if (institutionStatus === "approved") {
-                    toast.success(res.data.message)
-                    await new Promise((b) => setTimeout(b, 2000))
-                    navigate("/my_profile")
-                    window.location.reload()
-                } else if (institutionStatus === "pending") {
-                    toast.warn("Institution verification is pending. Please wait for admin verification.");
-                } else if (institutionStatus === "pending") {
-                    toast.error("Your institution account has been rejected.");
-                } else {
-                    toast.error("Invalid institution status.");
-                }
+    try {
+        const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}api/v1/login_institute`,
+        {
+            email: inputs.email,
+            adminPassword: inputs.password
+        },
+        { withCredentials: true }
+        );
 
+        if (res.data.success) {
+        const institutionStatus = res.data.institute?.status;
 
+        if (institutionStatus === "approved") {
+            toast.success("Login successful");
 
-            } else {
-                toast.error(res.data.message || "Login failed");
-            }
+            isAdminLogedIn(true);   
+            navigate("/");         
 
-
-        } catch (error) {
-            console.error(error.response?.data)
-            toast.error(error.response?.data?.message || "Login failed")
+        } else if (institutionStatus === "pending") {
+            toast.warn("Institution verification is pending.");
+        } else if (institutionStatus === "rejected") {
+            toast.error("Your institution account was rejected.");
+        } else {
+            toast.error("Invalid institution status.");
         }
-
+        } else {
+        toast.error(res.data.message || "Login failed");
+        }
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Login failed");
     }
+    };
 
     console.log(inputs);
 

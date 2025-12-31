@@ -76,6 +76,7 @@ import UserModuleQuizSubmission from './components/UploadRecordedVideo.jsx/UserM
 
 
 
+
 function App() {
   const { auth } = useContext(AdminContext)
 
@@ -89,8 +90,14 @@ function App() {
 
   return (
     <>
+  <Routes>
 
-      <Routes>
+  {/* Public route */}
+  <Route path="/login" element={<LoginInstitution />} />
+
+  {/* Protected routes wrapper */}
+  <Route element={<ProtectedRoutes />}>
+
         <Route exact path="/" element={<Dashboard />} >
           <Route path="/upload_recorded_video" element={<UploadVideos />} />
           <Route path="/recorded_sessions" element={<UploadedVideos />} />
@@ -108,7 +115,7 @@ function App() {
           <Route path="/verify_Instructors" element={<VerifyInstructors />} />
 
           <Route path="/users" element={<Users />} />
-          <Route path="/login" element={<LoginInstitution />} />
+          
           <Route path="/my_profile" element={<MyProfile />} />
           <Route path="/create_profile" element={<CreateProfile />} />
           <Route path="/Edit_profile/:id" element={<EditProfile />} />
@@ -148,8 +155,10 @@ function App() {
 
           <Route path="/adminhelpsupport" element={<AdminHelpSupport />} />
           <Route path="/solvedtickets" element={<SolvedTickets />} />
-        </Route>
-      </Routes>
+ 
+  </Route>
+  </Route>
+</Routes>
 
 
     </>

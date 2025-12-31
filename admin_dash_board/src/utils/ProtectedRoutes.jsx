@@ -1,15 +1,19 @@
-import React from 'react'
-import { Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { AdminContext } from "../components/AdminContext/Context";
 
-const ProtectedRoutes = ({ isAuthentication, children }) => {
+const ProtectedRoutes = () => {
+  const { auth } = useContext(AdminContext);
 
-    if (!isAuthentication) {
+  if (auth.loading) {
+    return <div>Loading...</div>;
+  }
 
-        return <Navigate to="/login" />
-    }
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-    return children
+  return <Outlet />;
+};
 
-}
-
-export default ProtectedRoutes
+export default ProtectedRoutes;
