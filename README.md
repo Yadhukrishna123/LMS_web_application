@@ -1,106 +1,123 @@
 🎓 LMS Web Application
 
-A full-stack Learning Management System (LMS) built with React, Node.js, Express, and MongoDB, designed to manage institutions, courses, instructors, students, payments, quizzes, attendance, and more — all in one platform.
+A full-stack Learning Management System (LMS) built using React, Node.js, Express, and MongoDB.
+This platform supports institutions, administrators, instructors, and students, providing complete tools for course management, learning delivery, assessments, payments, and analytics.
 
-🚀 Key Highlights
+📌 Project Overview
 
-🧑‍🎓 Student, Instructor & Admin roles
+The LMS Web Application is designed to manage the entire online learning lifecycle:
 
-🏫 Institution management
+Course creation and publishing
 
-📚 Course creation & enrollment
+Student enrollment and learning
 
-🎥 Video lessons & assignments
+Instructor content and assessment management
 
-📝 Quizzes & evaluations
+Admin-level monitoring, analytics, and control
 
-💳 Online payments (Razorpay)
+The system is split into three major applications:
 
-📊 Admin dashboard with analytics
+Admin Dashboard
 
-🔐 JWT-based authentication
+User LMS Website
 
-📩 Email notifications & certificates
+Backend Server (API)
 
-🏗️ Project Architecture
-Frontend (User Website)  → React + Vite
-Admin Dashboard          → React + Vite
-Backend API              → Node.js + Express
-Database                 → MongoDB
-Authentication           → JWT + Passport
-Payments                 → Razorpay
-File Uploads             → Multer
-Emails                   → Nodemailer
+🏗️ System Architecture
+Client (React - LMS Website)
+        ↓
+Admin Panel (React Dashboard)
+        ↓
+Backend API (Node.js + Express)
+        ↓
+Database (MongoDB)
 
-📁 Repository Structure (Essential View)
+📁 Repository Structure
 reluctant-king-lms_web_application/
 │
-├── admin_dash_board/        # Admin panel (React)
-├── website/lms/             # User-facing LMS website (React)
-├── server/                  # Backend API (Node.js + Express)
+├── admin_dash_board/        # Admin dashboard (React + Vite)
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── website/
+│   └── lms/                # User-facing LMS website (React + Vite)
+│       ├── src/
+│       ├── public/
+│       └── package.json
+│
+├── server/                 # Backend server (Node.js + Express)
+│   ├── Controllers/
+│   ├── Routes/
+│   ├── Models/
+│   ├── Middleware/
+│   └── Utils/
+│
 └── README.md
 
-🧩 Core Applications
-🖥️ Admin Dashboard
+🧩 Core Features
+👨‍💼 Admin Dashboard
 
-Manage courses, students, instructors
+Manage institutions, instructors, and students
 
-Attendance & batch scheduling
+Create and manage courses and categories
 
-Fee management & payments
+Batch scheduling and attendance tracking
 
-Notifications & announcements
+Fee structure and payment monitoring
 
-Reports & analytics
+Notifications and announcements
 
-🌐 LMS Website (Users)
+Support tickets management
 
-Browse & purchase courses
+Dashboard analytics and reports
 
-Watch lessons & submit assignments
+👩‍🏫 Instructor Module
+
+Create and manage courses
+
+Upload lessons and recorded videos
+
+Create quizzes and assignments
+
+Track student performance
+
+Manage enrolled students
+
+👨‍🎓 Student Module
+
+Browse and purchase courses
+
+Access lessons and learning materials
+
+Submit assignments
 
 Attempt quizzes
 
-Track learning progress
+Track progress and certifications
 
-Instructor course management
+🔐 Authentication & Authorization
 
-⚙️ Backend Server
+JWT-based authentication
 
-RESTful APIs
+Role-based access control
 
-Authentication & authorization
+Protected routes for Admin, Instructor, Institution, and Student
 
-Payment handling
+Secure login and password recovery
 
-Email services
-
-File uploads
-
-🔐 Authentication & Roles
-
-Admin
-
-Institution
-
-Instructor
-
-Student
-
-Each role has protected routes and permissions enforced via JWT middleware.
-
-🛠️ Tech Stack
+🛠️ Technology Stack
 Frontend
 
 React (Vite)
 
-Tailwind CSS / Custom CSS
+React Router
 
 Redux Toolkit
 
 Axios
 
-React Router
+Tailwind CSS / Custom CSS
 
 Backend
 
@@ -108,58 +125,21 @@ Node.js
 
 Express.js
 
-MongoDB + Mongoose
+MongoDB & Mongoose
 
-JWT
+JWT & Passport.js
 
-Passport.js
+Multer (file uploads)
 
-Multer
+Nodemailer (email services)
 
-Nodemailer
+Razorpay (payment gateway)
 
-Razorpay SDK
-
-⚙️ Installation & Setup
-1️⃣ Clone the Repository
-git clone https://github.com/reluctant-king/lms_web_application_.git
-cd lms_web_application_
-
-2️⃣ Backend Setup
-cd server
-npm install
-npm start
-
-
-Create a .env file:
-
-PORT=5000
-MONGO_URI=your_mongodb_url
-JWT_SECRET=your_secret_key
-RAZORPAY_KEY=your_key
-RAZORPAY_SECRET=your_secret
-EMAIL_USER=your_email
-EMAIL_PASS=your_password
-
-3️⃣ Admin Dashboard Setup
-cd admin_dash_board
-npm install
-npm run dev
-
-4️⃣ LMS Website Setup
-cd website/lms
-npm install
-npm run dev
-
-🌐 Environment URLs
-Service	URL
-Backend API	http://localhost:5000
-Admin Panel	http://localhost:5173
-LMS Website	http://localhost:5174
-📦 API Modules (Hidden by Default)
-<details> <summary><strong>Click to expand API Modules</strong></summary>
+📦 Backend API Modules
 
 Authentication & Authorization
+
+Institutions Management
 
 Courses & Categories
 
@@ -169,17 +149,15 @@ Quizzes & Submissions
 
 Assignments
 
-Attendance
+Attendance Management
 
 Fee Structure & Payments
 
-Notifications
+Notifications & Announcements
 
-Tickets & Support
+Support Tickets
 
-</details>
-📂 Database Models (Hidden)
-<details> <summary><strong>Click to view database models</strong></summary>
+🗄️ Database Models
 
 Users
 
@@ -201,35 +179,77 @@ Notifications
 
 Tickets
 
-</details>
+⚙️ Installation & Setup
+1️⃣ Clone the Repository
+git clone https://github.com/reluctant-king/lms_web_application_.git
+cd lms_web_application_
+
+2️⃣ Backend Setup
+cd server
+npm install
+npm start
+
+
+Create a .env file inside server/:
+
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+RAZORPAY_KEY=your_razorpay_key
+RAZORPAY_SECRET=your_razorpay_secret
+EMAIL_USER=your_email
+EMAIL_PASS=your_email_password
+
+3️⃣ Admin Dashboard Setup
+cd admin_dash_board
+npm install
+npm run dev
+
+4️⃣ LMS Website Setup
+cd website/lms
+npm install
+npm run dev
+
+🌐 Local Development URLs
+Service	URL
+Backend API	http://localhost:5000
+
+Admin Dashboard	http://localhost:5173
+
+LMS Website	http://localhost:5174
 🔒 Security Features
 
-JWT authentication
+JWT token validation
 
-Role-based access control
-
-Protected routes
+Role-based authorization
 
 Secure payment verification
 
-Input validation
+Protected API endpoints
 
-📈 Future Enhancements
+File upload validation
 
-📱 Mobile app support
+📈 Future Improvements
 
-🧠 AI-based course recommendations
+Mobile application support
 
-📊 Advanced analytics
+Advanced analytics dashboard
 
-🌍 Multi-language support
+AI-powered course recommendations
 
-🧾 Invoice generation
+Multi-language support
 
-🤝 Contribution
+Certificate automation
 
-Contributions are welcome!
-Fork the repository, create a feature branch, and submit a pull request.
+🤝 Contribution Guidelines
+
+Fork the repository
+
+Create a feature branch
+
+Commit your changes
+
+Submit a pull request
 
 📄 License
 
