@@ -138,7 +138,7 @@ Each role has protected routes and permissions enforced via JWT middleware.
 
 ### 1️⃣ Clone the Repository
 
-    git clone https://github.com/reluctant-king/lms_web_application_.git
+    git clone https://github.com/Yadhukrishna123/LMS_web_application.git
     cd lms_web_application_
 
 ### 2️⃣ Backend Setup
