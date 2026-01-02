@@ -71,6 +71,8 @@ import ViewAllQuizz from './components/UploadRecordedVideo.jsx/ViewAllQuizz';
 import VerifyInstructors from './components/Instructors/VerifyInstuctors';
 
 import UserModuleQuizSubmission from './components/UploadRecordedVideo.jsx/UserModuleQuizSubmission';
+import NotFound from './utils/NotFound';
+
 
 
 
@@ -94,6 +96,8 @@ function App() {
 
   {/* Public route */}
   <Route path="/login" element={<LoginInstitution />} />
+  <Route path="*" element={<NotFound />} />
+
 
   {/* Protected routes wrapper */}
   <Route element={<ProtectedRoutes />}>
