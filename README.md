@@ -173,7 +173,7 @@ Create a `.env` file inside `server/`:
 
 ## 🌐 Environment URLs
 
-- Backend API: `http://localhost:5000`  
+- Backend API: `http://localhost:8080`  
 - Admin Panel: `http://localhost:5173`  
 - LMS Website: `http://localhost:5174`  
 
