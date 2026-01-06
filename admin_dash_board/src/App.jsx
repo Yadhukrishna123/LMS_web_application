@@ -71,6 +71,9 @@ import ViewAllQuizz from './components/UploadRecordedVideo.jsx/ViewAllQuizz';
 import VerifyInstructors from './components/Instructors/VerifyInstuctors';
 
 import UserModuleQuizSubmission from './components/UploadRecordedVideo.jsx/UserModuleQuizSubmission';
+import NotFound from './utils/NotFound';
+
+
 
 
 
@@ -89,8 +92,16 @@ function App() {
 
   return (
     <>
+  <Routes>
 
-      <Routes>
+  {/* Public route */}
+  <Route path="/login" element={<LoginInstitution />} />
+  <Route path="*" element={<NotFound />} />
+
+
+  {/* Protected routes wrapper */}
+  <Route element={<ProtectedRoutes />}>
+
         <Route exact path="/" element={<Dashboard />} >
           <Route path="/upload_recorded_video" element={<UploadVideos />} />
           <Route path="/recorded_sessions" element={<UploadedVideos />} />
@@ -108,7 +119,7 @@ function App() {
           <Route path="/verify_Instructors" element={<VerifyInstructors />} />
 
           <Route path="/users" element={<Users />} />
-          <Route path="/login" element={<LoginInstitution />} />
+          
           <Route path="/my_profile" element={<MyProfile />} />
           <Route path="/create_profile" element={<CreateProfile />} />
           <Route path="/Edit_profile/:id" element={<EditProfile />} />
@@ -148,8 +159,10 @@ function App() {
 
           <Route path="/adminhelpsupport" element={<AdminHelpSupport />} />
           <Route path="/solvedtickets" element={<SolvedTickets />} />
-        </Route>
-      </Routes>
+ 
+  </Route>
+  </Route>
+</Routes>
 
 
     </>
