@@ -1,4 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const qaDatabase = {
   greetings: {
@@ -170,6 +172,18 @@ const QuickReplyButton = ({ text, onClick }) => {
 };
 
 const Chatbot = () => {
+  const location = useLocation();
+
+  const hideOnRoutes = ['/login', '/sign_up', '/enter_email'];
+  const isResetPasswordRoute = location.pathname.startsWith('/reset_password/');
+
+  const shouldHide =
+    hideOnRoutes.includes(location.pathname) || isResetPasswordRoute;
+
+  if (shouldHide) {
+    return null;
+  }
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -180,7 +194,9 @@ const Chatbot = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(false);
+
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -188,8 +204,10 @@ const Chatbot = () => {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (isOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isOpen]);
 
   const findResponse = (userInput) => {
     const input = userInput.toLowerCase().trim();
@@ -202,7 +220,7 @@ const Chatbot = () => {
       }
     }
 
-    return "🤔 I'm not sure I understand. Try asking about:\n• Hours\n• Pricing\n• Contact\n• Shipping\n• Refunds\n\nOr type 'help' for more options!";
+    return "🤔 I'm not sure I understand. Try asking about:\n• Courses\n• Enrollment\n• Pricing\n• Certificates\n• Technical support\n\nOr type 'help' for more options!";
   };
 
   const handleSend = (text = inputValue) => {
@@ -246,30 +264,57 @@ const Chatbot = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!isOpen) {
-    return (
+if (!isOpen) {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 9999,
+      }}
+      className="flex items-center gap-3"
+    >
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-5 right-5 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 
+        className="hidden sm:flex items-center gap-2 bg-white text-indigo-600
+                   border-2 border-indigo-500 rounded-full cursor-pointer px-4 py-2
+                   shadow-lg transition-all duration-300
+                   hover:bg-indigo-50 hover:scale-105"
+      >
+        <span className="font-medium text-sm whitespace-nowrap">
+          Need Help? 💬
+        </span>
+      </button>
+
+      <button
+        onClick={() => setIsOpen(true)}
+        className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 
                    border-none rounded-full cursor-pointer flex items-center justify-center
-                   shadow-lg shadow-indigo-500/50 transition-all duration-300 z-[1000]
+                   shadow-lg shadow-indigo-500/50 transition-all duration-300
                    hover:scale-110 hover:shadow-xl hover:shadow-indigo-500/60
-                   animate-pulse"
+                   animate-pulse hover:animate-none"
       >
         <svg viewBox="0 0 24 24" fill="white" className="w-7 h-7">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
         </svg>
       </button>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div
+      style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 9999,
+      }}
       className="fixed bottom-5 right-5 w-[380px] h-[600px] bg-white rounded-2xl 
-                    shadow-2xl flex flex-col overflow-hidden z-[1000] animate-slideUp
+                    shadow-2xl flex flex-col overflow-hidden animate-slideUp
                     max-sm:w-full max-sm:h-full max-sm:bottom-0 max-sm:right-0 max-sm:rounded-none"
     >
-      {/* Header */}
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-5 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center">
@@ -294,7 +339,6 @@ const Chatbot = () => {
         </button>
       </div>
 
-      {/* Messages */}
       <div
         className="flex-1 overflow-y-auto p-5 bg-gray-50 flex flex-col gap-4
                       scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
@@ -303,20 +347,17 @@ const Chatbot = () => {
           <Message key={message.id} message={message} formatTime={formatTime} />
         ))}
 
-        {/* Typing Indicator */}
         {isTyping && <TypingIndicator />}
 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Replies */}
       <div className="p-3 bg-gray-50 flex flex-wrap gap-2 border-t border-gray-200">
         {quickReplies.map((reply, index) => (
           <QuickReplyButton key={index} text={reply} onClick={() => handleQuickReply(reply)} />
         ))}
       </div>
 
-      {/* Input Area */}
       <div className="p-4 bg-white flex gap-3 border-t border-gray-200">
         <input
           type="text"
