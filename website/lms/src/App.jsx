@@ -43,6 +43,8 @@ import InstructorAddQuiz from './Component/Instructors/Quiz Manager/InstructorAd
 import SettingsPage from './Component/Instructors/Settings'
 import NotFound from './Component/NotFound'
 import InstructorLanding from './Component/Instructors/InstructorLanding'
+import Chatbot from './Component/Chatbbot/Chatbot'
+
 
 
 
@@ -113,6 +115,10 @@ function App() {
         <Route path="/instructor_quiz_manager" element={<InstructorQuizManager />} />
         <Route path="/instructor_quiz_submissions/:quizId" element={<QuizSubmissions />} />
         <Route path="/settings_page" element={<SettingsPage />} />
+
+
+
+        <Route path="/chatbot" element={<Chatbot />} />
 
 
         <Route path="*" element={<NotFound />} />

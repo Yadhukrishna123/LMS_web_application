@@ -78,7 +78,6 @@ import NotFound from './utils/NotFound';
 
 
 
-
 function App() {
   const { auth } = useContext(AdminContext)
 
@@ -159,6 +158,9 @@ function App() {
 
           <Route path="/adminhelpsupport" element={<AdminHelpSupport />} />
           <Route path="/solvedtickets" element={<SolvedTickets />} />
+
+
+
  
   </Route>
   </Route>
