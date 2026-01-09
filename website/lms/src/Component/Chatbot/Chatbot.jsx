@@ -109,47 +109,41 @@ const quickReplies = [
   "Refund policy",
 ];
 
-const TypingIndicator = () => {
-  return (
-    <div className="flex gap-2.5">
-      <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-lg flex-shrink-0">
-        🤖
-      </div>
-      <div className="flex gap-1 px-5 py-4 bg-white rounded-2xl rounded-bl-sm shadow-md">
-        <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-        <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-        <span className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-      </div>
+
+const TypingIndicator = () => (
+  <div className="flex gap-2">
+    <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+      🤖
     </div>
-  );
-};
+    <div className="flex gap-1 px-3 py-2 bg-white rounded-xl rounded-bl-sm shadow-sm">
+      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+    </div>
+  </div>
+);
 
 const Message = ({ message, formatTime }) => {
   const isBot = message.sender === 'bot';
 
   return (
-    <div className={`flex gap-2.5 animate-fadeIn ${!isBot ? 'flex-row-reverse' : ''}`}>
+    <div className={`flex gap-2 ${!isBot ? 'flex-row-reverse' : ''}`}>
       {isBot && (
-        <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-lg flex-shrink-0">
+        <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
           🤖
         </div>
       )}
-      <div className={`max-w-[75%] ${!isBot ? 'text-right' : ''}`}>
+      <div className={`max-w-[80%] ${!isBot ? 'text-right' : ''}`}>
         <div
-          className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+          className={`px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap ${
             isBot
-              ? 'bg-white text-gray-800 rounded-bl-sm shadow-md'
+              ? 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
               : 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-br-sm'
           }`}
         >
-          {message.text.split('\n').map((line, i) => (
-            <React.Fragment key={i}>
-              {line}
-              {i < message.text.split('\n').length - 1 && <br />}
-            </React.Fragment>
-          ))}
+          {message.text}
         </div>
-        <span className={`text-xs text-gray-400 mt-1 block ${!isBot ? 'text-right' : ''}`}>
+        <span className={`text-[10px] text-gray-400 mt-0.5 block ${!isBot ? 'text-right' : ''}`}>
           {formatTime(message.timestamp)}
         </span>
       </div>
@@ -157,61 +151,37 @@ const Message = ({ message, formatTime }) => {
   );
 };
 
-const QuickReplyButton = ({ text, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="px-4 py-2 bg-white border border-indigo-500 rounded-full text-indigo-500 text-xs 
-                 whitespace-nowrap cursor-pointer transition-all duration-200
-                 hover:bg-indigo-500 hover:text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/40
-                 active:scale-95"
-    >
-      {text}
-    </button>
-  );
-};
-
 const Chatbot = () => {
   const location = useLocation();
-
   const hideOnRoutes = ['/login', '/sign_up', '/enter_email'];
   const isResetPasswordRoute = location.pathname.startsWith('/reset_password/');
 
-  const shouldHide =
-    hideOnRoutes.includes(location.pathname) || isResetPasswordRoute;
-
-  if (shouldHide) {
+  if (hideOnRoutes.includes(location.pathname) || isResetPasswordRoute) {
     return null;
   }
 
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! 👋 I'm your virtual assistant. How can I help you today?",
+      text: "Hello! 👋 How can I help you today?",
       sender: 'bot',
       timestamp: new Date()
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
-
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
   const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   useEffect(() => {
     if (isOpen) {
-      scrollToBottom();
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isOpen]);
 
   const findResponse = (userInput) => {
     const input = userInput.toLowerCase().trim();
-
     for (const category of Object.values(qaDatabase)) {
       for (const pattern of category.patterns) {
         if (input.includes(pattern)) {
@@ -219,83 +189,64 @@ const Chatbot = () => {
         }
       }
     }
-
     return "🤔 I'm not sure I understand. Try asking about:\n• Courses\n• Enrollment\n• Pricing\n• Certificates\n• Technical support\n\nOr type 'help' for more options!";
   };
 
   const handleSend = (text = inputValue) => {
     if (!text.trim()) return;
 
-    const userMessage = {
+    setMessages((prev) => [...prev, {
       id: Date.now(),
       text: text.trim(),
       sender: 'user',
       timestamp: new Date()
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    }]);
     setInputValue('');
     setIsTyping(true);
+    setShowQuickReplies(false);
 
     setTimeout(() => {
-      const botResponse = {
+      setMessages((prev) => [...prev, {
         id: Date.now() + 1,
         text: findResponse(text),
         sender: 'bot',
         timestamp: new Date()
-      };
-      setMessages((prev) => [...prev, botResponse]);
+      }]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 500);
-  };
-
-  const handleQuickReply = (reply) => {
-    handleSend(reply);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    }, 800 + Math.random() * 400);
   };
 
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+// Closed State 
 if (!isOpen) {
   return (
     <div
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 9999,
-      }}
-      className="flex items-center gap-3"
+      style={{ position: 'fixed', bottom: '16px', right: '16px', zIndex: 9999 }}
+      className="flex items-center gap-2"
     >
+      {/* Text Button - Hidden on mobile, visible on sm+ */}
       <button
         onClick={() => setIsOpen(true)}
-        className="hidden sm:flex items-center gap-2 bg-white text-indigo-600
-                   border-2 border-indigo-500 rounded-full cursor-pointer px-4 py-2
+        className="hidden sm:flex items-center gap-1.5 bg-white text-indigo-600
+                   border-2 border-indigo-500 rounded-full cursor-pointer px-3 py-1.5
                    shadow-lg transition-all duration-300
                    hover:bg-indigo-50 hover:scale-105"
       >
-        <span className="font-medium text-sm whitespace-nowrap">
+        <span className="font-medium text-xs whitespace-nowrap">
           Need Help? 💬
         </span>
       </button>
-
       <button
         onClick={() => setIsOpen(true)}
-        className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 
-                   border-none rounded-full cursor-pointer flex items-center justify-center
-                   shadow-lg shadow-indigo-500/50 transition-all duration-300
-                   hover:scale-110 hover:shadow-xl hover:shadow-indigo-500/60
-                   animate-pulse hover:animate-none"
+        className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 
+                   rounded-full cursor-pointer flex items-center justify-center
+                   shadow-lg shadow-indigo-500/40 transition-all duration-300
+                   hover:scale-110 hover:shadow-xl animate-pulse hover:animate-none"
       >
-        <svg viewBox="0 0 24 24" fill="white" className="w-7 h-7">
+        <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
         </svg>
       </button>
@@ -303,81 +254,101 @@ if (!isOpen) {
   );
 }
 
+  // Open State
   return (
     <div
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: 9999,
-      }}
-      className="fixed bottom-5 right-5 w-[380px] h-[600px] bg-white rounded-2xl 
-                    shadow-2xl flex flex-col overflow-hidden animate-slideUp
-                    max-sm:w-full max-sm:h-full max-sm:bottom-0 max-sm:right-0 max-sm:rounded-none"
+      style={{ position: 'fixed', bottom: '16px', right: '16px', zIndex: 9999 }}
+      className="w-72 h-96 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden
+                 max-sm:w-full max-sm:h-full max-sm:bottom-0 max-sm:right-0 max-sm:rounded-none"
     >
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-5 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="white" className="w-7 h-7">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-2 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+            <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
             </svg>
           </div>
           <div>
-            <h3 className="m-0 text-lg font-semibold">Support Bot</h3>
-            <span className="text-xs text-green-300">● Online</span>
+            <h3 className="text-sm font-semibold leading-tight">Support Bot</h3>
+            <span className="text-[10px] text-green-300">● Online</span>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="w-9 h-9 bg-white/20 border-none rounded-full cursor-pointer 
-                     flex items-center justify-center transition-colors duration-200
-                     hover:bg-white/30"
+          className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
         >
-          <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
           </svg>
         </button>
       </div>
 
-      <div
-        className="flex-1 overflow-y-auto p-5 bg-gray-50 flex flex-col gap-4
-                      scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
-      >
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-3 bg-gray-50 flex flex-col gap-3">
         {messages.map((message) => (
           <Message key={message.id} message={message} formatTime={formatTime} />
         ))}
-
         {isTyping && <TypingIndicator />}
-
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-3 bg-gray-50 flex flex-wrap gap-2 border-t border-gray-200">
-        {quickReplies.map((reply, index) => (
-          <QuickReplyButton key={index} text={reply} onClick={() => handleQuickReply(reply)} />
-        ))}
+      {/* Quick Replies - Collapsible */}
+      <div className="border-t border-gray-100 bg-gray-50">
+        <button
+          onClick={() => setShowQuickReplies(!showQuickReplies)}
+          className="w-full px-3 py-1.5 flex items-center justify-between text-[10px] text-gray-500 hover:bg-gray-100 transition-colors"
+        >
+          <span className="flex items-center gap-1">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-indigo-500">
+              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/>
+            </svg>
+            Quick Replies
+          </span>
+          <svg 
+            viewBox="0 0 24 24" 
+            fill="currentColor" 
+            className={`w-3 h-3 transition-transform duration-200 ${showQuickReplies ? 'rotate-180' : ''}`}
+          >
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
+        </button>
+
+        <div className={`overflow-hidden transition-all duration-300 ${showQuickReplies ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-2 pb-2 flex flex-wrap gap-1">
+            {quickReplies.map((reply, index) => (
+              <button
+                key={index}
+                onClick={() => handleSend(reply)}
+                className="px-2 py-1 bg-white border border-indigo-400 rounded-full text-indigo-500 text-[10px]
+                           hover:bg-indigo-500 hover:text-white transition-all duration-200 active:scale-95"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="p-4 bg-white flex gap-3 border-t border-gray-200">
+      {/* Input */}
+      <div className="p-2 bg-white flex gap-2 border-t border-gray-100">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
-          className="flex-1 px-5 py-3 border-2 border-gray-200 rounded-full text-sm outline-none
-                     transition-colors duration-200 focus:border-indigo-500
-                     placeholder:text-gray-400"
+          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Type a message..."
+          className="flex-1 px-3 py-1.5 border border-gray-200 rounded-full text-xs outline-none
+                     focus:border-indigo-400 placeholder:text-gray-400 transition-colors"
         />
         <button
           onClick={() => handleSend()}
           disabled={!inputValue.trim()}
-          className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-full
-                     cursor-pointer flex items-center justify-center transition-all duration-200
-                     hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/40
-                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+          className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full
+                     flex items-center justify-center hover:scale-105 transition-transform
+                     disabled:opacity-50 disabled:hover:scale-100"
         >
-          <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>
