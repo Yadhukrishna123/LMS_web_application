@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -111,14 +110,14 @@ const quickReplies = [
 
 
 const TypingIndicator = () => (
-  <div className="flex gap-2">
-    <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+  <div className="flex gap-1.5 sm:gap-2">
+    <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs flex-shrink-0">
       🤖
     </div>
-    <div className="flex gap-1 px-3 py-2 bg-white rounded-xl rounded-bl-sm shadow-sm">
-      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+    <div className="flex gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white rounded-xl rounded-bl-sm shadow-sm">
+      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
     </div>
   </div>
 );
@@ -127,15 +126,15 @@ const Message = ({ message, formatTime }) => {
   const isBot = message.sender === 'bot';
 
   return (
-    <div className={`flex gap-2 ${!isBot ? 'flex-row-reverse' : ''}`}>
+    <div className={`flex gap-1.5 sm:gap-2 ${!isBot ? 'flex-row-reverse' : ''}`}>
       {isBot && (
-        <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+        <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-[10px] sm:text-xs flex-shrink-0">
           🤖
         </div>
       )}
-      <div className={`max-w-[80%] ${!isBot ? 'text-right' : ''}`}>
+      <div className={`max-w-[80%] sm:max-w-[75%] ${!isBot ? 'text-right' : ''}`}>
         <div
-          className={`px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap ${
+          className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm leading-relaxed whitespace-pre-wrap ${
             isBot
               ? 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
               : 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-br-sm'
@@ -143,7 +142,7 @@ const Message = ({ message, formatTime }) => {
         >
           {message.text}
         </div>
-        <span className={`text-[10px] text-gray-400 mt-0.5 block ${!isBot ? 'text-right' : ''}`}>
+        <span className={`text-[9px] sm:text-[10px] text-gray-400 mt-0.5 block ${!isBot ? 'text-right' : ''}`}>
           {formatTime(message.timestamp)}
         </span>
       </div>
@@ -223,30 +222,30 @@ const Chatbot = () => {
 // Closed State 
 if (!isOpen) {
   return (
-    <div
-      style={{ position: 'fixed', bottom: '16px', right: '16px', zIndex: 9999 }}
-      className="flex items-center gap-2"
-    >
+    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 md:bottom-5 md:right-5 z-[9999] flex items-center gap-2">
       {/* Text Button - Hidden on mobile, visible on sm+ */}
       <button
         onClick={() => setIsOpen(true)}
         className="hidden sm:flex items-center gap-1.5 bg-white text-indigo-600
-                   border-2 border-indigo-500 rounded-full cursor-pointer px-3 py-1.5
+                   border-2 border-indigo-500 rounded-full cursor-pointer px-3 py-1.5 md:px-4 md:py-2
                    shadow-lg transition-all duration-300
                    hover:bg-indigo-50 hover:scale-105"
       >
-        <span className="font-medium text-xs whitespace-nowrap">
+        <span className="font-medium text-xs md:text-sm whitespace-nowrap">
           Need Help? 💬
         </span>
       </button>
+      
+      {/* Floating Button - Always visible */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 
+        className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-500 to-purple-600 
                    rounded-full cursor-pointer flex items-center justify-center
-                   shadow-lg shadow-indigo-500/40 transition-all duration-300
-                   hover:scale-110 hover:shadow-xl animate-pulse hover:animate-none"
+                   shadow-lg shadow-indigo-500/50 transition-all duration-300
+                   hover:scale-110 hover:shadow-xl animate-pulse hover:animate-none
+                   active:scale-95"
       >
-        <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+        <svg viewBox="0 0 24 24" fill="white" className="w-7 h-7 sm:w-8 sm:h-8">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
         </svg>
       </button>
@@ -256,36 +255,39 @@ if (!isOpen) {
 
   // Open State
   return (
-    <div
-      style={{ position: 'fixed', bottom: '16px', right: '16px', zIndex: 9999 }}
-      className="w-72 h-96 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden
-                 max-sm:w-full max-sm:h-full max-sm:bottom-0 max-sm:right-0 max-sm:rounded-none"
-    >
+    <div className="fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 md:bottom-5 md:right-5 z-[9999]
+                    sm:w-[360px] sm:h-[550px] md:w-96 md:h-[600px] 
+                    bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-2 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-3 sm:px-4 sm:py-3.5 flex justify-between items-center flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 sm:w-6 sm:h-6">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-semibold leading-tight">Support Bot</h3>
-            <span className="text-[10px] text-green-300">● Online</span>
+            <h3 className="text-sm sm:text-base font-semibold leading-tight">Support Bot</h3>
+            <span className="text-[10px] sm:text-xs text-green-300 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-green-300 rounded-full"></span>
+              Online
+            </span>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+          className="w-8 h-8 sm:w-9 sm:h-9 bg-white/20 rounded-full flex items-center justify-center 
+                     hover:bg-white/30 transition-colors active:scale-90 flex-shrink-0"
         >
-          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
+          <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5 sm:w-5 sm:h-5">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
           </svg>
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 bg-gray-50 flex flex-col gap-3">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-gray-50 flex flex-col gap-2.5 sm:gap-3">
         {messages.map((message) => (
           <Message key={message.id} message={message} formatTime={formatTime} />
         ))}
@@ -294,13 +296,15 @@ if (!isOpen) {
       </div>
 
       {/* Quick Replies - Collapsible */}
-      <div className="border-t border-gray-100 bg-gray-50">
+      <div className="border-t border-gray-200 bg-gray-50 flex-shrink-0">
         <button
           onClick={() => setShowQuickReplies(!showQuickReplies)}
-          className="w-full px-3 py-1.5 flex items-center justify-between text-[10px] text-gray-500 hover:bg-gray-100 transition-colors"
+          className="w-full px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between 
+                     text-xs sm:text-sm text-gray-600 font-medium hover:bg-gray-100 
+                     transition-colors active:bg-gray-200"
         >
-          <span className="flex items-center gap-1">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-indigo-500">
+          <span className="flex items-center gap-1.5">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-indigo-500">
               <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/>
             </svg>
             Quick Replies
@@ -308,20 +312,23 @@ if (!isOpen) {
           <svg 
             viewBox="0 0 24 24" 
             fill="currentColor" 
-            className={`w-3 h-3 transition-transform duration-200 ${showQuickReplies ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 transition-transform duration-200 ${showQuickReplies ? 'rotate-180' : ''}`}
           >
             <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
           </svg>
         </button>
 
-        <div className={`overflow-hidden transition-all duration-300 ${showQuickReplies ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="px-2 pb-2 flex flex-wrap gap-1">
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out
+                        ${showQuickReplies ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-2 sm:px-3 pb-2 sm:pb-3 flex flex-wrap gap-1.5 sm:gap-2">
             {quickReplies.map((reply, index) => (
               <button
                 key={index}
                 onClick={() => handleSend(reply)}
-                className="px-2 py-1 bg-white border border-indigo-400 rounded-full text-indigo-500 text-[10px]
-                           hover:bg-indigo-500 hover:text-white transition-all duration-200 active:scale-95"
+                className="px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white border border-indigo-400 
+                           rounded-full text-indigo-600 text-[11px] sm:text-xs font-medium
+                           hover:bg-indigo-500 hover:text-white transition-all duration-200 
+                           active:scale-95 shadow-sm whitespace-nowrap"
               >
                 {reply}
               </button>
@@ -331,24 +338,28 @@ if (!isOpen) {
       </div>
 
       {/* Input */}
-      <div className="p-2 bg-white flex gap-2 border-t border-gray-100">
+      <div className="p-2.5 sm:p-3 bg-white flex gap-2 border-t border-gray-200 flex-shrink-0">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Type a message..."
-          className="flex-1 px-3 py-1.5 border border-gray-200 rounded-full text-xs outline-none
-                     focus:border-indigo-400 placeholder:text-gray-400 transition-colors"
+          className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 border border-gray-300 rounded-full 
+                     text-xs sm:text-sm outline-none
+                     focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 
+                     placeholder:text-gray-400 transition-all"
         />
         <button
           onClick={() => handleSend()}
           disabled={!inputValue.trim()}
-          className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full
-                     flex items-center justify-center hover:scale-105 transition-transform
-                     disabled:opacity-50 disabled:hover:scale-100"
+          className="w-10 h-10 sm:w-11 sm:h-11 bg-gradient-to-br from-indigo-500 to-purple-600 
+                     rounded-full flex items-center justify-center 
+                     hover:scale-105 active:scale-95 transition-transform
+                     disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed 
+                     shadow-md flex-shrink-0"
         >
-          <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
+          <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>

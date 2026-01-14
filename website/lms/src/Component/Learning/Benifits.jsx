@@ -66,7 +66,7 @@ const UpcomingEvents = () => {
       id: 2,
       title: 'WebDev Pro Code-a-Thon: Build a Responsive Website',
       description: 'Participants will have 48 hours to create a responsive website from scratch using HTML, CSS, and JavaScript.',
-      image: 'https://images.unsplash.com/photo-1487058792252-fa8eac87a087?w=800&q=80',
+      image: 'https://plus.unsplash.com/premium_photo-1723849222657-e1e48a0a306e?q=80&w=1121&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       buttonText: 'REGISTER FOR FREE',
       isFree: true
     },
@@ -90,17 +90,20 @@ const UpcomingEvents = () => {
 
   if (loading) {
     return (
-      <div className="bg-white py-20 px-6">
+      <div className="bg-white py-10 sm:py-16 md:py-20 px-4 sm:px-5 md:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-10 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
-            <div className="h-6 bg-gray-200 rounded w-96 mx-auto mb-12"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="h-8 sm:h-9 md:h-10 bg-gray-200 rounded 
+                            w-48 sm:w-56 md:w-64 mx-auto mb-3 sm:mb-4"></div>
+            <div className="h-4 sm:h-5 md:h-6 bg-gray-200 rounded 
+                            w-64 sm:w-80 md:w-96 mx-auto mb-8 sm:mb-10 md:mb-12"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="space-y-4">
-                  <div className="h-48 bg-gray-200 rounded-2xl"></div>
-                  <div className="h-6 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded"></div>
+                <div key={i} className="space-y-3 sm:space-y-4">
+                  <div className="h-40 sm:h-44 md:h-48 bg-gray-200 rounded-xl sm:rounded-2xl"></div>
+                  <div className="h-5 sm:h-6 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 sm:h-4 bg-gray-200 rounded"></div>
+                  <div className="h-3 sm:h-4 bg-gray-200 rounded w-5/6"></div>
                 </div>
               ))}
             </div>
@@ -111,47 +114,60 @@ const UpcomingEvents = () => {
   }
 
   return (
-    <div className="bg-white py-20 px-6">
+    <div className="bg-white py-10 sm:py-16 md:py-20 px-4 sm:px-5 md:px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 
+                         mb-3 sm:mb-4 px-2">
             Upcoming Events
           </h2>
-          <p className="text-gray-500 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-500 text-sm sm:text-base md:text-lg max-w-3xl mx-auto 
+                        px-2 leading-relaxed">
             Join our web development events designed to share insights, trends,
             and real-world experiences.
           </p>
         </div>
 
         {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
           {events.map((event) => (
             <div
               key={event.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
+              className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm 
+                         hover:shadow-xl transition-all duration-300 hover:-translate-y-2 
+                         border border-gray-100 active:scale-[0.98]"
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-40 sm:h-44 md:h-48 overflow-hidden">
                 <img
                   src={event.image}
                   alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 
+                             hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 min-h-[3.5rem]">
+              <div className="p-4 sm:p-5 md:p-6">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 
+                               line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem] md:min-h-[3.5rem] 
+                               leading-snug">
                   {event.title}
                 </h3>
-                <p className="text-gray-600 text-sm mb-6 line-clamp-3 min-h-[4rem]">
+                <p className="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-5 md:mb-6 
+                              line-clamp-3 min-h-[3rem] sm:min-h-[3.5rem] md:min-h-[4rem] 
+                              leading-relaxed">
                   {event.description}
                 </p>
 
                 {/* Button */}
-                <button className="w-full bg-gray-900 text-white font-bold text-xs py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-300 uppercase tracking-wider">
+                <button className="w-full bg-gray-900 text-white font-bold text-[10px] sm:text-xs 
+                                   py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg 
+                                   hover:bg-gray-800 active:bg-gray-700 
+                                   transition-colors duration-300 uppercase tracking-wider
+                                   active:scale-[0.98]">
                   {event.buttonText}
                 </button>
               </div>
